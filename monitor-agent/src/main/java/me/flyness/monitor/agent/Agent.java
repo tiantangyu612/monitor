@@ -1,7 +1,6 @@
 package me.flyness.monitor.agent;
 
 import me.flyness.monitor.agent.log.MonitorLoggerFactory;
-import me.flyness.monitor.agent.util.MonitorJarVersionUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,8 +8,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.jar.JarFile;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,14 +34,6 @@ public class Agent {
      * 监控配置文件名称
      */
     public static String CONFIG_FILE_NAME = "monitor.properties";
-    /**
-     * 监控采集器 jar 名称前缀
-     */
-    public static String MONITOR_COLLECTOR_PREFIX = "monitor-collector-";
-    /**
-     * 监控采集器 jar 名称前缀
-     */
-    public static String MONITOR_COLLECTOR_SUFFIX = ".jar";
 
     /**
      * 该方法在 main 方法执行前调用
@@ -89,14 +81,8 @@ public class Agent {
 
         LOG.info("monitor collector jar path is: " + monitorCollectorJarPath);
 
-        // 获取监控采集器 jar
-        String monitorCollectorJar = getMonitorCollectorJar(monitorCollectorJarPath);
-        JarFile monitorCollectorJarFile = new JarFile(monitorCollectorJar);
-        instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
-
         // 初始化 monitor 采集器
-        initMonitorCollector(monitorConfigProperties, agentArgs, instrumentation, agentJarPath,
-                monitorCollectorJar, logFileHandler, application, instance);
+        initMonitorCollector(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, application, instance);
     }
 
     /**
@@ -168,85 +154,19 @@ public class Agent {
     }
 
     /**
-     * 获取监控采集器 jar file
-     *
-     * @param monitorCollectorJarPath
-     * @return
-     * @throws IOException
-     */
-    private static String getMonitorCollectorJar(String monitorCollectorJarPath) throws IOException {
-        List<String> monitorCollectorJarList = searchMonitorCollectorJars(new File(monitorCollectorJarPath));
-        if (monitorCollectorJarList.isEmpty()) {
-            LOG.severe("can not found monitor collector jar file named with " + MONITOR_COLLECTOR_PREFIX + ".{version}.jar in path: " + monitorCollectorJarPath);
-            return null;
-        }
-
-        // 获取最高版本的 monitor 采集器 jar
-        String highestMonitorCollectorJar = MonitorJarVersionUtil.getHighestMonitorCollectorJar(monitorCollectorJarList);
-        LOG.info("use highest monitor collector jar version: " + highestMonitorCollectorJar);
-
-        File highestMonitorCollectorJarFile = new File(highestMonitorCollectorJar);
-        if (!highestMonitorCollectorJarFile.exists()) {
-            LOG.severe("highest monitor collector jar file not exist: " + highestMonitorCollectorJar);
-            return null;
-        }
-        if (!highestMonitorCollectorJarFile.isFile()) {
-            LOG.severe("highest monitor collector jar file not a file: " + highestMonitorCollectorJar);
-            return null;
-        }
-
-        return highestMonitorCollectorJar;
-    }
-
-    /**
-     * 查找 monitor 采集器 jar
-     *
-     * @param monitorCollectorJarPath
-     * @return
-     */
-    private static List<String> searchMonitorCollectorJars(File monitorCollectorJarPath) {
-        if (!monitorCollectorJarPath.exists()) {
-            LOG.severe("monitor collector jar path not found: " + monitorCollectorJarPath);
-            return Collections.emptyList();
-        }
-
-        if (!monitorCollectorJarPath.isDirectory()) {
-            LOG.severe("monitor collector jar path is not a directory: " + monitorCollectorJarPath);
-            return Collections.emptyList();
-        }
-
-        File[] files = monitorCollectorJarPath.listFiles();
-        if ((files == null) || (files.length == 0)) {
-            LOG.severe("monitor jar path folder is empty: " + monitorCollectorJarPath);
-            return Collections.emptyList();
-        }
-
-        List<String> monitorCollectorJars = new ArrayList<String>();
-        for (File file : files) {
-            String fileName = file.getName();
-            if ((file.isFile()) && (fileName.startsWith(MONITOR_COLLECTOR_PREFIX)) && (fileName.endsWith(MONITOR_COLLECTOR_SUFFIX))) {
-                monitorCollectorJars.add(file.getPath());
-            }
-        }
-
-        return monitorCollectorJars;
-    }
-
-    /**
      * 初始化 monitor 采集器
      *
      * @param monitorConfigProperties
      * @param agentArgs
      * @param instrumentation
      * @param agentJarPath
-     * @param monitorCollectorJar
      * @param logFileHandler
      * @param application
      * @param instance
      * @throws Exception
      */
     private static void initMonitorCollector(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
-                                             String monitorCollectorJar, FileHandler logFileHandler, String application, String instance) throws Exception {
+                                             FileHandler logFileHandler, String application, String instance) throws Exception {
         Class<?> collectorInitializerClass = Class.forName("me.flyness.monitor.collector.CollectorInitializer");
         Object collectorInitializer = collectorInitializerClass.newInstance();
 
@@ -257,7 +177,6 @@ public class Agent {
         environment.put("monitorFolder", monitorFolder.getPath());
         environment.put("agentArgs", agentArgs);
         environment.put("agentJarPath", agentJarPath);
-        environment.put("collectorPath", monitorCollectorJar);
         environment.put("logFileHandler", logFileHandler);
         environment.put("application", application);
         environment.put("instance", instance);

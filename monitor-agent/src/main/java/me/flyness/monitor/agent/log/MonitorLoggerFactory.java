@@ -48,7 +48,7 @@ public class MonitorLoggerFactory {
         // 获取日志根文件夹路径
         String logRootFolderPath = getLogRootFolderPath(logRoot);
         // 获取监控日志文件夹路径
-        String logFileFolderPath = logRootFolderPath + File.separator + "monitor-agent";
+        String logFileFolderPath = logRootFolderPath + File.separator + "monitor-logs";
         // 创建监控日志文件夹
         createLogFolder(logFileFolderPath);
         // 获取监控日志文件路径
@@ -114,9 +114,9 @@ public class MonitorLoggerFactory {
             logFilePath = logFileFolderPath + File.separator + "error.log";
         } else {
             if ((instance == null) || (instance.equals("default"))) {
-                logFilePath = logFileFolderPath + File.separator + "monitor_agent_" + application + ".log";
+                logFilePath = logFileFolderPath + File.separator + "monitor_" + application + ".log";
             } else {
-                logFilePath = logFileFolderPath + File.separator + "monitor_agent_" + application + "-" + instance + ".log";
+                logFilePath = logFileFolderPath + File.separator + "monitor_" + application + "-" + instance + ".log";
             }
         }
 
