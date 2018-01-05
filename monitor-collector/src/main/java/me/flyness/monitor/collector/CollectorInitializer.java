@@ -1,5 +1,7 @@
 package me.flyness.monitor.collector;
 
+import me.flyness.monitor.collector.environment.MonitorEnvironment;
+
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
 import java.util.Properties;
@@ -17,6 +19,7 @@ public class CollectorInitializer {
      * @param instrumentation
      */
     public void initCollector(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
-        System.out.println("initCollector....................");
+        MonitorEnvironment monitorEnvironment = new MonitorEnvironment(environment);
+        System.out.println(monitorEnvironment);
     }
 }

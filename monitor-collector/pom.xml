@@ -11,4 +11,11 @@
     <version>1.0.0</version>
 
     <artifactId>monitor-collector</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+    </dependencies>
 </project>

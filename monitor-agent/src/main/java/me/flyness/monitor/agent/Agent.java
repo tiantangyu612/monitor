@@ -178,8 +178,6 @@ public class Agent {
         environment.put("agentArgs", agentArgs);
         environment.put("agentJarPath", agentJarPath);
         environment.put("logFileHandler", logFileHandler);
-        environment.put("application", application);
-        environment.put("instance", instance);
 
         // 反射执行 collector 初始化方法
         collectorInitMethod.invoke(collectorInitializer, environment, monitorConfigProperties, instrumentation);
