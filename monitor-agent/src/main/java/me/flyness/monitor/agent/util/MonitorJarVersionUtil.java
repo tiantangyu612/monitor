@@ -1,5 +1,7 @@
 package me.flyness.monitor.agent.util;
 
+import me.flyness.monitor.agent.Agent;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,15 +10,6 @@ import java.util.List;
  * monitor jar version util，监控 jar 版本工具类
  */
 public class MonitorJarVersionUtil {
-    /**
-     * 监控采集器 jar 名称前缀
-     */
-    private static String MONITOR_COLLECTOR_PREFIX = "monitor-collector-";
-    /**
-     * 监控采集器 jar 名称前缀
-     */
-    private static String MONITOR_COLLECTOR_SUFFIX = ".jar";
-
     /**
      * 获取最高版本的监控收集器 monitor-collector jar 版本号
      *
@@ -43,8 +36,8 @@ public class MonitorJarVersionUtil {
      * @return
      */
     private static boolean isHigherVersionJar(String jar, String anotherJar) {
-        int monitorCollectorPrefixLength = MONITOR_COLLECTOR_PREFIX.length();
-        int monitorCollectorSuffixLength = MONITOR_COLLECTOR_SUFFIX.length();
+        int monitorCollectorPrefixLength = Agent.MONITOR_COLLECTOR_PREFIX.length();
+        int monitorCollectorSuffixLength = Agent.MONITOR_COLLECTOR_SUFFIX.length();
 
         String jarVersion = jar.substring(monitorCollectorPrefixLength, jar.length() - monitorCollectorSuffixLength);
         String anotherJarVersion = anotherJar.substring(monitorCollectorPrefixLength, anotherJar.length() - monitorCollectorSuffixLength);

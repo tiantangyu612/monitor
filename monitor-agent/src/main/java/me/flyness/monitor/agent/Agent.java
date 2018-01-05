@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.jar.JarFile;
@@ -23,15 +22,26 @@ import java.util.logging.Logger;
 public class Agent {
     private static Logger LOG = MonitorLoggerFactory.getLogger(Agent.class);
 
-    private static File MONITOR_AGNET_FILE = null;
-    public static String MONITOR_AGNET_NAME = "monitor-agent";
-
-    public static String AGENT_ARGS = "agent_args";
-    public static String PREMAIN_JAR_PATH = "premain_jar_path";
-    public static String COLLECTOR_JAR_PATH = "collector_jar_path";
-    public static String COLLECTOR_PREFIX = "sentry-javaagent-collector-";
-    public static String COLLECTOR_SUFFIX = ".jar";
-    public static String CONFIG_FILE_NAME = "sentry.properties";
+    /**
+     * 监控 agent jar 所在文件夹名称
+     */
+    private static File monitorFolder = null;
+    /**
+     * 监控 agent jar 所在文件夹名称常量，文件夹名称必须为该名称
+     */
+    public static final String MONITOR_FOLDER_NAME = "monitor";
+    /**
+     * 监控配置文件名称
+     */
+    public static String CONFIG_FILE_NAME = "monitor.properties";
+    /**
+     * 监控采集器 jar 名称前缀
+     */
+    public static String MONITOR_COLLECTOR_PREFIX = "monitor-collector-";
+    /**
+     * 监控采集器 jar 名称前缀
+     */
+    public static String MONITOR_COLLECTOR_SUFFIX = ".jar";
 
     /**
      * 该方法在 main 方法执行前调用
@@ -56,135 +66,202 @@ public class Agent {
      * @throws Exception
      */
     private static void initAgent(String agentArgs, Instrumentation instrumentation) throws Exception {
-        String agentJarPath = Agent.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        File jarFile = new File(agentJarPath);
-        MONITOR_AGNET_FILE = jarFile.getParentFile();
-
-        if (!MONITOR_AGNET_FILE.getName().equals(MONITOR_AGNET_NAME)) {
-            FileHandler fhandler = MonitorLoggerFactory.buildFileHandler(agentArgs, null, null);
-            LOG.addHandler(fhandler);
-            LOG.log(Level.SEVERE, " the folder name must be sentry-javaagent-home agent quit!");
+        // 获取 agent jar path，agent jar 必须在类路径下的 monitor-agent 文件夹下
+        String agentJarPath = validateAndGetAgentJarPath(agentArgs);
+        if (null == agentJarPath) {
             return;
         }
-        File propf = new File(MONITOR_AGNET_FILE.getPath() + File.separator + CONFIG_FILE_NAME);
 
-        Properties sentryProperties = new Properties();
-        String appName;
-        String instance;
-        FileHandler fhandler;
+        // 加载监控配置文件，文件名称必须为 monitor.properties
+        Properties monitorConfigProperties = loadMonitorConfigProperties(agentArgs);
+        String application = monitorConfigProperties.getProperty("application");
+        String instance = monitorConfigProperties.getProperty("instance");
+
+        FileHandler logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+        LOG.addHandler(logFileHandler);
+
+        // 监控收集器 jar path，需要在类路径下
+        String monitorCollectorJarPath = Agent.class.getClassLoader().getResource(".").getPath();
+        if (null == monitorCollectorJarPath) {
+            LOG.severe("monitor collector jar path is null!");
+            return;
+        }
+
+        // 获取监控采集器 jar
+        String monitorCollectorJar = getMonitorCollectorJar(monitorCollectorJarPath);
+        JarFile monitorCollectorJarFile = new JarFile(monitorCollectorJar);
+        instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
+
+        // 初始化 monitor 采集器
+        initMonitorCollector(monitorConfigProperties, agentArgs, instrumentation, agentJarPath,
+                monitorCollectorJar, logFileHandler, application, instance);
+    }
+
+    /**
+     * 验证 agent jar path 是否符合规则，若合法返回 agent jar path
+     *
+     * @param agentArgs
+     * @return
+     */
+    private static String validateAndGetAgentJarPath(String agentArgs) {
+        String agentJarPath = Agent.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        File agentJarFile = new File(agentJarPath);
+        monitorFolder = agentJarFile.getParentFile();
+
+        if (!monitorFolder.getName().equals(MONITOR_FOLDER_NAME)) {
+            FileHandler logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            LOG.addHandler(logFileHandler);
+            LOG.severe("init agent error, cause the folder name must be " + MONITOR_FOLDER_NAME + ", bye bye!");
+            return null;
+        }
+
+        return agentJarPath;
+    }
+
+    /**
+     * 加载监控配置
+     *
+     * @param agentArgs
+     * @return
+     */
+    private static Properties loadMonitorConfigProperties(String agentArgs) {
+        File configPropertiesFile = new File(monitorFolder.getPath() + File.separator + CONFIG_FILE_NAME);
+
+        Properties monitorConfigProperties = new Properties();
+        FileHandler logFileHandler;
 
         try {
-            sentryProperties.load(new FileInputStream(propf));
-            appName = (String) sentryProperties.get("appName");
+            monitorConfigProperties.load(new FileInputStream(configPropertiesFile));
+            String application = monitorConfigProperties.getProperty("application");
 
-            instance = (String) sentryProperties.get("instance");
-            if (instance == null) {
-                instance = System.getProperty("sentry_app_instance_name");
-            }
+            String instance = monitorConfigProperties.getProperty("instance");
             if (instance == null) {
                 instance = "default";
             }
-            fhandler = MonitorLoggerFactory.buildFileHandler(agentArgs, appName, instance);
-            LOG.addHandler(fhandler);
-            if (appName == null) {
-                LOG.log(Level.SEVERE, "appName property not exists!");
-                return;
+
+            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+            LOG.addHandler(logFileHandler);
+            if (application == null) {
+                LOG.severe("application property can not be null!");
+                return null;
             }
+
+            monitorConfigProperties.setProperty("instance", instance);
+            return monitorConfigProperties;
         } catch (FileNotFoundException e) {
-            fhandler = MonitorLoggerFactory.buildFileHandler(agentArgs, null, null);
-            LOG.addHandler(fhandler);
+            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            LOG.addHandler(logFileHandler);
 
-            String s = "sentry.properties file not exist in :" + MONITOR_AGNET_FILE.getPath();
-
-            LOG.log(Level.SEVERE, s, e);
-            return;
+            String errorMsg = "can not find monitor.properties in: " + monitorFolder.getPath();
+            LOG.log(Level.SEVERE, errorMsg, e);
+            return null;
         } catch (IOException e) {
-            fhandler = MonitorLoggerFactory.buildFileHandler(agentArgs, null, null);
-            LOG.addHandler(fhandler);
-            String s = "IOException reading in reading sentry.properties!";
-            LOG.log(Level.SEVERE, s, e);
-            return;
-        }
-        Object collectorLibPath = System.getProperties().get("sentry_collector_libpath");
-        if (collectorLibPath == null) {
-            LOG.log(Level.SEVERE, "collectorLibPath property not found in system property ");
-            return;
-        }
-        List<String> collectorList = searchAgentCollector(new File(collectorLibPath.toString()));
-        if (collectorList.isEmpty()) {
-            LOG.log(Level.SEVERE, "not found collector file named with " + COLLECTOR_PREFIX + ".{version}.jar:" + collectorLibPath.toString());
-            return;
-        }
-        LOG.info("found collectors:" + collectorList.toString());
+            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            LOG.addHandler(logFileHandler);
 
-        String collectorjar = MonitorJarVersionUtil.getHighestMonitorCollectorJar(collectorList);
-        LOG.info("use higest version:" + collectorjar);
-        File f = new File(collectorjar);
-        if (!f.exists()) {
-            LOG.severe("collectorjar file not exist:" + collectorjar);
-            return;
+            String errorMsg = "IOException while reading monitor.properties!";
+            LOG.log(Level.SEVERE, errorMsg, e);
+            return null;
         }
-        if (!f.isFile()) {
-            LOG.severe("collectorjar file not a file:" + collectorjar);
-            return;
-        }
-        JarFile jf = new JarFile(collectorjar);
-        instrumentation.appendToBootstrapClassLoaderSearch(jf);
-
-        LOG.info(" added " + collectorjar + " to  BootstrapClassLoaderSearch path");
-
-        initCollector(sentryProperties, agentArgs, instrumentation, agentJarPath, collectorjar, fhandler, appName, instance);
-
-        LOG.info("collector initialized successfully!");
     }
 
+    /**
+     * 获取监控采集器 jar file
+     *
+     * @param monitorCollectorJarPath
+     * @return
+     * @throws IOException
+     */
+    private static String getMonitorCollectorJar(String monitorCollectorJarPath) throws IOException {
+        List<String> monitorCollectorJarList = searchMonitorCollectorJars(new File(monitorCollectorJarPath));
+        if (monitorCollectorJarList.isEmpty()) {
+            LOG.severe("can not found monitor collector jar file named with " + MONITOR_COLLECTOR_PREFIX + ".{version}.jar in path: " + monitorCollectorJarPath);
+            return null;
+        }
 
-    private static void initCollector(Properties sentryProperties, String agentArgs, Instrumentation inst, String agentJarPath, String collectorPath, FileHandler fhandler, String appName, String instance)
-            throws IllegalArgumentException, IllegalAccessException, InvocationTargetException, InstantiationException, SecurityException, NoSuchMethodException, ClassNotFoundException {
-        String collectorClassName = "com.netease.sentry.javaagent.collector.CollectorInitializer";
-        Class<?> clazz = Class.forName(collectorClassName);
+        // 获取最高版本的 monitor 采集器 jar
+        String highestMonitorCollectorJar = MonitorJarVersionUtil.getHighestMonitorCollectorJar(monitorCollectorJarList);
+        LOG.info("use highest monitor collector jar version: " + highestMonitorCollectorJar);
 
-        Class<?>[] agentInitArgs = {Map.class, Properties.class, Instrumentation.class};
-        Object main = clazz.newInstance();
-        Method initMethod = main.getClass().getMethod("initAgent", agentInitArgs);
-        Map<String, Object> parameters = new HashMap();
-        parameters.put("sentry_javaagent_home", MONITOR_AGNET_FILE.getPath());
-        parameters.put("agent_args", agentArgs);
-        parameters.put("agent_jar_file", agentJarPath);
-        parameters.put("collector_jar_path", collectorPath);
-        parameters.put("log_file_handler", fhandler);
-        parameters.put("appName", appName);
-        parameters.put("instance", instance);
-        initMethod.invoke(main, new Object[]{parameters, sentryProperties, inst});
+        File highestMonitorCollectorJarFile = new File(highestMonitorCollectorJar);
+        if (!highestMonitorCollectorJarFile.exists()) {
+            LOG.severe("highest monitor collector jar file not exist: " + highestMonitorCollectorJar);
+            return null;
+        }
+        if (!highestMonitorCollectorJarFile.isFile()) {
+            LOG.severe("highest monitor collector jar file not a file: " + highestMonitorCollectorJar);
+            return null;
+        }
+
+        return highestMonitorCollectorJar;
     }
 
-    private static List<String> searchAgentCollector(File libPath) {
-        if (!libPath.exists()) {
-            LOG.severe("not exist:" + libPath);
+    /**
+     * 查找 monitor 采集器 jar
+     *
+     * @param monitorCollectorJarPath
+     * @return
+     */
+    private static List<String> searchMonitorCollectorJars(File monitorCollectorJarPath) {
+        if (!monitorCollectorJarPath.exists()) {
+            LOG.severe("monitor collector jar path not found: " + monitorCollectorJarPath);
             return Collections.emptyList();
         }
-        if (!libPath.isDirectory()) {
-            LOG.severe("not a directory:" + libPath);
+
+        if (!monitorCollectorJarPath.isDirectory()) {
+            LOG.severe("monitor collector jar path is not a directory: " + monitorCollectorJarPath);
             return Collections.emptyList();
         }
-        File[] children = libPath.listFiles();
-        if ((children == null) || (children.length == 0)) {
-            LOG.severe("no children:" + libPath);
+
+        File[] files = monitorCollectorJarPath.listFiles();
+        if ((files == null) || (files.length == 0)) {
+            LOG.severe("monitor jar path folder is empty: " + monitorCollectorJarPath);
             return Collections.emptyList();
         }
-        List<String> result = new ArrayList(3);
-        for (File ff : children) {
-            String fname = ff.getName();
-            if ((ff.isFile()) && (fname.startsWith(COLLECTOR_PREFIX)) && (fname.endsWith(COLLECTOR_SUFFIX))) {
-                result.add(ff.getPath());
+
+        List<String> monitorCollectorJars = new ArrayList<String>();
+        for (File file : files) {
+            String fileName = file.getName();
+            if ((file.isFile()) && (fileName.startsWith(MONITOR_COLLECTOR_PREFIX)) && (fileName.endsWith(MONITOR_COLLECTOR_SUFFIX))) {
+                monitorCollectorJars.add(file.getPath());
             }
         }
-        return result;
+
+        return monitorCollectorJars;
     }
 
-    public static void main(String[] args) {
-        String premainJarPath = Agent.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        File jarFile = new File(premainJarPath);
-        System.out.println(jarFile.getParentFile());
+    /**
+     * 初始化 monitor 采集器
+     *
+     * @param monitorConfigProperties
+     * @param agentArgs
+     * @param instrumentation
+     * @param agentJarPath
+     * @param monitorCollectorJar
+     * @param logFileHandler
+     * @param application
+     * @param instance
+     * @throws Exception
+     */
+    private static void initMonitorCollector(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
+                                             String monitorCollectorJar, FileHandler logFileHandler, String application, String instance) throws Exception {
+        Class<?> collectorInitializerClass = Class.forName("me.flyness.monitor.collector.CollectorInitializer");
+        Object collectorInitializer = collectorInitializerClass.newInstance();
+
+        Class<?>[] collectorInitArgs = {Map.class, Properties.class, Instrumentation.class};
+        Method collectorInitMethod = collectorInitializer.getClass().getMethod("initCollector", collectorInitArgs);
+
+        Map<String, Object> environment = new HashMap<String, Object>();
+        environment.put("monitorFolder", monitorFolder.getPath());
+        environment.put("agentArgs", agentArgs);
+        environment.put("agentJarPath", agentJarPath);
+        environment.put("collectorPath", monitorCollectorJar);
+        environment.put("logFileHandler", logFileHandler);
+        environment.put("application", application);
+        environment.put("instance", instance);
+
+        // 反射执行 collector 初始化方法
+        collectorInitMethod.invoke(collectorInitializer, environment, monitorConfigProperties, instrumentation);
+        LOG.info("monitor collector initialized successfully!");
     }
 }

@@ -37,29 +37,29 @@ public class MonitorLoggerFactory {
     }
 
     /**
-     * 构建 FileHandler
+     * 构建 LogFileHandler
      *
      * @param logRoot     日志根路径
      * @param application 应用名称
      * @param instance    实例名称
      * @return
      */
-    public static FileHandler buildFileHandler(String logRoot, String application, String instance) {
+    public static FileHandler buildLogFileHandler(String logRoot, String application, String instance) {
         // 获取日志根文件夹路径
         String logRootFolderPath = getLogRootFolderPath(logRoot);
         // 获取监控日志文件夹路径
         String logFileFolderPath = logRootFolderPath + File.separator + "monitor-agent";
         // 创建监控日志文件夹
-        createFolder(logFileFolderPath);
+        createLogFolder(logFileFolderPath);
         // 获取监控日志文件路径
         String logFilepath = getLogFilePath(logFileFolderPath, application, instance);
 
         try {
-            FileHandler fileHandler = new FileHandler(logFilepath, LOG_FILE_SIZE, LOG_FILE_COUNT);
-            fileHandler.setFormatter(new SimpleFormatter());
-            return fileHandler;
+            FileHandler logFileHandler = new FileHandler(logFilepath, LOG_FILE_SIZE, LOG_FILE_COUNT);
+            logFileHandler.setFormatter(new SimpleFormatter());
+            return logFileHandler;
         } catch (Exception e) {
-            throw new RuntimeException("buildFileHandler error, filePath is:" + logFilepath);
+            throw new RuntimeException("buildLogFileHandler error, filePath is:" + logFilepath);
         }
     }
 
@@ -93,7 +93,7 @@ public class MonitorLoggerFactory {
      *
      * @param folderPath
      */
-    private static void createFolder(String folderPath) {
+    private static void createLogFolder(String folderPath) {
         File folder = new File(folderPath);
         if (!folder.exists()) {
             folder.mkdir();
