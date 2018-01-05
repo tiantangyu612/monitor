@@ -21,7 +21,7 @@ public class MonitorEnvironment {
      */
     private String agentJarPath;
     /**
-     * 日志 fileHandler
+     * 日志 logFileHandler
      */
     private FileHandler logFileHandler;
 

@@ -7,9 +7,9 @@ import java.util.logging.SimpleFormatter;
 
 /**
  * Created by bjlizhitao on 2018/1/4.
- * 监控系统日志工厂，使用 java logging
+ * agent logFactory，使用 java logging
  */
-public class MonitorLoggerFactory {
+public class AgentLoggerFactory {
     /**
      * 1 MB 字节数
      */

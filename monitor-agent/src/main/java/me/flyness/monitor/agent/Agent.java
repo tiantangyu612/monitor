@@ -1,6 +1,6 @@
 package me.flyness.monitor.agent;
 
-import me.flyness.monitor.agent.log.MonitorLoggerFactory;
+import me.flyness.monitor.agent.log.AgentLoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * java agent 用于增加方法监控，该类实现 premain 方法
  */
 public class Agent {
-    private static Logger LOG = MonitorLoggerFactory.getLogger(Agent.class);
+    private static Logger LOG = AgentLoggerFactory.getLogger(Agent.class);
 
     /**
      * 监控 agent jar 所在文件夹名称
@@ -69,7 +69,7 @@ public class Agent {
         String application = monitorConfigProperties.getProperty("application");
         String instance = monitorConfigProperties.getProperty("instance");
 
-        FileHandler logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+        FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
         LOG.addHandler(logFileHandler);
 
         // 监控收集器 jar path，需要在类路径下
@@ -97,7 +97,7 @@ public class Agent {
         monitorFolder = agentJarFile.getParentFile();
 
         if (!monitorFolder.getName().equals(MONITOR_FOLDER_NAME)) {
-            FileHandler logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, null, null);
             LOG.addHandler(logFileHandler);
             LOG.severe("init agent error, cause the folder name must be " + MONITOR_FOLDER_NAME + ", bye bye!");
             return null;
@@ -127,7 +127,7 @@ public class Agent {
                 instance = "default";
             }
 
-            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+            logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
             LOG.addHandler(logFileHandler);
             if (application == null) {
                 LOG.severe("application property can not be null!");
@@ -137,14 +137,14 @@ public class Agent {
             monitorConfigProperties.setProperty("instance", instance);
             return monitorConfigProperties;
         } catch (FileNotFoundException e) {
-            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, null, null);
             LOG.addHandler(logFileHandler);
 
             String errorMsg = "can not find monitor.properties in: " + monitorFolder.getPath();
             LOG.log(Level.SEVERE, errorMsg, e);
             return null;
         } catch (IOException e) {
-            logFileHandler = MonitorLoggerFactory.buildLogFileHandler(agentArgs, null, null);
+            logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, null, null);
             LOG.addHandler(logFileHandler);
 
             String errorMsg = "IOException while reading monitor.properties!";
