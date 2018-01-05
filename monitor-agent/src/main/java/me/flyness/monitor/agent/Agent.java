@@ -87,6 +87,8 @@ public class Agent {
             return;
         }
 
+        LOG.info("monitor collector jar path is: " + monitorCollectorJarPath);
+
         // 获取监控采集器 jar
         String monitorCollectorJar = getMonitorCollectorJar(monitorCollectorJarPath);
         JarFile monitorCollectorJarFile = new JarFile(monitorCollectorJar);

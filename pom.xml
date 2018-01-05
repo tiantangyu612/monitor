@@ -12,6 +12,7 @@
     <modules>
         <module>monitor-agent</module>
         <module>monitor-collector</module>
+        <module>monitor-test</module>
     </modules>
 
     <dependencyManagement>

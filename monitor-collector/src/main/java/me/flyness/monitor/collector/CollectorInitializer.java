@@ -17,6 +17,6 @@ public class CollectorInitializer {
      * @param instrumentation
      */
     public void initCollector(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
-
+        System.out.println("initCollector....................");
     }
 }
