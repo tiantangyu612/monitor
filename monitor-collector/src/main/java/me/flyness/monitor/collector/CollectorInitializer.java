@@ -2,6 +2,7 @@ package me.flyness.monitor.collector;
 
 import me.flyness.monitor.collector.environment.MonitorEnvironment;
 import me.flyness.monitor.collector.log.CollectorLogFactory;
+import me.flyness.monitor.collector.transformer.JavaMethodTransformer;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
@@ -37,6 +38,8 @@ public class CollectorInitializer {
 
         String application = monitorConfigProperties.getProperty("application");
         String instance = monitorConfigProperties.getProperty("instance");
+
+        instrumentation.addTransformer(new JavaMethodTransformer());
     }
 
     /**
