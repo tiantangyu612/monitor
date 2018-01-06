@@ -8,9 +8,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.0</version>
+    <version>${monitor.version}</version>
 
-    <artifactId>monitor-collector</artifactId>
+    <artifactId>monitor-core</artifactId>
 
     <dependencies>
         <dependency>
@@ -18,4 +18,17 @@
             <artifactId>javassist</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

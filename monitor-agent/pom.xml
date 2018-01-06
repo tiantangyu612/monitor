@@ -8,11 +8,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <version>1.0.0</version>
+    <version>${monitor.version}</version>
 
     <artifactId>monitor-agent</artifactId>
 
     <build>
+        <finalName>monitor-agent-1.0.0</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
