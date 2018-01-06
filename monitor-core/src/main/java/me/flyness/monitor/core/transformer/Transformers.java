@@ -1,6 +1,6 @@
-package me.flyness.monitor.transformer;
+package me.flyness.monitor.core.transformer;
 
-import me.flyness.monitor.config.MonitorConfig;
+import me.flyness.monitor.core.config.MonitorConfig;
 
 import java.lang.instrument.Instrumentation;
 

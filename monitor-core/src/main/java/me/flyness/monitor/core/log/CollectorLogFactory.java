@@ -1,4 +1,4 @@
-package me.flyness.monitor.log;
+package me.flyness.monitor.core.log;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;

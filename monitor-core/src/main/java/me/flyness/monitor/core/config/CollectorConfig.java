@@ -1,4 +1,4 @@
-package me.flyness.monitor.config;
+package me.flyness.monitor.core.config;
 
 /**
  * Created by lizhitao on 2018/1/6.

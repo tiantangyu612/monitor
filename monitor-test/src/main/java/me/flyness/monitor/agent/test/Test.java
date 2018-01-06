@@ -1,4 +1,4 @@
-package me.flyness.monitor.test;
+package me.flyness.monitor.agent.test;
 
 /**
  * Created by lizhitao on 2018/1/5.
@@ -6,6 +6,6 @@ package me.flyness.monitor.test;
  */
 public class Test {
     public static void main(String[] args) {
-        System.out.println(JavaMethodTest.NUM);
+        new JavaMethodTest().say();
     }
 }

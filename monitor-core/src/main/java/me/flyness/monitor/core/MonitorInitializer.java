@@ -1,10 +1,10 @@
-package me.flyness.monitor;
+package me.flyness.monitor.core;
 
-import me.flyness.monitor.config.CollectorConfig;
-import me.flyness.monitor.config.MonitorConfig;
-import me.flyness.monitor.env.MonitorEnv;
-import me.flyness.monitor.log.CollectorLogFactory;
-import me.flyness.monitor.transformer.Transformers;
+import me.flyness.monitor.core.config.CollectorConfig;
+import me.flyness.monitor.core.config.MonitorConfig;
+import me.flyness.monitor.core.env.MonitorEnv;
+import me.flyness.monitor.core.log.CollectorLogFactory;
+import me.flyness.monitor.core.transformer.Transformers;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Map;

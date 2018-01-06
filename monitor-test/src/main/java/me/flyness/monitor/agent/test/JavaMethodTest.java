@@ -1,7 +1,7 @@
-package me.flyness.monitor.test;
+package me.flyness.monitor.agent.test;
 
 
-import me.flyness.monitor.annotation.Monitor;
+import me.flyness.monitor.core.annotation.Monitor;
 
 /**
  * Created by lizhitao on 2018/1/5.

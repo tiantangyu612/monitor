@@ -1,4 +1,4 @@
-package me.flyness.monitor.annotation;
+package me.flyness.monitor.core.annotation;
 
 /**
  * Created by lizhitao on 2018/1/5.

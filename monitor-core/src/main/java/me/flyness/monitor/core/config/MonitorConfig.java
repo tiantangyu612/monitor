@@ -1,7 +1,7 @@
-package me.flyness.monitor.config;
+package me.flyness.monitor.core.config;
 
-import me.flyness.monitor.env.MonitorEnv;
-import me.flyness.monitor.log.CollectorLogFactory;
+import me.flyness.monitor.core.env.MonitorEnv;
+import me.flyness.monitor.core.log.CollectorLogFactory;
 
 import java.util.Map;
 import java.util.Properties;

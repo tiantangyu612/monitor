@@ -1,9 +1,10 @@
-package me.flyness.monitor.transformer;
+package me.flyness.monitor.core.transformer;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import me.flyness.monitor.log.CollectorLogFactory;
+import me.flyness.monitor.core.log.CollectorLogFactory;
+import me.flyness.monitor.core.annotation.Monitor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,7 +32,8 @@ public class JavaMethodTransformer implements ClassFileTransformer {
             CtMethod[] methods = ctClass.getDeclaredMethods();
             if (methods != null && methods.length != 0) {
                 for (CtMethod method : methods) {
-                    System.out.println(method);
+                    if (method.hasAnnotation(Monitor.class))
+                        System.out.println(method);
                 }
             }
         } catch (IOException e) {

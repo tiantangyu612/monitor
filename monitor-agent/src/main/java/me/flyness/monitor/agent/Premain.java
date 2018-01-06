@@ -1,6 +1,6 @@
-package me.flyness.monitor;
+package me.flyness.monitor.agent;
 
-import me.flyness.monitor.log.AgentLoggerFactory;
+import me.flyness.monitor.agent.log.AgentLoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,8 +19,8 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/4.
  * java agent 用于增加方法监控，该类实现 premain 方法
  */
-public class Agent {
-    private static Logger LOG = AgentLoggerFactory.getLogger(Agent.class);
+public class Premain {
+    private static Logger LOG = AgentLoggerFactory.getLogger(Premain.class);
 
     /**
      * 监控 agent jar 所在文件夹名称
@@ -46,7 +46,7 @@ public class Agent {
         try {
             initAgent(agentArgs, instrumentation);
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "Agent init error, cause: ", e);
+            LOG.log(Level.SEVERE, "Premain init error, cause: ", e);
         }
     }
 
@@ -83,7 +83,7 @@ public class Agent {
      * @return
      */
     private static String validateAndGetAgentJarPath(String agentArgs) {
-        String agentJarPath = Agent.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String agentJarPath = Premain.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         File agentJarFile = new File(agentJarPath);
         monitorFolder = agentJarFile.getParentFile();
 
@@ -156,7 +156,7 @@ public class Agent {
      */
     private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
                                     FileHandler logFileHandler) throws Exception {
-        Class<?> monitorInitializerClass = Class.forName("me.flyness.monitor.MonitorInitializer");
+        Class<?> monitorInitializerClass = Class.forName("me.flyness.monitor.core.MonitorInitializer");
         Object monitorInitializer = monitorInitializerClass.newInstance();
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
