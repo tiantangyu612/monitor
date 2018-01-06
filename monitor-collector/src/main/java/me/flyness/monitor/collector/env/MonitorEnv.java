@@ -1,4 +1,4 @@
-package me.flyness.monitor.collector.environment;
+package me.flyness.monitor.collector.env;
 
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -7,9 +7,9 @@ import java.util.logging.FileHandler;
  * Created by lizhitao on 2018/1/5.
  * monitor 环境配置
  */
-public class MonitorEnvironment {
+public class MonitorEnv {
     /**
-     * monitor 所在文件夹路径
+     * monitor 文件夹路径
      */
     private String monitorFolder;
     /**
@@ -25,7 +25,7 @@ public class MonitorEnvironment {
      */
     private FileHandler logFileHandler;
 
-    public MonitorEnvironment(Map<String, Object> environment) {
+    public MonitorEnv(Map<String, Object> environment) {
         this.monitorFolder = (String) environment.get("monitorFolder");
         this.agentArgs = (String) environment.get("agentArgs");
         this.agentJarPath = (String) environment.get("agentJarPath");
@@ -66,7 +66,7 @@ public class MonitorEnvironment {
 
     @Override
     public String toString() {
-        return "MonitorEnvironment{" +
+        return "MonitorEnv{" +
                 "monitorFolder='" + monitorFolder + '\'' +
                 ", agentArgs='" + agentArgs + '\'' +
                 ", agentJarPath='" + agentJarPath + '\'' +

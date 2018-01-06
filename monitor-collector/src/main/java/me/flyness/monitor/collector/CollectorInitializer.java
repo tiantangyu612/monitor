@@ -1,6 +1,7 @@
 package me.flyness.monitor.collector;
 
-import me.flyness.monitor.collector.environment.MonitorEnvironment;
+import me.flyness.monitor.collector.config.MonitorConfig;
+import me.flyness.monitor.collector.env.MonitorEnv;
 import me.flyness.monitor.collector.log.CollectorLogFactory;
 import me.flyness.monitor.collector.transformer.JavaMethodTransformer;
 
@@ -22,7 +23,7 @@ public class CollectorInitializer {
     private static Properties monitorConfigProperties;
 
     /**
-     * 初始化监控系统采集器，该方法由 Agent 反射调用
+     * 初始化监控系统采集器，该方法由 Agent premain 反射调用
      *
      * @param environment
      * @param monitorConfigProperties
@@ -30,16 +31,29 @@ public class CollectorInitializer {
      */
     public void initCollector(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
         CollectorInitializer.monitorConfigProperties = monitorConfigProperties;
+        MonitorEnv monitorEnv = new MonitorEnv(environment);
 
-        MonitorEnvironment monitorEnvironment = new MonitorEnvironment(environment);
+        // 初始化日志配置
+        initLog(monitorEnv);
 
-        FileHandler logFileHandler = monitorEnvironment.getLogFileHandler();
-        CollectorLogFactory.initLog(logFileHandler);
-
-        String application = monitorConfigProperties.getProperty("application");
-        String instance = monitorConfigProperties.getProperty("instance");
+        // 初始化监控配置
+        boolean initConfigSuccess = MonitorConfig.initConfig(monitorEnv, monitorConfigProperties);
+        if (!initConfigSuccess) {
+            LOG.severe("init monitor config failure!");
+            return;
+        }
 
         instrumentation.addTransformer(new JavaMethodTransformer());
+    }
+
+    /**
+     * 初始化日志配置
+     *
+     * @param monitorEnv
+     */
+    private void initLog(MonitorEnv monitorEnv) {
+        FileHandler logFileHandler = monitorEnv.getLogFileHandler();
+        CollectorLogFactory.initLog(logFileHandler);
     }
 
     /**
