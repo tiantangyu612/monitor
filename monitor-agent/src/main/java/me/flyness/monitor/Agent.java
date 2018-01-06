@@ -158,7 +158,7 @@ public class Agent {
      */
     private static void initMonitorCollector(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
                                              FileHandler logFileHandler, String application, String instance) throws Exception {
-        Class<?> collectorInitializerClass = Class.forName("me.flyness.monitor.collector.CollectorInitializer");
+        Class<?> collectorInitializerClass = Class.forName("me.flyness.monitor.CollectorInitializer");
         Object collectorInitializer = collectorInitializerClass.newInstance();
 
         Class<?>[] collectorInitArgs = {Map.class, Properties.class, Instrumentation.class};
