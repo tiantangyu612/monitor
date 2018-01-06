@@ -1,10 +1,9 @@
-package me.flyness.monitor.collector.transformer;
+package me.flyness.monitor.transformer;
 
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
-import me.flyness.monitor.collector.annotation.Monitor;
-import me.flyness.monitor.collector.log.CollectorLogFactory;
+import me.flyness.monitor.log.CollectorLogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,6 +15,7 @@ import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/5.
+ * JavaMethodTransformer，使用 Javassist 增加被监控的方法，记录方法的执行 rt、错误数、最大并发、异常等信息
  */
 public class JavaMethodTransformer implements ClassFileTransformer {
     private static Logger LOG = CollectorLogFactory.getLogger(JavaMethodTransformer.class);

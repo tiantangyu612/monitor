@@ -1,6 +1,6 @@
-package me.flyness.monitor.agent;
+package me.flyness.monitor;
 
-import me.flyness.monitor.agent.log.AgentLoggerFactory;
+import me.flyness.monitor.log.AgentLoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,15 +71,6 @@ public class Agent {
 
         FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
         LOG.addHandler(logFileHandler);
-
-        // 监控收集器 jar path，需要在类路径下
-        String monitorCollectorJarPath = Agent.class.getClassLoader().getResource(".").getPath();
-        if (null == monitorCollectorJarPath) {
-            LOG.severe("monitor collector jar path is null!");
-            return;
-        }
-
-        LOG.info("monitor collector jar path is: " + monitorCollectorJarPath);
 
         // 初始化 monitor 采集器
         initMonitorCollector(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, application, instance);

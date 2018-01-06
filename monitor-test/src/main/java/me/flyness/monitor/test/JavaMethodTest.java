@@ -1,6 +1,6 @@
 package me.flyness.monitor.test;
 
-import me.flyness.monitor.collector.annotation.Monitor;
+import me.flyness.monitor.annotation.Monitor;
 
 /**
  * Created by lizhitao on 2018/1/5.

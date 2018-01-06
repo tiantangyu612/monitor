@@ -30,7 +30,7 @@
                         <manifestEntries>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
                             <Can-Retransform-Classes>true</Can-Retransform-Classes>
-                            <Premain-Class>me.flyness.monitor.agent.Agent</Premain-Class>
+                            <Premain-Class>me.flyness.monitor.Agent</Premain-Class>
                         </manifestEntries>
                     </archive>
                 </configuration>

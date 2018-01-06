@@ -1,4 +1,4 @@
-package me.flyness.monitor.agent.log;
+package me.flyness.monitor.log;
 
 import java.io.File;
 import java.util.logging.FileHandler;

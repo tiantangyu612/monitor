@@ -1,7 +1,7 @@
-package me.flyness.monitor.collector.config;
+package me.flyness.monitor.config;
 
-import me.flyness.monitor.collector.env.MonitorEnv;
-import me.flyness.monitor.collector.log.CollectorLogFactory;
+import me.flyness.monitor.env.MonitorEnv;
+import me.flyness.monitor.log.CollectorLogFactory;
 
 import java.util.Map;
 import java.util.Properties;
@@ -35,17 +35,10 @@ public class MonitorConfig {
      * @param monitorConfigProperties
      * @return
      */
-    public static boolean initConfig(MonitorEnv monitorEnv, Properties monitorConfigProperties) {
+    public static void initConfig(MonitorEnv monitorEnv, Properties monitorConfigProperties) {
         // 获取并设置监控配置
         Properties monitorConfig = getMonitorConfig(monitorConfigProperties);
         setMonitorConfig(monitorConfig);
-
-        try {
-
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -85,20 +78,38 @@ public class MonitorConfig {
         // 是否启用 java method 采集
         String isEnableJavaMethodCollectValue = monitorConfig.getProperty("isEnableJavaMethodCollect");
         if ("false".equals(isEnableJavaMethodCollectValue)) {
-            isEnableJavaMethodCollect = false;
+            MonitorConfig.isEnableJavaMethodCollect = false;
         }
 
         // java method 采集最大数量
         String maxCollectJavaMethodCountValue = monitorConfig.getProperty("maxCollectJavaMethodCount");
         if (!"null".equals(maxCollectJavaMethodCountValue)) {
             try {
-                maxCollectJavaMethodCount = Integer.parseInt(maxCollectJavaMethodCountValue);
-                if (maxCollectJavaMethodCount > MAX_COLLECT_JAVA_METHOD_COUNT_LIMIT) {
-                    maxCollectJavaMethodCount = MAX_COLLECT_JAVA_METHOD_COUNT_LIMIT;
+                MonitorConfig.maxCollectJavaMethodCount = Integer.parseInt(maxCollectJavaMethodCountValue);
+                if (MonitorConfig.maxCollectJavaMethodCount > MonitorConfig.MAX_COLLECT_JAVA_METHOD_COUNT_LIMIT) {
+                    MonitorConfig.maxCollectJavaMethodCount = MonitorConfig.MAX_COLLECT_JAVA_METHOD_COUNT_LIMIT;
                 }
             } catch (Exception e) {
                 // NOP
             }
         }
+    }
+
+    /**
+     * 获取是否启用 java method 数据采集
+     *
+     * @return
+     */
+    public static boolean isEnableJavaMethodCollect() {
+        return MonitorConfig.isEnableJavaMethodCollect;
+    }
+
+    /**
+     * 获取采集的java method 的最大数量
+     *
+     * @return
+     */
+    public static int getMaxCollectJavaMethodCount() {
+        return MonitorConfig.maxCollectJavaMethodCount;
     }
 }
