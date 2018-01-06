@@ -6,13 +6,9 @@ package me.flyness.monitor.config;
  */
 public class CollectorConfig {
     /**
-     * 启动采集器
+     * 初始化采集器配置信息
      */
-    public static void start() {
-        init();
-    }
-
-    private static void init() {
+    public static void initConfig() {
 
     }
 }

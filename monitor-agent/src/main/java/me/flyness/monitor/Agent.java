@@ -73,7 +73,7 @@ public class Agent {
         LOG.addHandler(logFileHandler);
 
         // 初始化 monitor 采集器
-        initMonitorCollector(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, application, instance);
+        initMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler);
     }
 
     /**
@@ -152,17 +152,15 @@ public class Agent {
      * @param instrumentation
      * @param agentJarPath
      * @param logFileHandler
-     * @param application
-     * @param instance
      * @throws Exception
      */
-    private static void initMonitorCollector(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
-                                             FileHandler logFileHandler, String application, String instance) throws Exception {
-        Class<?> collectorInitializerClass = Class.forName("me.flyness.monitor.CollectorInitializer");
-        Object collectorInitializer = collectorInitializerClass.newInstance();
+    private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
+                                    FileHandler logFileHandler) throws Exception {
+        Class<?> monitorInitializerClass = Class.forName("me.flyness.monitor.MonitorInitializer");
+        Object monitorInitializer = monitorInitializerClass.newInstance();
 
-        Class<?>[] collectorInitArgs = {Map.class, Properties.class, Instrumentation.class};
-        Method collectorInitMethod = collectorInitializer.getClass().getMethod("initCollector", collectorInitArgs);
+        Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
+        Method monitorInitMethod = monitorInitializer.getClass().getMethod("initMonitor", monitorInitArgs);
 
         Map<String, Object> environment = new HashMap<String, Object>();
         environment.put("monitorFolder", monitorFolder.getPath());
@@ -171,7 +169,7 @@ public class Agent {
         environment.put("logFileHandler", logFileHandler);
 
         // 反射执行 collector 初始化方法
-        collectorInitMethod.invoke(collectorInitializer, environment, monitorConfigProperties, instrumentation);
-        LOG.info("monitor collector initialized successfully!");
+        monitorInitMethod.invoke(monitorInitializer, environment, monitorConfigProperties, instrumentation);
+        LOG.info("monitor initialized successfully!");
     }
 }

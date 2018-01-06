@@ -14,19 +14,19 @@ import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/5.
- * 监控采集器初始化类，初始化监控环境、监控配置、Transformer并启动采集器
+ * 监控初始化类，初始化监控环境、监控配置、Transformer、采集器配置并启动监控采集器
  */
-public class CollectorInitializer {
-    private static Logger LOG = CollectorLogFactory.getLogger(CollectorInitializer.class);
+public class MonitorInitializer {
+    private static Logger LOG = CollectorLogFactory.getLogger(MonitorInitializer.class);
 
     /**
-     * 初始化监控系统采集器，该方法由 Agent premain 反射调用
+     * 初始化监控系统，该方法由 Agent premain 反射调用
      *
      * @param environment
      * @param monitorConfigProperties
      * @param instrumentation
      */
-    public void initCollector(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
+    public void initMonitor(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
         MonitorEnv monitorEnv = new MonitorEnv(environment);
 
         // 初始化日志配置
@@ -41,9 +41,9 @@ public class CollectorInitializer {
         Transformers.initTransformers(instrumentation);
         LOG.info("init transformers success!");
 
-        // 启动监控采集器采集监控数据
-        CollectorConfig.start();
-        LOG.info("collector start success!");
+        // 初始化监控采集器配置信息
+        CollectorConfig.initConfig();
+        LOG.info("init collector config success!");
     }
 
     /**
