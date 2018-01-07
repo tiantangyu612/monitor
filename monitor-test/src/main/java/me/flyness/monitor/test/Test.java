@@ -1,4 +1,4 @@
-package me.flyness.monitor.agent.test;
+package me.flyness.monitor.test;
 
 /**
  * Created by lizhitao on 2018/1/5.

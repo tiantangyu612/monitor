@@ -67,9 +67,9 @@ public class Premain {
         // 加载监控配置文件，文件名称必须为 monitor.properties
         Properties monitorConfigProperties = loadMonitorConfigProperties(agentArgs);
         String application = monitorConfigProperties.getProperty("application");
-        String instance = monitorConfigProperties.getProperty("instance");
+        String cluster = monitorConfigProperties.getProperty("cluster");
 
-        FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+        FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, cluster);
         LOG.addHandler(logFileHandler);
 
         // 初始化 monitor 采集器

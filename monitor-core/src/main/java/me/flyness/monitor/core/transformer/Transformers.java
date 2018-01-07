@@ -16,7 +16,7 @@ public class Transformers {
      */
     public static void initTransformers(Instrumentation instrumentation) {
         if (MonitorConfig.isEnableJavaMethodCollect()) {
-            instrumentation.addTransformer(new JavaMethodTransformer());
+            instrumentation.addTransformer(new MethodTransformer());
         }
     }
 }

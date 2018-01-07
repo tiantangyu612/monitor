@@ -16,6 +16,20 @@ public class MonitorConfig {
     private static Logger LOG = CollectorLogFactory.getLogger(MonitorConfig.class);
 
     /**
+     * 监控环境信息
+     */
+    private static MonitorEnv monitorEnv;
+
+    /**
+     * 应用名称
+     */
+    private static String application;
+    /**
+     * 集群名称
+     */
+    private static String cluster;
+
+    /**
      * 是否启用 java method 数据采集
      */
     private static boolean isEnableJavaMethodCollect = true;
@@ -36,8 +50,12 @@ public class MonitorConfig {
      * @return
      */
     public static void initConfig(MonitorEnv monitorEnv, Properties monitorConfigProperties) {
-        // 获取并设置监控配置
+        // 设置监控环境信息
+        MonitorConfig.monitorEnv = monitorEnv;
+
+        // 获取监控配置信息
         Properties monitorConfig = getMonitorConfig(monitorConfigProperties);
+        // 设置监控配置信息
         setMonitorConfig(monitorConfig);
     }
 
@@ -66,7 +84,18 @@ public class MonitorConfig {
      * @param monitorConfig
      */
     private static void setMonitorConfig(Properties monitorConfig) {
+        setMonitorBasicConfig(monitorConfig);
         setJavaMethodCollectConfig(monitorConfig);
+    }
+
+    /**
+     * 设置基本配置
+     *
+     * @param monitorConfig
+     */
+    private static void setMonitorBasicConfig(Properties monitorConfig) {
+        MonitorConfig.application = monitorConfig.getProperty("application");
+        MonitorConfig.cluster = monitorConfig.getProperty("cluster");
     }
 
     /**
@@ -93,6 +122,33 @@ public class MonitorConfig {
                 // NOP
             }
         }
+    }
+
+    /**
+     * 获取监控环境信息
+     *
+     * @return
+     */
+    public static MonitorEnv getMonitorEnv() {
+        return MonitorConfig.monitorEnv;
+    }
+
+    /**
+     * 获取应用名称
+     *
+     * @return
+     */
+    public static String getApplication() {
+        return MonitorConfig.application;
+    }
+
+    /**
+     * 获取集群名称
+     *
+     * @return
+     */
+    public static String getCluster() {
+        return MonitorConfig.cluster;
     }
 
     /**

@@ -41,10 +41,10 @@ public class AgentLoggerFactory {
      *
      * @param logRoot     日志根路径
      * @param application 应用名称
-     * @param instance    实例名称
+     * @param cluster     集群名称
      * @return
      */
-    public static FileHandler buildLogFileHandler(String logRoot, String application, String instance) {
+    public static FileHandler buildLogFileHandler(String logRoot, String application, String cluster) {
         // 获取日志根文件夹路径
         String logRootFolderPath = getLogRootFolderPath(logRoot);
         // 获取监控日志文件夹路径
@@ -52,7 +52,7 @@ public class AgentLoggerFactory {
         // 创建监控日志文件夹
         createLogFolder(logFileFolderPath);
         // 获取监控日志文件路径
-        String logFilepath = getLogFilePath(logFileFolderPath, application, instance);
+        String logFilepath = getLogFilePath(logFileFolderPath, application, cluster);
 
         try {
             FileHandler logFileHandler = new FileHandler(logFilepath, LOG_FILE_SIZE, LOG_FILE_COUNT);
@@ -105,18 +105,18 @@ public class AgentLoggerFactory {
      *
      * @param logFileFolderPath 日志文件夹路径
      * @param application       应用名
-     * @param instance          实例名
+     * @param cluster           集群名
      * @return
      */
-    private static String getLogFilePath(String logFileFolderPath, String application, String instance) {
+    private static String getLogFilePath(String logFileFolderPath, String application, String cluster) {
         String logFilePath;
         if (application == null) {
             logFilePath = logFileFolderPath + File.separator + "error.log";
         } else {
-            if ((instance == null) || (instance.equals("default"))) {
+            if ((cluster == null) || (cluster.equals("default"))) {
                 logFilePath = logFileFolderPath + File.separator + "monitor_" + application + ".log";
             } else {
-                logFilePath = logFileFolderPath + File.separator + "monitor_" + application + "-" + instance + ".log";
+                logFilePath = logFileFolderPath + File.separator + "monitor_" + application + "-" + cluster + ".log";
             }
         }
 

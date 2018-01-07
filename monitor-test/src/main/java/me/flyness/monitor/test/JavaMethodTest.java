@@ -1,4 +1,4 @@
-package me.flyness.monitor.agent.test;
+package me.flyness.monitor.test;
 
 
 import me.flyness.monitor.core.annotation.Monitor;
