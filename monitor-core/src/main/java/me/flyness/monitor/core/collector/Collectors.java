@@ -15,8 +15,7 @@ public class Collectors {
     private static Map<String, Collector> collectorMap = new HashMap<String, Collector>();
 
     public static void initCollectors() {
-        JVMCollector jvmCollector = JVMCollector.getInstance();
-        collectorMap.put(jvmCollector.getName(), jvmCollector);
+        addCollector(JVMCollector.getInstance());
     }
 
     /**
