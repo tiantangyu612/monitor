@@ -1,7 +1,4 @@
-package me.flyness.monitor.core.config;
-
-import me.flyness.monitor.core.env.MonitorEnv;
-import me.flyness.monitor.core.log.CollectorLogFactory;
+package me.flyness.monitor.core;
 
 import java.util.Map;
 import java.util.Properties;
@@ -13,7 +10,7 @@ import java.util.logging.Logger;
  * 监控配置信息
  */
 public class MonitorConfig {
-    private static Logger LOG = CollectorLogFactory.getLogger(MonitorConfig.class);
+    private static Logger LOG = MonitorLogFactory.getLogger(MonitorConfig.class);
 
     /**
      * 监控环境信息

@@ -1,4 +1,4 @@
-package me.flyness.monitor.core.env;
+package me.flyness.monitor.core;
 
 import java.util.Map;
 import java.util.logging.FileHandler;

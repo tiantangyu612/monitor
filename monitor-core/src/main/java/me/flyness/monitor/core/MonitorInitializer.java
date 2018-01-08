@@ -1,9 +1,6 @@
 package me.flyness.monitor.core;
 
-import me.flyness.monitor.core.config.CollectorConfig;
-import me.flyness.monitor.core.config.MonitorConfig;
-import me.flyness.monitor.core.env.MonitorEnv;
-import me.flyness.monitor.core.log.CollectorLogFactory;
+import me.flyness.monitor.core.collector.Collectors;
 import me.flyness.monitor.core.transformer.Transformers;
 
 import java.lang.instrument.Instrumentation;
@@ -17,7 +14,7 @@ import java.util.logging.Logger;
  * 监控初始化类，初始化监控环境、监控配置、Transformer、采集器配置并启动监控采集器
  */
 public class MonitorInitializer {
-    private static Logger LOG = CollectorLogFactory.getLogger(MonitorInitializer.class);
+    private static Logger LOG = MonitorLogFactory.getLogger(MonitorInitializer.class);
 
     /**
      * 初始化监控系统，该方法由 Agent premain 反射调用
@@ -42,8 +39,8 @@ public class MonitorInitializer {
         LOG.info("init transformers success!");
 
         // 初始化监控采集器配置信息
-        CollectorConfig.initConfig();
-        LOG.info("init collector config success!");
+        Collectors.initCollectors();
+        LOG.info("init collectors success!");
     }
 
     /**
@@ -53,6 +50,6 @@ public class MonitorInitializer {
      */
     private void initLog(MonitorEnv monitorEnv) {
         FileHandler logFileHandler = monitorEnv.getLogFileHandler();
-        CollectorLogFactory.initLog(logFileHandler);
+        MonitorLogFactory.initLog(logFileHandler);
     }
 }

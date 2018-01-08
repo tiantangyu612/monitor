@@ -2,13 +2,12 @@ package me.flyness.monitor.core.transformer;
 
 import javassist.*;
 import me.flyness.monitor.core.annotation.Monitor;
-import me.flyness.monitor.core.log.CollectorLogFactory;
+import me.flyness.monitor.core.MonitorLogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
-import java.lang.reflect.Modifier;
 import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +19,7 @@ import java.util.logging.Logger;
  * MethodTransformer，使用 Javassist 增加被监控的方法，记录方法的执行 rt、错误数、最大并发、异常等信息
  */
 public class MethodTransformer implements ClassFileTransformer {
-    private static Logger LOG = CollectorLogFactory.getLogger(MethodTransformer.class);
+    private static Logger LOG = MonitorLogFactory.getLogger(MethodTransformer.class);
     /**
      * 不需要监控的方法名称
      */

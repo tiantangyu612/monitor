@@ -1,13 +1,13 @@
-package me.flyness.monitor.core.log;
+package me.flyness.monitor.core;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/5.
- * 监控采集器 logFactory，使用 java logging
+ * 监控 logFactory，使用 java logging
  */
-public class CollectorLogFactory {
+public class MonitorLogFactory {
     private static FileHandler logFileHandler;
 
     /**
@@ -16,7 +16,7 @@ public class CollectorLogFactory {
      * @param logFileHandler
      */
     public static void initLog(FileHandler logFileHandler) {
-        CollectorLogFactory.logFileHandler = logFileHandler;
+        MonitorLogFactory.logFileHandler = logFileHandler;
     }
 
     /**
