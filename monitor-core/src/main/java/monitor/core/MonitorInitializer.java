@@ -1,9 +1,9 @@
-package me.flyness.monitor.core;
+package monitor.core;
 
 import com.alibaba.fastjson.JSON;
-import me.flyness.monitor.core.collector.Collectors;
-import me.flyness.monitor.core.collector.base.Collector;
-import me.flyness.monitor.core.transformer.Transformers;
+import monitor.core.collector.Collectors;
+import monitor.core.collector.base.Collector;
+import monitor.core.transformer.Transformers;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;

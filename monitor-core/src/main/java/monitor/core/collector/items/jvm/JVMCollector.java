@@ -1,6 +1,6 @@
-package me.flyness.monitor.core.collector.items.jvm;
+package monitor.core.collector.items.jvm;
 
-import me.flyness.monitor.core.collector.base.AbstractCollector;
+import monitor.core.collector.base.AbstractCollector;
 
 /**
  * Created by lizhitao on 2018/1/8.

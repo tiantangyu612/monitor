@@ -1,7 +1,7 @@
-package me.flyness.monitor.core.collector.base;
+package monitor.core.collector.base;
 
-import me.flyness.monitor.core.collector.Collectors;
-import me.flyness.monitor.core.util.CollectionUtils;
+import monitor.core.collector.Collectors;
+import monitor.core.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

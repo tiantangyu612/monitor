@@ -1,8 +1,8 @@
-package me.flyness.monitor.core.collector;
+package monitor.core.collector;
 
-import me.flyness.monitor.core.collector.base.Collector;
-import me.flyness.monitor.core.collector.items.jvm.JVMCollector;
-import me.flyness.monitor.core.util.StringUtils;
+import monitor.core.collector.base.Collector;
+import monitor.core.collector.items.jvm.JVMCollector;
+import monitor.core.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;

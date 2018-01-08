@@ -1,6 +1,6 @@
-package me.flyness.monitor.agent;
+package monitor.agent;
 
-import me.flyness.monitor.agent.log.AgentLoggerFactory;
+import monitor.agent.log.AgentLoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -156,7 +156,7 @@ public class Premain {
      */
     private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
                                     FileHandler logFileHandler) throws Exception {
-        Class<?> monitorInitializerClass = Class.forName("me.flyness.monitor.core.MonitorInitializer");
+        Class<?> monitorInitializerClass = Class.forName("monitor.core.MonitorInitializer");
         Object monitorInitializer = monitorInitializerClass.newInstance();
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
