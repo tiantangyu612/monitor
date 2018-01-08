@@ -87,72 +87,72 @@ public class MethodTransformer implements ClassFileTransformer {
     }
 
     private void addInterceptor(CtMethod method, CtClass clazz, int index) throws CannotCompileException, NotFoundException, ClassNotFoundException {
-        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
-        if (null != method.getGenericSignature()) {
-            newMethod.setGenericSignature(method.getGenericSignature());
-        }
-
-        String oldName = method.getName() + "$sentryProxy" + index;
-        method.setName(oldName);
-        if (Modifier.isPublic(method.getModifiers())) {
-            int collectorName = method.getModifiers() - 1 + 2;
-            method.setModifiers(collectorName);
-        }
-
-        String collectorName1 = JavaMethodCollector.class.getName();
-        String statsClassName = MethodStatsVo.class.getName();
-        StringBuilder body = new StringBuilder();
-        body.append("{");
-        body.append("long startTime=0;");
-        body.append("boolean isEnable =").append(collectorName1).append(".isEnabled();");
-        body.append(statsClassName + " stats =null;");
-        body.append("try{");
-        body.append("if(isEnable){");
-        body.append("startTime=System.nanoTime();");
-        body.append("stats=").append(collectorName1).append(".onStart(").append(resourceId.intValue()).append(");");
-        body.append("}");
-        if (method.getReturnType() == CtClass.voidType) {
-            body.append(oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.intType) {
-            body.append("int result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.booleanType) {
-            body.append("boolean result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.byteType) {
-            body.append("byte result  = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.charType) {
-            body.append("char result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.doubleType) {
-            body.append("double result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.floatType) {
-            body.append("float result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.longType) {
-            body.append("long result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.shortType) {
-            body.append("short result = " + oldName + "($$);");
-        } else {
-            body.append("Object result = " + oldName + "($$);");
-        }
-
-        if (method.getReturnType() != CtClass.voidType) {
-            body.append("return result;");
-        }
-
-        body.append("}");
-        body.append("catch(Throwable t){");
-        body.append("if(stats!=null)stats.onThrowable(t);");
-        body.append("throw t;");
-        body.append("}");
-        body.append("finally{if(stats!=null){");
-        body.append("long endTime=System.nanoTime();");
-        body.append("long timeUsed=endTime-startTime;");
-        body.append("stats.onFinally(timeUsed);");
-        body.append("}");
-        body.append("}");
-        body.append("}");
-        newMethod.setBody(body.toString());
-        JavassistUtil.copyMethodAnnotationdAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
-        JavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
-        clazz.addMethod(newMethod);
-        LOG.info(" Interceptor added for " + cam1.getClassName() + "." + cam1.getMethodName() + ",resourceId[[" + resourceId + "]]");
+//        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
+//        if (null != method.getGenericSignature()) {
+//            newMethod.setGenericSignature(method.getGenericSignature());
+//        }
+//
+//        String oldName = method.getName() + "$sentryProxy" + index;
+//        method.setName(oldName);
+//        if (Modifier.isPublic(method.getModifiers())) {
+//            int collectorName = method.getModifiers() - 1 + 2;
+//            method.setModifiers(collectorName);
+//        }
+//
+//        String collectorName1 = JavaMethodCollector.class.getName();
+//        String statsClassName = MethodStatsVo.class.getName();
+//        StringBuilder body = new StringBuilder();
+//        body.append("{");
+//        body.append("long startTime=0;");
+//        body.append("boolean isEnable =").append(collectorName1).append(".isEnabled();");
+//        body.append(statsClassName + " stats =null;");
+//        body.append("try{");
+//        body.append("if(isEnable){");
+//        body.append("startTime=System.nanoTime();");
+//        body.append("stats=").append(collectorName1).append(".onStart(").append(resourceId.intValue()).append(");");
+//        body.append("}");
+//        if (method.getReturnType() == CtClass.voidType) {
+//            body.append(oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.intType) {
+//            body.append("int result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.booleanType) {
+//            body.append("boolean result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.byteType) {
+//            body.append("byte result  = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.charType) {
+//            body.append("char result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.doubleType) {
+//            body.append("double result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.floatType) {
+//            body.append("float result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.longType) {
+//            body.append("long result = " + oldName + "($$);");
+//        } else if (method.getReturnType() == CtClass.shortType) {
+//            body.append("short result = " + oldName + "($$);");
+//        } else {
+//            body.append("Object result = " + oldName + "($$);");
+//        }
+//
+//        if (method.getReturnType() != CtClass.voidType) {
+//            body.append("return result;");
+//        }
+//
+//        body.append("}");
+//        body.append("catch(Throwable t){");
+//        body.append("if(stats!=null)stats.onThrowable(t);");
+//        body.append("throw t;");
+//        body.append("}");
+//        body.append("finally{if(stats!=null){");
+//        body.append("long endTime=System.nanoTime();");
+//        body.append("long timeUsed=endTime-startTime;");
+//        body.append("stats.onFinally(timeUsed);");
+//        body.append("}");
+//        body.append("}");
+//        body.append("}");
+//        newMethod.setBody(body.toString());
+//        JavassistUtil.copyMethodAnnotationdAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
+//        JavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
+//        clazz.addMethod(newMethod);
+//        LOG.info(" Interceptor added for " + cam1.getClassName() + "." + cam1.getMethodName() + ",resourceId[[" + resourceId + "]]");
     }
 }
