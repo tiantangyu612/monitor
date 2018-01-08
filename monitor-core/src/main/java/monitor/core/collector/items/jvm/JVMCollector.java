@@ -20,12 +20,32 @@ public class JVMCollector extends AbstractCollector {
      * JVM 线程信息采集项
      */
     private static JVMThreadCollectorItem jvmThreadCollectorItem = new JVMThreadCollectorItem();
+    /**
+     * JVM 类加载信息采集项
+     */
+    private static JVMClassLoadingCollectorItem jvmClassLoadingCollectorItem = new JVMClassLoadingCollectorItem();
+    /**
+     * JVM 编译信息采集项
+     */
+    private static JVMCompileCollectorItem jvmCompileCollectorItem = new JVMCompileCollectorItem();
+    /**
+     * JVM cpu 信息采集
+     */
+    private static JVMCpuCollectorItem jvmCpuCollectorItem = new JVMCpuCollectorItem();
+    /**
+     * JVM memory pool 信息采集
+     */
+    private static JVMMemoryPoolCollectItem jvmMemoryPoolCollectItem = new JVMMemoryPoolCollectItem();
 
 
     static {
         instance.addCollectorItem(jvmGCCollectorItem);
         instance.addCollectorItem(jvmMemoryCollectorItem);
         instance.addCollectorItem(jvmThreadCollectorItem);
+        instance.addCollectorItem(jvmClassLoadingCollectorItem);
+        instance.addCollectorItem(jvmCompileCollectorItem);
+        instance.addCollectorItem(jvmCpuCollectorItem);
+        instance.addCollectorItem(jvmMemoryPoolCollectItem);
     }
 
     private JVMCollector() {

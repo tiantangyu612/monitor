@@ -3,7 +3,6 @@ package monitor.core;
 import com.alibaba.fastjson.JSON;
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
-import monitor.core.transformer.Transformers;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
@@ -37,15 +36,12 @@ public class MonitorInitializer {
         MonitorConfig.initConfig(monitorEnv, monitorConfigProperties);
         LOG.info("init monitor config success!");
 
-        // 初始化 Transformers
-        Transformers.initTransformers(instrumentation);
-        LOG.info("init transformers success!");
-
         // 初始化监控采集器配置信息
-        Collectors.initCollectors();
+        Collectors.initCollectors(instrumentation);
         LOG.info("init collectors success!");
 
-        startCollect();
+        // 启动采集器
+        startCollector();
     }
 
     /**
@@ -58,12 +54,15 @@ public class MonitorInitializer {
         MonitorLogFactory.initLog(logFileHandler);
     }
 
-    private static void startCollect() {
+    /**
+     * 启动采集器
+     */
+    private static void startCollector() {
         Map<String, Collector> collectorMap = Collectors.getAllCollectors();
         for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
             Map<String, List<Map<String, Object>>> collectDatas = collectorEntry.getValue().collectData();
 
-            for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()){
+            for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
                 System.out.println(JSON.toJSONString(collectDatasEntry));
             }
         }

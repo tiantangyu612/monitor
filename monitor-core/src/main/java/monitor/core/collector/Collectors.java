@@ -1,9 +1,12 @@
 package monitor.core.collector;
 
+import monitor.core.MonitorConfig;
 import monitor.core.collector.base.Collector;
 import monitor.core.collector.items.jvm.JVMCollector;
+import monitor.core.collector.items.method.MethodTransformer;
 import monitor.core.util.StringUtils;
 
+import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,8 +17,18 @@ import java.util.Map;
 public class Collectors {
     private static Map<String, Collector> collectorMap = new HashMap<String, Collector>();
 
-    public static void initCollectors() {
+    /**
+     * 初始化采集器
+     *
+     * @param instrumentation
+     */
+    public static void initCollectors(Instrumentation instrumentation) {
+        // 添加 JVM 采集器
         addCollector(JVMCollector.getInstance());
+
+        if (MonitorConfig.isEnableJavaMethodCollect()) {
+            instrumentation.addTransformer(new MethodTransformer());
+        }
     }
 
     /**
