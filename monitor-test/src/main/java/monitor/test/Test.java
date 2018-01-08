@@ -1,4 +1,4 @@
-package me.flyness.monitor.test;
+package monitor.test;
 
 /**
  * Created by lizhitao on 2018/1/5.

@@ -1,4 +1,4 @@
-package me.flyness.monitor.test;
+package monitor.test;
 
 
 import monitor.core.annotation.Monitor;
