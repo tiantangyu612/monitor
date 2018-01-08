@@ -1,6 +1,7 @@
 package monitor.core;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 
@@ -63,7 +64,7 @@ public class MonitorInitializer {
             Map<String, List<Map<String, Object>>> collectDatas = collectorEntry.getValue().collectData();
 
             for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
-                System.out.println(JSON.toJSONString(collectDatasEntry));
+                System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
             }
         }
     }
