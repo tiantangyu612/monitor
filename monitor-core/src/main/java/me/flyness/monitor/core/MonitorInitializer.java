@@ -1,9 +1,12 @@
 package me.flyness.monitor.core;
 
+import com.alibaba.fastjson.JSON;
 import me.flyness.monitor.core.collector.Collectors;
+import me.flyness.monitor.core.collector.base.Collector;
 import me.flyness.monitor.core.transformer.Transformers;
 
 import java.lang.instrument.Instrumentation;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.FileHandler;
@@ -41,6 +44,8 @@ public class MonitorInitializer {
         // 初始化监控采集器配置信息
         Collectors.initCollectors();
         LOG.info("init collectors success!");
+
+        startCollect();
     }
 
     /**
@@ -51,5 +56,16 @@ public class MonitorInitializer {
     private void initLog(MonitorEnv monitorEnv) {
         FileHandler logFileHandler = monitorEnv.getLogFileHandler();
         MonitorLogFactory.initLog(logFileHandler);
+    }
+
+    private static void startCollect() {
+        Map<String, Collector> collectorMap = Collectors.getAllCollectors();
+        for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
+            Map<String, List<Map<String, Object>>> collectDatas = collectorEntry.getValue().collectData();
+
+            for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()){
+                System.out.println(JSON.toJSONString(collectDatasEntry));
+            }
+        }
     }
 }

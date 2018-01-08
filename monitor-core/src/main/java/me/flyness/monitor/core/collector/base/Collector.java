@@ -35,4 +35,11 @@ public interface Collector {
      * @return
      */
     Map<String, List<Map<String, Object>>> collectData();
+
+    /**
+     * 是否项目启动时收集
+     *
+     * @return
+     */
+    boolean isCollectOnStart();
 }

@@ -1,6 +1,5 @@
 package me.flyness.monitor.core.collector.base;
 
-import me.flyness.monitor.core.collector.Collectors;
 import me.flyness.monitor.core.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -22,10 +21,6 @@ public abstract class AbstractCollector implements Collector {
      * 采集器是否启用，默认不启用
      */
     private boolean enable = false;
-
-    protected AbstractCollector() {
-        Collectors.addCollector(this);
-    }
 
     /**
      * 设置采集器是否启用
@@ -81,5 +76,15 @@ public abstract class AbstractCollector implements Collector {
         }
 
         return collectDataMap;
+    }
+
+    /**
+     * 是否项目启动时收集
+     *
+     * @return
+     */
+    @Override
+    public boolean isCollectOnStart() {
+        return false;
     }
 }

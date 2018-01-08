@@ -1,6 +1,7 @@
 package me.flyness.monitor.core.collector;
 
 import me.flyness.monitor.core.collector.base.Collector;
+import me.flyness.monitor.core.collector.items.jvm.JVMCollector;
 import me.flyness.monitor.core.util.StringUtils;
 
 import java.util.HashMap;
@@ -14,6 +15,8 @@ public class Collectors {
     private static Map<String, Collector> collectorMap = new HashMap<String, Collector>();
 
     public static void initCollectors() {
+        JVMCollector jvmCollector = JVMCollector.getInstance();
+        collectorMap.put(jvmCollector.getName(), jvmCollector);
     }
 
     /**

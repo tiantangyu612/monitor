@@ -26,6 +26,12 @@
                 <artifactId>javassist</artifactId>
                 <version>3.20.0-GA</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.44</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -1,4 +1,4 @@
-package me.flyness.monitor.core.collector.method;
+package me.flyness.monitor.core.collector.items.method;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;

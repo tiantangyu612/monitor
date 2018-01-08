@@ -38,9 +38,31 @@ public interface CollectorItem {
     void setMaxCollectCount(int maxCollectCount);
 
     /**
+     * 获取一个采集周期内的最大采集数据条数
+     *
+     * @param maxCollectCount
+     * @return
+     */
+    int getMaxCollectCount(int maxCollectCount);
+
+    /**
      * 采集监控数据
      *
      * @return
      */
     List<Map<String, Object>> collectData();
+
+    /**
+     * 设置是否需要上报监控数据到监控数据中心
+     *
+     * @param needReport
+     */
+    void setNeedReport(boolean needReport);
+
+    /**
+     * 获取是否需要上报监控数据到监控数据中心状态
+     *
+     * @return
+     */
+    boolean isNeedReport();
 }
