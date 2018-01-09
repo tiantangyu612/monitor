@@ -10,8 +10,6 @@ import java.util.Random;
  * JavaMethodTest
  */
 public class JavaMethodTest {
-    public static final int NUM = 10;
-
     @Monitor
     public void say() {
         try {

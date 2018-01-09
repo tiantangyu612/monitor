@@ -63,9 +63,12 @@ public class JavaMethodCollectInfo {
      */
     public final AtomicInteger s10_n = new AtomicInteger(0);
 
+    /**
+     * 进入方法时调用
+     */
     public void onStart() {
-        int ic = this.invokingCount.incrementAndGet();
-        ConcurrentUtil.setMaxValue(this.maxConcurrency, ic);
+        int invokingCount = this.invokingCount.incrementAndGet();
+        ConcurrentUtil.setMaxValue(this.maxConcurrency, invokingCount);
     }
 
     public void onThrowable(Throwable t, boolean recordStackTrace) {

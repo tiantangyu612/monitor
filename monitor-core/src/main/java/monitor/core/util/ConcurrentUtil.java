@@ -3,69 +3,103 @@ package monitor.core.util;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * Created by lizhitao on 2018/1/9.
+ * ConcurrentUtil，并发工具类
+ */
 public class ConcurrentUtil {
-    public ConcurrentUtil() {
+    private ConcurrentUtil() {
     }
 
-    public static void setMinValue(AtomicInteger current, int value) {
-        int min;
+    /**
+     * 设置 AtomicInteger 最小值
+     *
+     * @param current
+     * @param minValue
+     */
+    public static void setMinValue(AtomicInteger current, int minValue) {
+        int currentValue;
         do {
-            min = current.get();
-        } while (value < min && !current.compareAndSet(min, value));
-
+            currentValue = current.get();
+        } while (minValue < currentValue && !current.compareAndSet(currentValue, minValue));
     }
 
-    public static void setMinValue(AtomicLong current, long value) {
-        long min;
+    /**
+     * 设置 AtomicLong 最小值
+     *
+     * @param current
+     * @param minValue
+     */
+    public static void setMinValue(AtomicLong current, long minValue) {
+        long currentValue;
         do {
-            min = current.get();
-        } while (value < min && !current.compareAndSet(min, value));
+            currentValue = current.get();
+        } while (minValue < currentValue && !current.compareAndSet(currentValue, minValue));
 
     }
 
-    public static void setMinValue(AtomicDouble current, double value) {
-        double min;
+    /**
+     * 设置 AtomicDouble 最小值
+     *
+     * @param current
+     * @param minValue
+     */
+    public static void setMinValue(AtomicDouble current, double minValue) {
+        double currentValue;
         do {
-            min = current.get();
-        } while (value < min && !current.compareAndSet(min, value));
+            currentValue = current.get();
+        } while (minValue < currentValue && !current.compareAndSet(currentValue, minValue));
 
     }
 
-    public static boolean setMaxValue(AtomicInteger current, int value) {
+    /**
+     * 设置 AtomicInteger 最大值
+     *
+     * @param current
+     * @param maxValue
+     */
+    public static boolean setMaxValue(AtomicInteger current, int maxValue) {
         while (true) {
-            int max = current.get();
-            if (value > max) {
-                if (!current.compareAndSet(max, value)) {
+            int currentValue = current.get();
+            if (maxValue > currentValue) {
+                if (!current.compareAndSet(currentValue, maxValue)) {
                     continue;
                 }
-
                 return true;
             }
-
             return false;
         }
     }
 
-    public static boolean setMaxValue(AtomicLong current, long value) {
+    /**
+     * 设置 AtomicLong 最大值
+     *
+     * @param current
+     * @param maxValue
+     */
+    public static boolean setMaxValue(AtomicLong current, long maxValue) {
         while (true) {
-            long max = current.get();
-            if (value > max) {
-                if (!current.compareAndSet(max, value)) {
+            long currentValue = current.get();
+            if (maxValue > currentValue) {
+                if (!current.compareAndSet(currentValue, maxValue)) {
                     continue;
                 }
-
                 return true;
             }
-
             return false;
         }
     }
 
-    public static void setMaxValue(AtomicDouble current, double value) {
-        double max;
+    /**
+     * 设置 AtomicDouble 最大值
+     *
+     * @param current
+     * @param maxValue
+     */
+    public static void setMaxValue(AtomicDouble current, double maxValue) {
+        double currentValue;
         do {
-            max = current.get();
-        } while (value > max && !current.compareAndSet(max, value));
-
+            currentValue = current.get();
+        } while (maxValue > currentValue && !current.compareAndSet(currentValue, maxValue));
     }
 }

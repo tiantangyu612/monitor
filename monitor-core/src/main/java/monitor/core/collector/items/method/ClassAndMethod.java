@@ -1,5 +1,9 @@
 package monitor.core.collector.items.method;
 
+/**
+ * Created by lizhitao on 2018/1/9.
+ * ClassAndMethod
+ */
 public class ClassAndMethod {
     private String className;
     private String methodName;
@@ -23,5 +27,13 @@ public class ClassAndMethod {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    @Override
+    public String toString() {
+        return "ClassAndMethod{" +
+                "className='" + className + '\'' +
+                ", methodName='" + methodName + '\'' +
+                '}';
     }
 }
