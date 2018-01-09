@@ -1,20 +1,60 @@
 package monitor.core.util;
 
-import javassist.*;
-import javassist.bytecode.*;
+import javassist.ClassClassPath;
+import javassist.ClassPool;
+import javassist.CtClass;
+import javassist.NotFoundException;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.AttributeInfo;
+import javassist.bytecode.ParameterAnnotationsAttribute;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by lizhitao on 2018/1/9.
  * javassist 工具类
  */
 public class JavassistUtil {
+    /**
+     * 不需要增强的方法名称
+     */
+    private static final Set<String> IGNORED_METHOD = new HashSet<String>();
+
+    static {
+        IGNORED_METHOD.add("getClass");
+        IGNORED_METHOD.add("hashCode");
+        IGNORED_METHOD.add("wait");
+        IGNORED_METHOD.add("equals");
+        IGNORED_METHOD.add("clone");
+        IGNORED_METHOD.add("toString");
+        IGNORED_METHOD.add("notify");
+        IGNORED_METHOD.add("notifyAll");
+        IGNORED_METHOD.add("finalize");
+        IGNORED_METHOD.add("main");
+    }
+
     private JavassistUtil() {
+    }
+
+    /**
+     * 是否为不需要增强的 java method
+     *
+     * @param methodName
+     * @return
+     */
+    public static boolean isIgnoredMethod(String methodName) {
+        return IGNORED_METHOD.contains(methodName) || methodName.contains("$monitorProxy");
+    }
+
+    /**
+     * 是否为不需要增强的 java 类
+     *
+     * @param className
+     * @return
+     */
+    public static boolean isIgnoredClass(String className) {
+        return className.startsWith("sun/") || className.startsWith("java/")
+                || className.startsWith("monitor/agent") || className.startsWith("monitor/core");
     }
 
     /**
@@ -36,19 +76,6 @@ public class JavassistUtil {
             pool.insertClassPath(new ClassClassPath(clazz));
             return pool.get(className);
         }
-    }
-
-    /**
-     * 获取方法全名
-     *
-     * @param ctMethod
-     * @return
-     */
-    public static String getMethodFullName(CtMethod ctMethod) {
-        MethodInfo methodInfo = getMethodInfo(ctMethod.getSignature());
-        String methodName = ctMethod.getName() + methodInfo.getMethodSignature();
-        String className = ctMethod.getDeclaringClass().getName();
-        return className + "." + methodName;
     }
 
     /**
@@ -117,178 +144,83 @@ public class JavassistUtil {
     }
 
     private static int getTypeString(StringBuilder sb, String source, int index) {
-        char c = source.charAt(index++);
-        sb.append(c);
-        if (c == 76) {
+        char ch = source.charAt(index++);
+        sb.append(ch);
+        if (ch == 76) {
             do {
-                c = source.charAt(index++);
-                sb.append(c);
-            } while (c != 59);
+                ch = source.charAt(index++);
+                sb.append(ch);
+            } while (ch != 59);
         }
 
         return index;
     }
 
-    public static void copyMethodAnnotationdAttributes(javassist.bytecode.MethodInfo oldMethod, javassist.bytecode.MethodInfo newMethod) {
+    /**
+     * 拷贝 Annotation 注解到新方法上
+     *
+     * @param oldMethod
+     * @param newMethod
+     */
+    public static void copyMethodAnnotationAttributes(javassist.bytecode.MethodInfo oldMethod, javassist.bytecode.MethodInfo newMethod) {
         if (oldMethod != null && newMethod != null) {
             AnnotationsAttribute oldAnnotations = (AnnotationsAttribute) oldMethod.getAttribute("RuntimeVisibleAnnotations");
             ParameterAnnotationsAttribute oldParamAnnotations = (ParameterAnnotationsAttribute) oldMethod.getAttribute("RuntimeVisibleParameterAnnotations");
             AnnotationsAttribute newAnnotations = (AnnotationsAttribute) newMethod.getAttribute("RuntimeVisibleAnnotations");
             ParameterAnnotationsAttribute newParamAnnotations = (ParameterAnnotationsAttribute) newMethod.getAttribute("RuntimeVisibleParameterAnnotations");
-            AttributeInfo ann;
+            AttributeInfo attributeInfo;
             if (oldAnnotations != null && newAnnotations == null) {
-                ann = oldAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
-                newMethod.addAttribute(ann);
+                attributeInfo = oldAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
+                newMethod.addAttribute(attributeInfo);
             }
 
             if (oldParamAnnotations != null && newParamAnnotations == null) {
-                ann = oldParamAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
-                newMethod.addAttribute(ann);
-            }
-
-        }
-    }
-
-    public static String getLocalVariableString(CtMethod method) {
-        javassist.bytecode.MethodInfo mi = method.getMethodInfo();
-        if (mi == null) {
-            return null;
-        } else {
-            CodeAttribute cb = mi.getCodeAttribute();
-            if (cb == null) {
-                return null;
-            } else {
-                LocalVariableAttribute attr = (LocalVariableAttribute) cb.getAttribute("LocalVariableTable");
-                if (attr == null) {
-                    return null;
-                } else {
-                    String[] variableNames = new String[0];
-
-                    try {
-                        variableNames = new String[method.getParameterTypes().length];
-                    } catch (NotFoundException var11) {
-                        var11.printStackTrace();
-                    }
-
-                    int staticIndex = Modifier.isStatic(method.getModifiers()) ? 0 : 1;
-
-                    for (int sb = 0; sb < variableNames.length; ++sb) {
-                        variableNames[sb] = attr.variableName(sb + staticIndex);
-                    }
-
-                    StringBuilder var12 = new StringBuilder();
-                    var12.append("(");
-                    String[] arr$ = variableNames;
-                    int len$ = variableNames.length;
-
-                    for (int i$ = 0; i$ < len$; ++i$) {
-                        String s = arr$[i$];
-                        var12.append(s).append(",");
-                    }
-
-                    var12.append(")");
-                    return var12.toString();
-                }
+                attributeInfo = oldParamAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
+                newMethod.addAttribute(attributeInfo);
             }
         }
     }
 
-    public static void removeAnnotationAttribute(javassist.bytecode.MethodInfo minfo) {
-        if (minfo != null) {
-            List allAttributes = minfo.getAttributes();
+    /**
+     * 移除方法 Annotation 注解
+     *
+     * @param methodInfo
+     */
+    public static void removeAnnotationAttribute(javassist.bytecode.MethodInfo methodInfo) {
+        if (methodInfo != null) {
+            List allAttributes = methodInfo.getAttributes();
             if (allAttributes != null) {
-                Iterator it = allAttributes.iterator();
+                Iterator attributeIterator = allAttributes.iterator();
 
                 while (true) {
-                    Object o;
+                    Object attribute;
                     do {
-                        if (!it.hasNext()) {
+                        if (!attributeIterator.hasNext()) {
                             return;
                         }
 
-                        o = it.next();
-                    } while (!(o instanceof AnnotationsAttribute) && !(o instanceof ParameterAnnotationsAttribute));
+                        attribute = attributeIterator.next();
+                    }
+                    while (!(attribute instanceof AnnotationsAttribute) && !(attribute instanceof ParameterAnnotationsAttribute));
 
-                    it.remove();
+                    attributeIterator.remove();
                 }
             }
         }
     }
 
-    public static String getMethodAttributeString(javassist.bytecode.MethodInfo minfo) {
-        StringBuilder sb = new StringBuilder();
-        if (minfo != null) {
-            List allAttributes = minfo.getAttributes();
-            if (allAttributes != null) {
-                Iterator it = allAttributes.iterator();
-
-                while (it.hasNext()) {
-                    Object o = it.next();
-                    sb.append(o.getClass().getSimpleName()).append(",");
-                }
-            }
-        }
-
-        sb.append(")");
-        return sb.toString();
-    }
-
-    public static void createProxyMethod(CtMethod method, CtClass clazz, String before, String catchThrowable, String dofinally) throws CannotCompileException, NotFoundException {
-        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
-        String oldName = method.getName() + "$sentryProxy";
-        method.setName(oldName);
-        if (Modifier.isPublic(method.getModifiers())) {
-            int body = method.getModifiers() - 1 + 2;
-            method.setModifiers(body);
-        }
-
-        StringBuilder body1 = new StringBuilder();
-        if (method.getReturnType() == CtClass.voidType) {
-            body1.append("{ " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.intType) {
-            body1.append("{ int result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.booleanType) {
-            body1.append("{ boolean result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.byteType) {
-            body1.append("{ byte result  = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.charType) {
-            body1.append("{ char result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.doubleType) {
-            body1.append("{ double result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.floatType) {
-            body1.append("{ float result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.longType) {
-            body1.append("{ long result = " + oldName + "($$);");
-        } else if (method.getReturnType() == CtClass.shortType) {
-            body1.append("{ short result = " + oldName + "($$);");
-        } else {
-            body1.append("{ Object result = " + oldName + "($$);");
-        }
-
-        if (method.getReturnType() == CtClass.voidType) {
-            body1.append("}");
-        } else {
-            body1.append("return result;}");
-        }
-
-        newMethod.setBody(body1.toString());
-        newMethod.insertBefore(before);
-        ClassPool pool = ClassPool.getDefault();
-        CtClass etype = pool.get("java.lang.Throwable");
-        newMethod.addCatch(catchThrowable, etype);
-        newMethod.insertAfter(dofinally, true);
-        clazz.addMethod(newMethod);
-    }
-
+    /**
+     * 方法信息
+     */
     public static class MethodInfo {
         private List<String> paramClassList;
         private String methodSignature;
-        private String returnClassString;
+        private String returnClass;
 
-        public MethodInfo(List<String> paramClassList, String trimedMethodName, String returnClassString) {
+        public MethodInfo(List<String> paramClassList, String methodSignature, String returnClass) {
             this.paramClassList = paramClassList;
-            this.methodSignature = trimedMethodName;
-            this.returnClassString = returnClassString;
+            this.methodSignature = methodSignature;
+            this.returnClass = returnClass;
         }
 
         public String getMethodSignature() {
@@ -303,16 +235,17 @@ public class JavassistUtil {
             this.paramClassList = paramClassList;
         }
 
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("paramClassList:").append(this.paramClassList.toString()).append("\n");
-            sb.append("trimedMethodName:").append(this.methodSignature).append("\n");
-            sb.append("returnClassString:").append(this.returnClassString);
-            return sb.toString();
+        public String getReturnClass() {
+            return this.returnClass;
         }
 
-        public String getReturnClassString() {
-            return this.returnClassString;
+        @Override
+        public String toString() {
+            return "MethodInfo{" +
+                    "paramClassList=" + paramClassList +
+                    ", methodSignature='" + methodSignature + '\'' +
+                    ", returnClass='" + returnClass + '\'' +
+                    '}';
         }
     }
 }

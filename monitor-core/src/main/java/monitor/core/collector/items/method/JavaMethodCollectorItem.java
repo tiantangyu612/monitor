@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by lizhitao on 2018/1/8.
+ * java method 采集项
  */
 public class JavaMethodCollectorItem extends AbstractCollectorItem {
     public static ConcurrentResourceFactory<JavaMethodCollectInfo, ClassAndMethod> RESOURCE_FACTORY =
@@ -28,29 +29,35 @@ public class JavaMethodCollectorItem extends AbstractCollectorItem {
         if (size == 0) {
             return Collections.emptyList();
         } else {
-            ArrayList list = new ArrayList();
-            AtomicReference[] allValues = RESOURCE_FACTORY.getAllValues();
+            List<Map<String, Object>> collectDatas = new ArrayList<Map<String, Object>>();
+            AtomicReference[] javaMethodCollectInfos = RESOURCE_FACTORY.getAllValues();
 
             for (int resourceId = 0; resourceId < size; ++resourceId) {
-                JavaMethodCollectInfo stats = (JavaMethodCollectInfo) allValues[resourceId].get();
-                if (stats != null) {
-                    Map vv = stats.harvest();
-                    if (vv != null) {
-                        ClassAndMethod cam = RESOURCE_FACTORY.getResource(resourceId);
-                        vv.put("class", cam.getClassName());
-                        vv.put("method", cam.getMethodName());
-                        list.add(vv);
+                JavaMethodCollectInfo javaMethodCollectInfo = (JavaMethodCollectInfo) javaMethodCollectInfos[resourceId].get();
+                if (javaMethodCollectInfo != null) {
+                    Map<String, Object> collectData = javaMethodCollectInfo.collectData();
+                    if (collectData != null) {
+                        ClassAndMethod classAndMethod = RESOURCE_FACTORY.getResource(resourceId);
+                        collectData.put("class", classAndMethod.getClassName());
+                        collectData.put("method", classAndMethod.getMethodName());
+                        collectDatas.add(collectData);
                     }
                 }
             }
 
-            return list;
+            return collectDatas;
         }
     }
 
+    /**
+     * 采集器启动时调用
+     *
+     * @param resourceId
+     * @return
+     */
     public JavaMethodCollectInfo onStart(int resourceId) {
-        JavaMethodCollectInfo stats = RESOURCE_FACTORY.obtainValue(resourceId, JavaMethodCollectInfo.class);
-        stats.onStart();
-        return stats;
+        JavaMethodCollectInfo javaMethodCollectInfo = RESOURCE_FACTORY.obtainValue(resourceId, JavaMethodCollectInfo.class);
+        javaMethodCollectInfo.onStart();
+        return javaMethodCollectInfo;
     }
 }
