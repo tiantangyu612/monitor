@@ -63,10 +63,13 @@ public class MonitorInitializer {
     private static void startCollector() {
         Map<String, Collector> collectorMap = Collectors.getAllCollectors();
         for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
-            Map<String, List<Map<String, Object>>> collectDatas = collectorEntry.getValue().collectData();
+            Collector collector = collectorEntry.getValue();
+            if (collector.isEnable()) {
+                Map<String, List<Map<String, Object>>> collectDatas = collector.collectData();
 
-            for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
-                System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
+                for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
+                    System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
+                }
             }
         }
     }

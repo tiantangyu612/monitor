@@ -3,6 +3,7 @@ package monitor.core.collector.items.method;
 import javassist.*;
 import monitor.core.annotation.Monitor;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.util.JavassistUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,7 +42,7 @@ public class JavaMethodTransformer implements ClassFileTransformer {
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         if (!className.startsWith("sun/") && !className.startsWith("java/")) {
-            if (className.startsWith("me/flyness/monitor/agent")) {
+            if (className.startsWith("monitor/agent")) {
                 return classfileBuffer;
             }
 
@@ -52,16 +53,26 @@ public class JavaMethodTransformer implements ClassFileTransformer {
                 CtClass ctClass = classPool.makeClass(classFileByteArrayInputStream);
 
                 if (!ctClass.isInterface() && !ctClass.isAnnotation() && !ctClass.isEnum() && !ctClass.isArray()) {
+                    Class superClass = null;
+                    try {
+                        if (classBeingRedefined != null) {
+                            superClass = classBeingRedefined.getSuperclass();
+                            if (superClass != null) {
+                                JavassistUtil.addToClassPathIfNotExist(superClass.getName(), loader);
+                            }
+                        }
+                    } catch (Exception e) {
+                        String allMethodToAddInterceptor = superClass == null ? "null" : superClass.getName();
+                        LOG.log(Level.SEVERE, "failed to load super class::" + allMethodToAddInterceptor + ",origin class:" + className, e);
+                    }
 
-                }
-
-                CtMethod[] methods = ctClass.getDeclaredMethods();
-                if (methods != null && methods.length != 0) {
-                    for (CtMethod method : methods) {
-                        if (!IGNORED_METHOD.contains(method.getName())) {
-                            if (method.hasAnnotation(Monitor.class)) {
-
-
+                    CtMethod[] methods = ctClass.getDeclaredMethods();
+                    if (methods != null && methods.length != 0) {
+                        for (CtMethod method : methods) {
+                            if (!IGNORED_METHOD.contains(method.getName())) {
+                                if (method.hasAnnotation(Monitor.class)) {
+                                    addInterceptor(method, ctClass, loader, 1);
+                                }
                             }
                         }
                     }
@@ -85,7 +96,7 @@ public class JavaMethodTransformer implements ClassFileTransformer {
         return classfileBuffer;
     }
 
-    private void addInterceptor(CtMethod method, CtClass clazz, int index) throws CannotCompileException, NotFoundException, ClassNotFoundException {
+    private void addInterceptor(CtMethod method, CtClass clazz, ClassLoader classLoader, int index) {
 //        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
 //        if (null != method.getGenericSignature()) {
 //            newMethod.setGenericSignature(method.getGenericSignature());
