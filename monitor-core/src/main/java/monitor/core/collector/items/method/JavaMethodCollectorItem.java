@@ -36,7 +36,7 @@ public class JavaMethodCollectorItem extends AbstractCollectorItem {
                 if (stats != null) {
                     Map vv = stats.harvest();
                     if (vv != null) {
-                        ClassAndMethod cam = RESOURCE_FACTORY.getReource(resourceId);
+                        ClassAndMethod cam = RESOURCE_FACTORY.getResource(resourceId);
                         vv.put("class", cam.getClassName());
                         vv.put("method", cam.getMethodName());
                         list.add(vv);

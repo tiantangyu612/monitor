@@ -74,7 +74,7 @@ public class JavaMethodCollectInfo {
     public void onThrowable(Throwable t, boolean recordStackTrace) {
         this.errorCount.incrementAndGet();
         if (recordStackTrace && this.lastError.get() == null) {
-            String s = ExceptionUtil.getThrowableStackTrace(t);
+            String s = ExceptionUtil.getStackTrace(t);
             this.lastError.compareAndSet(null, s);
         }
 
@@ -91,7 +91,7 @@ public class JavaMethodCollectInfo {
     public void onThrowable(Throwable t) {
         this.errorCount.incrementAndGet();
         if (this.lastError.get() == null) {
-            String s = ExceptionUtil.getThrowableStackTrace(t);
+            String s = ExceptionUtil.getStackTrace(t);
             this.lastError.compareAndSet(null, s);
         }
 

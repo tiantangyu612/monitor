@@ -234,7 +234,7 @@ public class JavassistUtil {
     }
 
     public static void createProxyMethod(CtMethod method, CtClass clazz, String before, String catchThrowable, String dofinally) throws CannotCompileException, NotFoundException {
-        CtMethod newMethod = CtNewMethod.copy(method, clazz, (ClassMap) null);
+        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
         String oldName = method.getName() + "$sentryProxy";
         method.setName(oldName);
         if (Modifier.isPublic(method.getModifiers())) {

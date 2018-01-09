@@ -6,6 +6,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
+/**
+ * Created by lizhitao on 2018/1/9.
+ * 原子 double 类
+ */
 public class AtomicDouble extends Number implements Serializable {
     private static final long serialVersionUID = 0L;
     private transient volatile long value;
@@ -18,32 +22,68 @@ public class AtomicDouble extends Number implements Serializable {
     public AtomicDouble() {
     }
 
+    /**
+     * 获取 double value
+     *
+     * @return
+     */
     public final double get() {
         return Double.longBitsToDouble(this.value);
     }
 
+    /**
+     * 设置 double value
+     *
+     * @param newValue
+     */
     public final void set(double newValue) {
         long next = Double.doubleToRawLongBits(newValue);
         this.value = next;
     }
 
-    public final void lazySet(double newValue) {
-        this.set(newValue);
+    public final void lazySet(int newValue) {
+        set(newValue);
     }
 
+    /**
+     * 设置并获取新值
+     *
+     * @param newValue
+     * @return
+     */
     public final double getAndSet(double newValue) {
         long next = Double.doubleToRawLongBits(newValue);
         return Double.longBitsToDouble(updater.getAndSet(this, next));
     }
 
+    /**
+     * CAS 设置新值
+     *
+     * @param expect
+     * @param update
+     * @return
+     */
     public final boolean compareAndSet(double expect, double update) {
         return updater.compareAndSet(this, Double.doubleToRawLongBits(expect), Double.doubleToRawLongBits(update));
     }
 
+    /**
+     * weakCompareAndSet
+     *
+     * @param expect
+     * @param update
+     * @return
+     */
     public final boolean weakCompareAndSet(double expect, double update) {
         return updater.weakCompareAndSet(this, Double.doubleToRawLongBits(expect), Double.doubleToRawLongBits(update));
     }
 
+    /**
+     * Atomically adds the given value to the current value.
+     *
+     * @param delta
+     * @return
+     */
     public final double getAndAdd(double delta) {
         long current;
         double currentVal;
@@ -92,13 +132,13 @@ public class AtomicDouble extends Number implements Serializable {
         return this.get();
     }
 
-    private void writeObject(ObjectOutputStream s) throws IOException {
-        s.defaultWriteObject();
-        s.writeDouble(this.get());
+    private void writeObject(ObjectOutputStream objectOutputStream) throws IOException {
+        objectOutputStream.defaultWriteObject();
+        objectOutputStream.writeDouble(this.get());
     }
 
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException {
-        s.defaultReadObject();
-        this.set(s.readDouble());
+    private void readObject(ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+        objectInputStream.defaultReadObject();
+        this.set(objectInputStream.readDouble());
     }
 }

@@ -3,16 +3,21 @@ package monitor.core.util;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Created by lizhitao on 2018/1/9.
+ * ConcurrentResourceFactory
+ */
 public class ConcurrentResourceFactory<T, R> {
     private R[] resources;
     private AtomicReference<T>[] values;
     private LinkedBlockingQueue<Integer> linkedBlockingQueue;
 
+    @SuppressWarnings("unchecked")
     public ConcurrentResourceFactory(int size) {
-        if (size > 5012) {
-            throw new RuntimeException("more than 5012:" + size);
+        if (size > 5000) {
+            throw new RuntimeException("more than 5000:" + size);
         } else if (size <= 0) {
-            throw new RuntimeException("less than zero:" + size);
+            throw new RuntimeException("less than 0:" + size);
         } else {
             this.values = new AtomicReference[size];
 
@@ -23,32 +28,33 @@ public class ConcurrentResourceFactory<T, R> {
             }
 
             this.resources = (R[]) new Object[size];
-            this.linkedBlockingQueue = new LinkedBlockingQueue(size);
+            this.linkedBlockingQueue = new LinkedBlockingQueue<Integer>(size);
 
             for (i = 0; i < size; ++i) {
-                this.linkedBlockingQueue.add(Integer.valueOf(i));
+                this.linkedBlockingQueue.add(i);
             }
 
         }
     }
 
-    public T obtainValue(int resourceId, Class<? extends T> cls) {
-        AtomicReference ar = this.values[resourceId];
-        Object t = ar.get();
-        if (t != null) {
-            return (T) t;
+    @SuppressWarnings("unchecked")
+    public T obtainValue(int resourceId, Class<? extends T> clazz) {
+        AtomicReference atomicReference = this.values[resourceId];
+        Object object = atomicReference.get();
+        if (object != null) {
+            return (T) object;
         } else {
-            Object tt;
+            Object instance;
             try {
-                tt = cls.newInstance();
-            } catch (InstantiationException var7) {
-                throw new RuntimeException("failed to init!", var7);
-            } catch (IllegalAccessException var8) {
-                throw new RuntimeException("IllegalAccessException", var8);
+                instance = clazz.newInstance();
+            } catch (InstantiationException e) {
+                throw new RuntimeException("failed to instantiation!", e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("IllegalAccessException!", e);
             }
 
-            boolean flag = ar.compareAndSet(null, tt);
-            return (T) (flag ? tt : ar.get());
+            boolean flag = atomicReference.compareAndSet(null, instance);
+            return (T) (flag ? instance : atomicReference.get());
         }
     }
 
@@ -57,21 +63,21 @@ public class ConcurrentResourceFactory<T, R> {
     }
 
     public int size() {
-        Integer i = this.linkedBlockingQueue.peek();
-        return i == null ? this.resources.length : i.intValue();
+        Integer size = this.linkedBlockingQueue.peek();
+        return size == null ? this.resources.length : size;
     }
 
-    public Integer registerResource(R res) {
+    public Integer registerResource(R resource) {
         Integer index = this.linkedBlockingQueue.poll();
         if (index == null) {
             return null;
         } else {
-            this.resources[index] = res;
+            this.resources[index] = resource;
             return index;
         }
     }
 
-    public R getReource(int resourceId) {
+    public R getResource(int resourceId) {
         return this.resources[resourceId];
     }
 }
