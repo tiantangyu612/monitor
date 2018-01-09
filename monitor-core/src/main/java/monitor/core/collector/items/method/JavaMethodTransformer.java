@@ -16,10 +16,10 @@ import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/5.
- * MethodTransformer，使用 Javassist 增加被监控的方法，记录方法的执行 rt、错误数、最大并发、异常等信息
+ * JavaMethodTransformer，使用 Javassist 增加被监控的方法，记录方法的执行 rt、错误数、最大并发、异常等信息
  */
-public class MethodTransformer implements ClassFileTransformer {
-    private static Logger LOG = MonitorLogFactory.getLogger(MethodTransformer.class);
+public class JavaMethodTransformer implements ClassFileTransformer {
+    private static Logger LOG = MonitorLogFactory.getLogger(JavaMethodTransformer.class);
     /**
      * 不需要监控的方法名称
      */

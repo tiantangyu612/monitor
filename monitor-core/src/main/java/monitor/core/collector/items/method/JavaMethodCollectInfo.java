@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Created by lizhitao on 2018/1/6.
  * java 方法监控收集信息
  */
-public class MethodCollectInfo {
+public class JavaMethodCollectInfo {
     /**
      * 方法已经执行的次数
      */
