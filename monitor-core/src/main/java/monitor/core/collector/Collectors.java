@@ -1,6 +1,6 @@
 package monitor.core.collector;
 
-import monitor.core.MonitorConfig;
+import monitor.core.config.MonitorConfig;
 import monitor.core.collector.base.Collector;
 import monitor.core.collector.items.jvm.JVMCollector;
 import monitor.core.collector.items.jvm.JVMInfoCollector;
@@ -24,11 +24,14 @@ public class Collectors {
      * @param instrumentation
      */
     public static void initCollectors(Instrumentation instrumentation) {
-        // 添加 JVM 采集器
-        addCollector(JVMCollector.getInstance());
-        addCollector(JVMInfoCollector.getInstance());
+        if (MonitorConfig.isEnableJVMInfoCollect()) {
+            // 添加 JVM 采集器
+            addCollector(JVMCollector.getInstance());
+            addCollector(JVMInfoCollector.getInstance());
+        }
 
         if (MonitorConfig.isEnableJavaMethodCollect()) {
+            // 添加 java method 采集器
             instrumentation.addTransformer(new JavaMethodTransformer());
         }
     }

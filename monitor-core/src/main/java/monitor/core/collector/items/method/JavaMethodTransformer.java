@@ -2,7 +2,7 @@ package monitor.core.collector.items.method;
 
 import javassist.*;
 import monitor.core.annotation.Monitor;
-import monitor.core.MonitorLogFactory;
+import monitor.core.log.MonitorLogFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

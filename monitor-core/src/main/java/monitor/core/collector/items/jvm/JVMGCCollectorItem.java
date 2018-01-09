@@ -1,6 +1,6 @@
 package monitor.core.collector.items.jvm;
 
-import monitor.core.MonitorLogFactory;
+import monitor.core.log.MonitorLogFactory;
 import monitor.core.collector.base.AbstractCollectorItem;
 
 import java.lang.management.GarbageCollectorMXBean;

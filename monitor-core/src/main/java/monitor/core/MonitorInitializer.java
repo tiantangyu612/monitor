@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
+import monitor.core.config.MonitorConfig;
+import monitor.core.log.MonitorLogFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;

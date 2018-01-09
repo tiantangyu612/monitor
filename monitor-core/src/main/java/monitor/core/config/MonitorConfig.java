@@ -1,4 +1,7 @@
-package monitor.core;
+package monitor.core.config;
+
+import monitor.core.MonitorEnv;
+import monitor.core.log.MonitorLogFactory;
 
 import java.util.Map;
 import java.util.Properties;
@@ -21,15 +24,21 @@ public class MonitorConfig {
      * 应用名称
      */
     private static String application;
+
     /**
      * 集群名称
      */
     private static String cluster;
 
     /**
+     * 是否启用 jvm 相关数据采集
+     */
+    private static boolean enableJVMInfoCollect = true;
+
+    /**
      * 是否启用 java method 数据采集
      */
-    private static boolean isEnableJavaMethodCollect = true;
+    private static boolean enableJavaMethodCollect = true;
     /**
      * 采集的java method 的最大数量，默认 2000 个方法，最大可设置到 5000 个，限制数量防止内存溢出
      */
@@ -82,6 +91,7 @@ public class MonitorConfig {
      */
     private static void setMonitorConfig(Properties monitorConfig) {
         setMonitorBasicConfig(monitorConfig);
+        setJVMInfoCollectConfig(monitorConfig);
         setJavaMethodCollectConfig(monitorConfig);
     }
 
@@ -96,15 +106,28 @@ public class MonitorConfig {
     }
 
     /**
+     * 设置 jvm info collect 配置
+     *
+     * @param monitorConfig
+     */
+    private static void setJVMInfoCollectConfig(Properties monitorConfig) {
+        // 是否启用 jvm 信息采集
+        String enableJVMInfoCollectValue = monitorConfig.getProperty("enableJVMInfoCollect");
+        if ("false".equals(enableJVMInfoCollectValue)) {
+            MonitorConfig.enableJVMInfoCollect = false;
+        }
+    }
+
+    /**
      * 设置 java method collect 配置
      *
      * @param monitorConfig
      */
     private static void setJavaMethodCollectConfig(Properties monitorConfig) {
         // 是否启用 java method 采集
-        String isEnableJavaMethodCollectValue = monitorConfig.getProperty("isEnableJavaMethodCollect");
-        if ("false".equals(isEnableJavaMethodCollectValue)) {
-            MonitorConfig.isEnableJavaMethodCollect = false;
+        String enableJavaMethodCollectValue = monitorConfig.getProperty("enableJavaMethodCollect");
+        if ("false".equals(enableJavaMethodCollectValue)) {
+            MonitorConfig.enableJavaMethodCollect = false;
         }
 
         // java method 采集最大数量
@@ -149,12 +172,21 @@ public class MonitorConfig {
     }
 
     /**
+     * 获取是否启用 jvm 相关数据采集
+     *
+     * @return
+     */
+    public static boolean isEnableJVMInfoCollect() {
+        return MonitorConfig.enableJVMInfoCollect;
+    }
+
+    /**
      * 获取是否启用 java method 数据采集
      *
      * @return
      */
     public static boolean isEnableJavaMethodCollect() {
-        return MonitorConfig.isEnableJavaMethodCollect;
+        return MonitorConfig.enableJavaMethodCollect;
     }
 
     /**

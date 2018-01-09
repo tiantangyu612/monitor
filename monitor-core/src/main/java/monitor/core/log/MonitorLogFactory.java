@@ -1,4 +1,4 @@
-package monitor.core;
+package monitor.core.log;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
