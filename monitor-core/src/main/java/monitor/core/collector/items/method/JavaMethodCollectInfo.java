@@ -1,5 +1,10 @@
 package monitor.core.collector.items.method;
 
+import monitor.core.util.ConcurrentUtil;
+import monitor.core.util.ExceptionUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -57,4 +62,77 @@ public class JavaMethodCollectInfo {
      * 执行方法时间在 10 s 以上的个数
      */
     public final AtomicInteger s10_n = new AtomicInteger(0);
+
+    public void onStart() {
+        int ic = this.invokingCount.incrementAndGet();
+        ConcurrentUtil.setMaxValue(this.maxConcurrency, ic);
+    }
+
+    public void onThrowable(Throwable t, boolean recordStackTrace) {
+        this.errorCount.incrementAndGet();
+        if (recordStackTrace && this.lastError.get() == null) {
+            String s = ExceptionUtil.getThrowableStackTrace(t);
+            this.lastError.compareAndSet(null, s);
+        }
+
+    }
+
+    public void onThrowable(Throwable t, String stackTrace) {
+        this.errorCount.incrementAndGet();
+        if (this.lastError.get() == null) {
+            this.lastError.compareAndSet(null, stackTrace);
+        }
+
+    }
+
+    public void onThrowable(Throwable t) {
+        this.errorCount.incrementAndGet();
+        if (this.lastError.get() == null) {
+            String s = ExceptionUtil.getThrowableStackTrace(t);
+            this.lastError.compareAndSet(null, s);
+        }
+
+    }
+
+    public void onFinally(long timeUsed) {
+        this.invokedCount.incrementAndGet();
+        this.invokingCount.decrementAndGet();
+        this.totalNanos.addAndGet(timeUsed);
+        ConcurrentUtil.setMaxValue(this.maxTime, timeUsed);
+        timeUsed /= 1000000L;
+        if (timeUsed < 10L) {
+            this.ms0_10.incrementAndGet();
+        } else if (timeUsed < 100L) {
+            this.ms10_100.incrementAndGet();
+        } else if (timeUsed < 1000L) {
+            this.ms100_1000.incrementAndGet();
+        } else if (timeUsed < 10000L) {
+            this.s1_10.incrementAndGet();
+        } else {
+            this.s10_n.incrementAndGet();
+        }
+
+    }
+
+    public Map<String, Object> harvest() {
+        int ic = this.invokedCount.getAndSet(0);
+        if (ic <= 0) {
+            return null;
+        } else {
+            HashMap v = new HashMap();
+            v.put("invokedCount", Integer.valueOf(ic));
+            v.put("invokingCount", Integer.valueOf(this.invokingCount.get()));
+            v.put("totalTime", Integer.valueOf((int) (this.totalNanos.getAndSet(0L) / 1000000L)));
+            v.put("errorCount", Integer.valueOf(this.errorCount.getAndSet(0)));
+            v.put("lastError", this.lastError.getAndSet(null));
+            v.put("maxConcurrency", Integer.valueOf(this.maxConcurrency.getAndSet(0)));
+            v.put("maxTime", Integer.valueOf((int) (this.maxTime.getAndSet(0L) / 1000000L)));
+            v.put("ms0_10", Integer.valueOf(this.ms0_10.getAndSet(0)));
+            v.put("ms10_100", Integer.valueOf(this.ms10_100.getAndSet(0)));
+            v.put("ms100_1000", Integer.valueOf(this.ms100_1000.getAndSet(0)));
+            v.put("s1_10", Integer.valueOf(this.s1_10.getAndSet(0)));
+            v.put("s10_n", Integer.valueOf(this.s10_n.getAndSet(0)));
+            return v;
+        }
+    }
 }

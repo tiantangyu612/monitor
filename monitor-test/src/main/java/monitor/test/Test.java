@@ -6,6 +6,9 @@ package monitor.test;
  */
 public class Test {
     public static void main(String[] args) {
-        new JavaMethodTest().say();
+        JavaMethodTest javaMethodTest = new JavaMethodTest();
+        while (true) {
+            javaMethodTest.say();
+        }
     }
 }

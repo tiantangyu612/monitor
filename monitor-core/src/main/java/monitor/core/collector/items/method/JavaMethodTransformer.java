@@ -11,6 +11,7 @@ import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +43,7 @@ public class JavaMethodTransformer implements ClassFileTransformer {
     public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
                             byte[] classfileBuffer) throws IllegalClassFormatException {
         if (!className.startsWith("sun/") && !className.startsWith("java/")) {
-            if (className.startsWith("monitor/agent")) {
+            if (className.startsWith("monitor/agent") || className.startsWith("monitor/core")) {
                 return classfileBuffer;
             }
 
@@ -68,16 +69,23 @@ public class JavaMethodTransformer implements ClassFileTransformer {
 
                     CtMethod[] methods = ctClass.getDeclaredMethods();
                     if (methods != null && methods.length != 0) {
+                        int methodIndex = 0;
                         for (CtMethod method : methods) {
                             if (!IGNORED_METHOD.contains(method.getName())) {
                                 if (method.hasAnnotation(Monitor.class)) {
-                                    addInterceptor(method, ctClass, loader, 1);
+                                    try {
+                                        addInterceptor(method, ctClass, loader, methodIndex);
+                                        methodIndex++;
+                                    } catch (Exception e) {
+                                        LOG.log(Level.SEVERE, "javassist enhance error, cause: ", e);
+                                    }
                                 }
                             }
                         }
+                        return ctClass.toBytecode();
                     }
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 String errorMsg = "makeClass error, className is: " + className;
                 LOG.log(Level.SEVERE, errorMsg, e);
             } finally {
@@ -96,73 +104,93 @@ public class JavaMethodTransformer implements ClassFileTransformer {
         return classfileBuffer;
     }
 
-    private void addInterceptor(CtMethod method, CtClass clazz, ClassLoader classLoader, int index) {
-//        CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
-//        if (null != method.getGenericSignature()) {
-//            newMethod.setGenericSignature(method.getGenericSignature());
-//        }
-//
-//        String oldName = method.getName() + "$sentryProxy" + index;
-//        method.setName(oldName);
-//        if (Modifier.isPublic(method.getModifiers())) {
-//            int collectorName = method.getModifiers() - 1 + 2;
-//            method.setModifiers(collectorName);
-//        }
-//
-//        String collectorName1 = JavaMethodCollector.class.getName();
-//        String statsClassName = MethodStatsVo.class.getName();
-//        StringBuilder body = new StringBuilder();
-//        body.append("{");
-//        body.append("long startTime=0;");
-//        body.append("boolean isEnable =").append(collectorName1).append(".isEnabled();");
-//        body.append(statsClassName + " stats =null;");
-//        body.append("try{");
-//        body.append("if(isEnable){");
-//        body.append("startTime=System.nanoTime();");
-//        body.append("stats=").append(collectorName1).append(".onStart(").append(resourceId.intValue()).append(");");
-//        body.append("}");
-//        if (method.getReturnType() == CtClass.voidType) {
-//            body.append(oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.intType) {
-//            body.append("int result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.booleanType) {
-//            body.append("boolean result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.byteType) {
-//            body.append("byte result  = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.charType) {
-//            body.append("char result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.doubleType) {
-//            body.append("double result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.floatType) {
-//            body.append("float result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.longType) {
-//            body.append("long result = " + oldName + "($$);");
-//        } else if (method.getReturnType() == CtClass.shortType) {
-//            body.append("short result = " + oldName + "($$);");
-//        } else {
-//            body.append("Object result = " + oldName + "($$);");
-//        }
-//
-//        if (method.getReturnType() != CtClass.voidType) {
-//            body.append("return result;");
-//        }
-//
-//        body.append("}");
-//        body.append("catch(Throwable t){");
-//        body.append("if(stats!=null)stats.onThrowable(t);");
-//        body.append("throw t;");
-//        body.append("}");
-//        body.append("finally{if(stats!=null){");
-//        body.append("long endTime=System.nanoTime();");
-//        body.append("long timeUsed=endTime-startTime;");
-//        body.append("stats.onFinally(timeUsed);");
-//        body.append("}");
-//        body.append("}");
-//        body.append("}");
-//        newMethod.setBody(body.toString());
-//        JavassistUtil.copyMethodAnnotationdAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
-//        JavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
-//        clazz.addMethod(newMethod);
-//        LOG.info(" Interceptor added for " + cam1.getClassName() + "." + cam1.getMethodName() + ",resourceId[[" + resourceId + "]]");
+    private void addInterceptor(CtMethod method, CtClass clazz, ClassLoader loader, int index) throws CannotCompileException, NotFoundException, ClassNotFoundException {
+        String methodName = method.getName();
+        JavassistUtil.MethodInfo methodInfo = JavassistUtil.getMethodInfo(method.getSignature());
+        Iterator fullName = methodInfo.getParamClassList().iterator();
+
+        while (fullName.hasNext()) {
+            String cam = (String) fullName.next();
+            JavassistUtil.addToClassPathIfNotExist(cam, loader);
+        }
+
+        if (methodInfo.getReturnClassString() != null) {
+            JavassistUtil.addToClassPathIfNotExist(methodInfo.getReturnClassString(), loader);
+        }
+
+        String fullName1 = methodName + methodInfo.getMethodSignature();
+        ClassAndMethod cam1 = new ClassAndMethod(clazz.getName(), fullName1);
+        Integer resourceId = JavaMethodCollectorItem.RESOURCE_FACTORY.registerResource(cam1);
+        if (resourceId == null) {
+            LOG.severe("not enough resource:" + cam1.toString());
+        } else {
+            CtMethod newMethod = CtNewMethod.copy(method, clazz, null);
+            if (null != method.getGenericSignature()) {
+                newMethod.setGenericSignature(method.getGenericSignature());
+            }
+
+            String oldName = method.getName() + "$sentryProxy" + index;
+            method.setName(oldName);
+            if (java.lang.reflect.Modifier.isPublic(method.getModifiers())) {
+                int collectorName = method.getModifiers() - 1 + 2;
+                method.setModifiers(collectorName);
+            }
+
+            String javaMethodCollectorName = JavaMethodCollector.class.getName();
+            String collectInfoClassName = JavaMethodCollectInfo.class.getName();
+            StringBuilder body = new StringBuilder();
+            body.append("{");
+            body.append("long startTime=0;");
+            body.append("boolean isEnable =").append(javaMethodCollectorName).append(".isEnabled();");
+            body.append(collectInfoClassName + " stats = null;");
+            body.append("try{");
+            body.append("if(isEnable){");
+            body.append("startTime=System.nanoTime();");
+            body.append("stats=").append(javaMethodCollectorName).append(".onStart(").append(resourceId.intValue()).append(");");
+            body.append("}");
+            if (method.getReturnType() == CtClass.voidType) {
+                body.append(oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.intType) {
+                body.append("int result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.booleanType) {
+                body.append("boolean result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.byteType) {
+                body.append("byte result  = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.charType) {
+                body.append("char result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.doubleType) {
+                body.append("double result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.floatType) {
+                body.append("float result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.longType) {
+                body.append("long result = " + oldName + "($$);");
+            } else if (method.getReturnType() == CtClass.shortType) {
+                body.append("short result = " + oldName + "($$);");
+            } else {
+                body.append("Object result = " + oldName + "($$);");
+            }
+
+            if (method.getReturnType() != CtClass.voidType) {
+                body.append("return result;");
+            }
+
+            body.append("}");
+            body.append("catch(Throwable t){");
+            body.append("if(stats!=null)stats.onThrowable(t);");
+            body.append("throw t;");
+            body.append("}");
+            body.append("finally{if(stats!=null){");
+            body.append("long endTime=System.nanoTime();");
+            body.append("long timeUsed=endTime-startTime;");
+            body.append("stats.onFinally(timeUsed);");
+            body.append("}");
+            body.append("}");
+            body.append("}");
+            newMethod.setBody(body.toString());
+            JavassistUtil.copyMethodAnnotationdAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
+            JavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
+            clazz.addMethod(newMethod);
+            LOG.info(" Interceptor added for " + cam1.getClassName() + "." + cam1.getMethodName() + ",resourceId[[" + resourceId + "]]");
+        }
     }
 }

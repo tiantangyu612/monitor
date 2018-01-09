@@ -1,5 +1,6 @@
 package monitor.core.collector;
 
+import monitor.core.collector.items.method.JavaMethodCollector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.collector.base.Collector;
 import monitor.core.collector.items.jvm.JVMCollector;
@@ -33,6 +34,7 @@ public class Collectors {
         if (MonitorConfig.isEnableJavaMethodCollect()) {
             // 添加 java method 采集器
             instrumentation.addTransformer(new JavaMethodTransformer());
+            addCollector(JavaMethodCollector.getInstance());
         }
     }
 

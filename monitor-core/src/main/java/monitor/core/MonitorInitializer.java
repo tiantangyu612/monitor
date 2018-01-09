@@ -11,6 +11,9 @@ import java.lang.instrument.Instrumentation;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
@@ -61,16 +64,22 @@ public class MonitorInitializer {
      * 启动采集器
      */
     private static void startCollector() {
-        Map<String, Collector> collectorMap = Collectors.getAllCollectors();
-        for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
-            Collector collector = collectorEntry.getValue();
-            if (collector.isEnable()) {
-                Map<String, List<Map<String, Object>>> collectDatas = collector.collectData();
+        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                Map<String, Collector> collectorMap = Collectors.getAllCollectors();
+                for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
+                    Collector collector = collectorEntry.getValue();
+                    if (collector.isEnable()) {
+                        Map<String, List<Map<String, Object>>> collectDatas = collector.collectData();
 
-                for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
-                    System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
+                        for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
+                            System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
+                        }
+                    }
                 }
             }
-        }
+        }, 5, 10, TimeUnit.SECONDS);
     }
 }

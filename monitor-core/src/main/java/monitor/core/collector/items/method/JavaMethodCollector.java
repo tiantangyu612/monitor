@@ -22,8 +22,16 @@ public class JavaMethodCollector extends AbstractCollector {
         return JavaMethodCollector.instance;
     }
 
+    public static boolean isEnabled() {
+        return instance.isEnable();
+    }
+
     @Override
     public String getName() {
         return "JavaMethod";
+    }
+
+    public static JavaMethodCollectInfo onStart(int resourceId) {
+        return javaMethodCollectorItem.onStart(resourceId);
     }
 }
