@@ -80,6 +80,6 @@ public class MonitorInitializer {
                     }
                 }
             }
-        }, 5, 10, TimeUnit.SECONDS);
+        }, 2, 5, TimeUnit.SECONDS);
     }
 }

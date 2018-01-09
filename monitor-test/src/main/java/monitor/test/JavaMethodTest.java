@@ -13,7 +13,7 @@ public class JavaMethodTest {
     @Monitor
     public void say() {
         try {
-            Thread.sleep(new Random().nextInt(1000));
+            Thread.sleep(20);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

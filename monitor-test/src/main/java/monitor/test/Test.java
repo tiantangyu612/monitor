@@ -9,13 +9,12 @@ import java.util.concurrent.Executors;
  */
 public class Test {
     public static void main(String[] args) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(20);
-        final JavaMethodTest javaMethodTest = new JavaMethodTest();
+        ExecutorService threadPool = Executors.newFixedThreadPool(1);
         while (true) {
             threadPool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    javaMethodTest.say();
+                    new JavaMethodTest().say();
                 }
             });
         }
