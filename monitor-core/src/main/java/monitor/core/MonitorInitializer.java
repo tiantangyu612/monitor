@@ -65,7 +65,7 @@ public class MonitorInitializer {
      */
     private static void startCollector() {
         ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
                 Map<String, Collector> collectorMap = Collectors.getAllCollectors();
