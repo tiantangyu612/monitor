@@ -156,7 +156,19 @@ public class Premain {
      */
     private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
                                     FileHandler logFileHandler) throws Exception {
-        Class<?> monitorInitializerClass = Class.forName("monitor.core.MonitorInitializer");
+        Class<?> monitorInitializerClass = null;
+        try {
+            monitorInitializerClass = Class.forName("monitor.core.MonitorInitializer");
+        } catch (ClassNotFoundException e) {
+            try {
+                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+                classLoader.loadClass("monitor.core.MonitorInitializer");
+            } catch (Exception e1) {
+                LOG.log(Level.SEVERE, "class not found: monitor.core.MonitorInitializer", e);
+                return;
+            }
+        }
+
         Object monitorInitializer = monitorInitializerClass.newInstance();
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
