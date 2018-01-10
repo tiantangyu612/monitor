@@ -25,6 +25,7 @@
     </dependencies>
 
     <build>
+        <finalName>monitor-core-1.0.1</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
