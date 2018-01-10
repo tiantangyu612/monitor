@@ -18,6 +18,7 @@
         <module>monitor-core</module>
         <module>monitor-test</module>
         <module>monitor-datahub</module>
+        <module>monitor-web</module>
     </modules>
 
     <dependencyManagement>
