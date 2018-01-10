@@ -1,4 +1,6 @@
-package monitor.core.util;
+package monitor.core.util.concurrent;
+
+import monitor.core.util.concurrent.AtomicDouble;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;

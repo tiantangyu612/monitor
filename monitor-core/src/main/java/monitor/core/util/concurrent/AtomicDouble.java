@@ -1,4 +1,4 @@
-package monitor.core.util;
+package monitor.core.util.concurrent;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

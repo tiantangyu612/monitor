@@ -1,6 +1,6 @@
 package monitor.core.collector.items.method;
 
-import monitor.core.util.ConcurrentUtil;
+import monitor.core.util.concurrent.ConcurrentUtil;
 import monitor.core.util.ExceptionUtil;
 
 import java.util.HashMap;

@@ -2,7 +2,7 @@ package monitor.core.collector.items.method;
 
 import monitor.core.collector.base.AbstractCollectorItem;
 import monitor.core.config.MonitorConfig;
-import monitor.core.util.ConcurrentResourceFactory;
+import monitor.core.util.concurrent.ConcurrentResourceFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;

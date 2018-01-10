@@ -1,4 +1,4 @@
-package monitor.core.util;
+package monitor.core.util.concurrent;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicReference;

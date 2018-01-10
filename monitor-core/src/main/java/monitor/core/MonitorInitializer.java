@@ -6,7 +6,7 @@ import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
-import monitor.core.util.NamedThreadFactory;
+import monitor.core.util.concurrent.NamedThreadFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
