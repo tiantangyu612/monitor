@@ -81,20 +81,10 @@ public class Premain {
         FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, cluster);
         LOG.addHandler(logFileHandler);
 
-        // 获取监控采集器 jar
-        // 监控收集器 jar path，需要在类路径下
-        String monitorCollectorJarPath = Premain.class.getClassLoader().getResource(".").getPath();
-        if (null == monitorCollectorJarPath) {
-            LOG.severe("monitor collector jar path is null!");
+        // 获取最高版的监控 core jar，并添加到 BootstrapClassLoaderSearch
+        if (!addMonitorCoreJarToBootstrapClassLoaderSearch(instrumentation)) {
             return;
         }
-
-        LOG.info("monitor collector jar path is: " + monitorCollectorJarPath);
-
-        String monitorCollectorJar = getMonitorCollectorJar(monitorCollectorJarPath);
-        JarFile monitorCollectorJarFile = new JarFile(monitorCollectorJar);
-        instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
-
 
         // 初始化 monitor 采集器
         initMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler);
@@ -171,32 +161,32 @@ public class Premain {
     /**
      * 获取监控 core jar file
      *
-     * @param monitorCollectorJarPath
+     * @param monitorCoreJarPath
      * @return
      * @throws IOException
      */
-    private static String getMonitorCollectorJar(String monitorCollectorJarPath) throws IOException {
-        List<String> monitorCollectorJarList = searchMonitorCoreJars(new File(monitorCollectorJarPath));
-        if (monitorCollectorJarList.isEmpty()) {
-            LOG.severe("can not found monitor collector jar file named with " + MONITOR_CORE_PREFIX + ".{version}.jar in path: " + monitorCollectorJarPath);
+    private static String getMonitorCoreJar(String monitorCoreJarPath) throws IOException {
+        List<String> monitorCoreJarList = searchMonitorCoreJars(new File(monitorCoreJarPath));
+        if (monitorCoreJarList.isEmpty()) {
+            LOG.severe("can not found monitor core jar file named with " + MONITOR_CORE_PREFIX + ".{version}.jar in path: " + monitorCoreJarPath);
             return null;
         }
 
-        // 获取最高版本的 monitor 采集器 jar
-        String highestMonitorCollectorJar = MonitorJarVersionUtil.getHighestMonitorCoreJar(monitorCollectorJarList);
-        LOG.info("use highest monitor collector jar version: " + highestMonitorCollectorJar);
+        // 获取最高版本的 monitor core jar
+        String highestMonitorCoreJar = MonitorJarVersionUtil.getHighestMonitorCoreJar(monitorCoreJarList);
+        LOG.info("use highest monitor core jar version: " + highestMonitorCoreJar);
 
-        File highestMonitorCollectorJarFile = new File(highestMonitorCollectorJar);
-        if (!highestMonitorCollectorJarFile.exists()) {
-            LOG.severe("highest monitor collector jar file not exist: " + highestMonitorCollectorJar);
+        File highestMonitorCoreJarFile = new File(highestMonitorCoreJar);
+        if (!highestMonitorCoreJarFile.exists()) {
+            LOG.severe("highest monitor core jar file not exist: " + highestMonitorCoreJar);
             return null;
         }
-        if (!highestMonitorCollectorJarFile.isFile()) {
-            LOG.severe("highest monitor collector jar file not a file: " + highestMonitorCollectorJar);
+        if (!highestMonitorCoreJarFile.isFile()) {
+            LOG.severe("highest monitor core jar file not a file: " + highestMonitorCoreJar);
             return null;
         }
 
-        return highestMonitorCollectorJar;
+        return highestMonitorCoreJar;
     }
 
     /**
@@ -218,21 +208,46 @@ public class Premain {
 
         File[] files = monitorCoreJarPath.listFiles();
         if ((files == null) || (files.length == 0)) {
-            LOG.severe("monitor jar path folder is empty: " + monitorCoreJarPath);
+            LOG.severe("monitor core jar path folder is empty: " + monitorCoreJarPath);
             return Collections.emptyList();
         }
 
-        List<String> monitorCollectorJars = new ArrayList<String>();
+        List<String> monitorCoreJars = new ArrayList<String>();
         for (File file : files) {
             String fileName = file.getName();
             if ((file.isFile()) && (fileName.startsWith(MONITOR_CORE_PREFIX)) && (fileName.endsWith(MONITOR_CORE_SUFFIX))) {
-                monitorCollectorJars.add(file.getPath());
+                monitorCoreJars.add(file.getPath());
             }
         }
 
-        return monitorCollectorJars;
+        return monitorCoreJars;
     }
 
+    /**
+     * 获取最高版的监控 core jar，并添加到 BootstrapClassLoaderSearch
+     *
+     * @param instrumentation
+     * @return
+     * @throws IOException
+     */
+    private static boolean addMonitorCoreJarToBootstrapClassLoaderSearch(Instrumentation instrumentation) throws IOException {
+        Object monitorCoreJarPath = System.getProperties().get("monitor_core_lib_path");
+        if (monitorCoreJarPath == null) {
+            LOG.log(Level.SEVERE, "monitor core lib path property not found in system property");
+            return false;
+        }
+
+        String monitorCoreJar = getMonitorCoreJar(monitorCoreJarPath.toString());
+        if (monitorCoreJar == null) {
+            LOG.log(Level.SEVERE, "monitor core jar can not be found");
+            return false;
+        }
+
+        JarFile monitorCollectorJarFile = new JarFile(monitorCoreJar);
+        instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
+
+        return true;
+    }
 
     /**
      * 初始化 monitor 采集器
