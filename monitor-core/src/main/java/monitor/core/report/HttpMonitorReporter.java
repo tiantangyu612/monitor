@@ -6,6 +6,7 @@ import monitor.core.log.MonitorLogFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -27,9 +28,10 @@ public class HttpMonitorReporter implements MonitorReporter {
             String monitorJsonData = JSON.toJSONString(monitorData, SerializerFeature.PrettyFormat);
 
             System.out.println(monitorJsonData);
-            LOGGER.info(monitorJsonData);
             return true;
         } catch (Throwable e) {
+            String errorMsg = "reportData failure!!!!";
+            LOGGER.log(Level.SEVERE, errorMsg, e);
             return false;
         }
     }
