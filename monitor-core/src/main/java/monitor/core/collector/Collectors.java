@@ -1,6 +1,7 @@
 package monitor.core.collector;
 
 import monitor.core.collector.items.method.JavaMethodCollector;
+import monitor.core.collector.items.tomcat.TomcatCollector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.collector.base.Collector;
 import monitor.core.collector.items.jvm.JVMCollector;
@@ -36,6 +37,8 @@ public class Collectors {
             instrumentation.addTransformer(new JavaMethodTransformer());
             addCollector(JavaMethodCollector.getInstance());
         }
+
+        addCollector(TomcatCollector.getInstance());
     }
 
     /**
