@@ -6,6 +6,7 @@ import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.report.task.MonitorReportTask;
 import monitor.core.util.concurrent.NamedThreadFactory;
 
 import java.lang.instrument.Instrumentation;
@@ -65,22 +66,20 @@ public class MonitorInitializer {
      * 启动采集器
      */
     private static void startCollector() {
-        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
-        scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
+        MonitorReportTask.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                Map<String, Collector> collectorMap = Collectors.getAllCollectors();
-                for (Map.Entry<String, Collector> collectorEntry : collectorMap.entrySet()) {
-                    Collector collector = collectorEntry.getValue();
-                    if (collector.isEnable()) {
-                        Map<String, List<Map<String, Object>>> collectDatas = collector.collectData();
-
-                        for (Map.Entry<String, List<Map<String, Object>>> collectDatasEntry : collectDatas.entrySet()) {
-                            System.out.println(JSON.toJSONString(collectDatasEntry, SerializerFeature.PrettyFormat));
-                        }
-                    }
-                }
+                stopCollector();
             }
-        }, 20, 5, TimeUnit.SECONDS);
+        });
+    }
+
+    /**
+     * 停止采集器
+     */
+    private static void stopCollector() {
+        MonitorReportTask.stop();
     }
 }

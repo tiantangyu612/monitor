@@ -35,6 +35,31 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.alibaba.fastjson</pattern>
+                                    <shadedPattern>monitor.core.thirdparty.fastjson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>monitor.core.thirdparty.javassist</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
