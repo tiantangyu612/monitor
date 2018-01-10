@@ -37,7 +37,7 @@ public class JavaMethodCollectInfo {
     /**
      * 执行方法的错误信息
      */
-    public final AtomicReference<String> lastError = new AtomicReference();
+    public final AtomicReference<String> lastError = new AtomicReference<String>();
     /**
      * 执行该方法的最大并发数
      */

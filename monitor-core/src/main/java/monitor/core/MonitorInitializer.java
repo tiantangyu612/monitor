@@ -6,6 +6,7 @@ import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.util.NamedThreadFactory;
 
 import java.lang.instrument.Instrumentation;
 import java.util.List;
@@ -64,7 +65,7 @@ public class MonitorInitializer {
      * 启动采集器
      */
     private static void startCollector() {
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
         scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {

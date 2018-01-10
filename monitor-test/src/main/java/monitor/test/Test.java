@@ -9,14 +9,25 @@ import java.util.concurrent.Executors;
  */
 public class Test {
     public static void main(String[] args) {
-        ExecutorService threadPool = Executors.newFixedThreadPool(1);
+        final JavaMethodTest test = new JavaMethodTest();
+
+        /*while (true){
+            test.say();
+        }*/
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                test.say();
+            }
+        };
+        ExecutorService threadPool = Executors.newFixedThreadPool(20);
         while (true) {
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    new JavaMethodTest().say();
-                }
-            });
+            threadPool.execute(task);
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
