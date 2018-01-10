@@ -9,9 +9,11 @@ import monitor.core.collector.base.AbstractCollector;
 public class TomcatCollector extends AbstractCollector {
     private static TomcatCollector instance = new TomcatCollector();
     private static TomcatCollectorItem tomcatCollectorItem = new TomcatCollectorItem();
+    private static TomcatInfoCollectorItem tomcatInfoCollectorItem = new TomcatInfoCollectorItem();
 
     static {
         instance.addCollectorItem(tomcatCollectorItem);
+        instance.addCollectorItem(tomcatInfoCollectorItem);
     }
 
     public static TomcatCollector getInstance() {
