@@ -34,6 +34,10 @@ public class Constants {
      */
     public static final String MONITOR_CORE_SUFFIX = ".jar";
     /**
+     * 默认应用名称
+     */
+    public static final String DEFAULT_APPLICATION = "default-application";
+    /**
      * 默认 cluster 名称
      */
     public static final String DEFAULT_CLUSTER_NAME = "default";
