@@ -1,7 +1,5 @@
 package monitor.core.report.task;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.report.MonitorReporterFactory;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -23,7 +22,12 @@ public class MonitorReportTask implements Runnable {
     private MonitorReportTask() {
     }
 
-    public static final ScheduledExecutorService monitorReportSchedule = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
+    public static MonitorReportTask getInstance() {
+        return MonitorReportTask.instance;
+    }
+
+    private ScheduledExecutorService monitorReportSchedule = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
+    private ScheduledFuture scheduledFuture;
 
     @Override
     public void run() {
@@ -41,14 +45,15 @@ public class MonitorReportTask implements Runnable {
     /**
      * 启动数据上报
      */
-    public static void start() {
-        MonitorReportTask.monitorReportSchedule.scheduleWithFixedDelay(MonitorReportTask.instance, 20, 10, TimeUnit.SECONDS);
+    public void start() {
+        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(MonitorReportTask.instance, 20, 20, TimeUnit.SECONDS);
     }
 
     /**
      * 停止数据上报
      */
-    public static void stop() {
-        MonitorReportTask.monitorReportSchedule.shutdown();
+    public void stop() {
+        scheduledFuture.cancel(true);
+        monitorReportSchedule.shutdown();
     }
 }

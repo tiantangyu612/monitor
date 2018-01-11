@@ -26,8 +26,9 @@ public class MonitorInitializer {
      * @param environment
      * @param monitorConfigProperties
      * @param instrumentation
+     * @throws Exception
      */
-    public void initMonitor(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) {
+    public void initMonitor(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) throws Exception {
         MonitorEnv monitorEnv = new MonitorEnv(environment);
 
         // 初始化日志配置
@@ -35,9 +36,7 @@ public class MonitorInitializer {
         LOG.info("int collector log success!");
 
         // 将 monitor-core jar 添加到 classpath，防止 javassist 字节码增强时出现 ClassNotFoundException
-        if (!addMonitorCoreJarToClasspath(monitorEnv)) {
-            return;
-        }
+        addMonitorCoreJarToClasspath(monitorEnv);
 
         // 初始化监控配置
         MonitorConfig.initConfig(monitorEnv, monitorConfigProperties);
@@ -67,7 +66,7 @@ public class MonitorInitializer {
      * @param monitorEnv
      * @return
      */
-    private boolean addMonitorCoreJarToClasspath(MonitorEnv monitorEnv) {
+    private void addMonitorCoreJarToClasspath(MonitorEnv monitorEnv) throws NotFoundException {
         String monitorCoreJarPath = monitorEnv.getMonitorCoreJarPath();
         ClassPool classPool = ClassPool.getDefault();
 
@@ -78,18 +77,16 @@ public class MonitorInitializer {
                 classPool.insertClassPath(monitorCoreJarPath);
             } catch (NotFoundException e1) {
                 LOG.severe("failed to insert javassist class path:" + monitorCoreJarPath);
-                return false;
+                throw e;
             }
         }
-
-        return true;
     }
 
     /**
      * 启动采集器
      */
     private static void startCollector() {
-        MonitorReportTask.start();
+        MonitorReportTask.getInstance().start();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -103,6 +100,6 @@ public class MonitorInitializer {
      * 停止采集器
      */
     private static void stopCollector() {
-        MonitorReportTask.stop();
+        MonitorReportTask.getInstance().stop();
     }
 }

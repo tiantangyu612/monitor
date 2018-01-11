@@ -36,9 +36,10 @@ public class Collectors {
         }
 
         if (MonitorConfig.isEnableJavaMethodCollect()) {
+            // 字节码增强需要监控的 java method
+            monitorTransformer.addTransformer(new JavaMethodTransformer());
             // 添加 java method 采集器
             addCollector(JavaMethodCollector.getInstance());
-            monitorTransformer.addTransformer(new JavaMethodTransformer());
         }
 
         if (MonitorConfig.isEnableTomcatCollect()) {
