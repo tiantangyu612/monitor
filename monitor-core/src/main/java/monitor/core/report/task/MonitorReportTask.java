@@ -46,7 +46,7 @@ public class MonitorReportTask implements Runnable {
      * 启动数据上报
      */
     public void start() {
-        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(MonitorReportTask.instance, 20, 20, TimeUnit.SECONDS);
+        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(MonitorReportTask.instance, 30, 30, TimeUnit.SECONDS);
     }
 
     /**
