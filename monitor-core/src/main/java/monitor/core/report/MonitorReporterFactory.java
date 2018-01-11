@@ -11,6 +11,6 @@ public class MonitorReporterFactory {
      * @return
      */
     public static MonitorReporter createMonitorRepoter() {
-        return new HttpMonitorReporter();
+        return new MonitorSocketReporter();
     }
 }

@@ -1,7 +1,5 @@
 package monitor.agent.util;
 
-import monitor.agent.Premain;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +34,8 @@ public class MonitorJarVersionUtil {
      * @return
      */
     private static boolean isHigherVersionJar(String jar, String anotherJar) {
-        int monitorCollectorPrefixLength = Premain.MONITOR_CORE_PREFIX.length();
-        int monitorCollectorSuffixLength = Premain.MONITOR_CORE_SUFFIX.length();
+        int monitorCollectorPrefixLength = Constants.MONITOR_CORE_PREFIX.length();
+        int monitorCollectorSuffixLength = Constants.MONITOR_CORE_SUFFIX.length();
 
         String jarVersion = jar.substring(monitorCollectorPrefixLength, jar.length() - monitorCollectorSuffixLength);
         String anotherJarVersion = anotherJar.substring(monitorCollectorPrefixLength, anotherJar.length() - monitorCollectorSuffixLength);

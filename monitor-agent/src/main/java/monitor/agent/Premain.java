@@ -1,6 +1,7 @@
 package monitor.agent;
 
 import monitor.agent.log.AgentLoggerFactory;
+import monitor.agent.util.Constants;
 import monitor.agent.util.MonitorJarVersionUtil;
 
 import java.io.File;
@@ -18,6 +19,7 @@ import java.util.logging.Logger;
 /**
  * Created by lizhitao on 2018/1/4.
  * java agent 用于增加方法监控，该类实现 premain 方法
+ * 添加监控需要 java -javaagent:agent_path -Dmonitor_core_lib_path=libPath
  */
 public class Premain {
     private static Logger LOG = AgentLoggerFactory.getLogger(Premain.class);
@@ -26,22 +28,6 @@ public class Premain {
      * 监控 agent jar 所在文件夹名称
      */
     private static File monitorFolder = null;
-    /**
-     * 监控 agent jar 所在文件夹名称常量，文件夹名称必须为该名称
-     */
-    public static final String MONITOR_FOLDER_NAME = "monitor";
-    /**
-     * 监控配置文件名称
-     */
-    public static String CONFIG_FILE_NAME = "monitor.properties";
-    /**
-     * 监控 core jar 名称前缀
-     */
-    public static String MONITOR_CORE_PREFIX = "monitor-core-";
-    /**
-     * 监控 core jar 名称后缀
-     */
-    public static String MONITOR_CORE_SUFFIX = ".jar";
 
 
     /**
@@ -90,7 +76,6 @@ public class Premain {
             return;
         }
 
-
         // 初始化 monitor 采集器
         initMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, monitorCoreJarPath);
     }
@@ -106,10 +91,10 @@ public class Premain {
         File agentJarFile = new File(agentJarPath);
         monitorFolder = agentJarFile.getParentFile();
 
-        if (!monitorFolder.getName().equals(MONITOR_FOLDER_NAME)) {
+        if (!monitorFolder.getName().equals(Constants.MONITOR_FOLDER_NAME)) {
             FileHandler logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, null, null);
             LOG.addHandler(logFileHandler);
-            LOG.severe("init agent error, cause the folder name must be " + MONITOR_FOLDER_NAME + ", bye bye!");
+            LOG.severe("init agent error, cause the folder name must be " + Constants.MONITOR_FOLDER_NAME + ", bye bye!");
             return null;
         }
 
@@ -123,7 +108,7 @@ public class Premain {
      * @return
      */
     private static Properties loadMonitorConfigProperties(String agentArgs) {
-        File configPropertiesFile = new File(monitorFolder.getPath() + File.separator + CONFIG_FILE_NAME);
+        File configPropertiesFile = new File(monitorFolder.getPath() + File.separator + Constants.CONFIG_FILE_NAME);
 
         Properties monitorConfigProperties = new Properties();
         FileHandler logFileHandler;
@@ -132,19 +117,19 @@ public class Premain {
             monitorConfigProperties.load(new FileInputStream(configPropertiesFile));
             String application = monitorConfigProperties.getProperty("application");
 
-            String instance = monitorConfigProperties.getProperty("instance");
-            if (instance == null) {
-                instance = "default";
+            String cluster = monitorConfigProperties.getProperty("cluster");
+            if (cluster == null) {
+                cluster = Constants.DEFAULT_CLUSTER_NAME;
             }
 
-            logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, instance);
+            logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, application, cluster);
             LOG.addHandler(logFileHandler);
             if (application == null) {
                 LOG.severe("application property can not be null!");
                 return null;
             }
 
-            monitorConfigProperties.setProperty("instance", instance);
+            monitorConfigProperties.setProperty("cluster", cluster);
             return monitorConfigProperties;
         } catch (FileNotFoundException e) {
             logFileHandler = AgentLoggerFactory.buildLogFileHandler(agentArgs, null, null);
@@ -173,7 +158,7 @@ public class Premain {
     private static String getMonitorCoreJar(String monitorCoreJarPath) throws IOException {
         List<String> monitorCoreJarList = searchMonitorCoreJars(new File(monitorCoreJarPath));
         if (monitorCoreJarList.isEmpty()) {
-            LOG.severe("can not found monitor core jar file named with " + MONITOR_CORE_PREFIX + ".{version}.jar in path: " + monitorCoreJarPath);
+            LOG.severe("can not found monitor core jar file named with " + Constants.MONITOR_CORE_PREFIX + ".{version}.jar in path: " + monitorCoreJarPath);
             return null;
         }
 
@@ -220,7 +205,7 @@ public class Premain {
         List<String> monitorCoreJars = new ArrayList<String>();
         for (File file : files) {
             String fileName = file.getName();
-            if ((file.isFile()) && (fileName.startsWith(MONITOR_CORE_PREFIX)) && (fileName.endsWith(MONITOR_CORE_SUFFIX))) {
+            if ((file.isFile()) && (fileName.startsWith(Constants.MONITOR_CORE_PREFIX)) && (fileName.endsWith(Constants.MONITOR_CORE_SUFFIX))) {
                 monitorCoreJars.add(file.getPath());
             }
         }
@@ -235,7 +220,7 @@ public class Premain {
      * @throws IOException
      */
     private static String getMonitorCoreJarPath() throws IOException {
-        Object monitorCoreJarPath = System.getProperties().get("monitor_core_lib_path");
+        Object monitorCoreJarPath = System.getProperties().get(Constants.MONITOR_CORE_LIB_PATH_PROPERTY);
         if (monitorCoreJarPath == null) {
             LOG.log(Level.SEVERE, "monitor core lib path property not found in system property");
             return null;
@@ -263,7 +248,7 @@ public class Premain {
      */
     private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
                                     FileHandler logFileHandler, String monitorCoreJarPath) throws Exception {
-        Class<?> monitorInitializerClass = Class.forName("monitor.core.MonitorInitializer");
+        Class<?> monitorInitializerClass = Class.forName(Constants.MONITOR_INITIALIZER_CLASS);
         Object monitorInitializer = monitorInitializerClass.newInstance();
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};

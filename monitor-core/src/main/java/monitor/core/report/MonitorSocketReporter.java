@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/10.
- * 使用 Http 接口上报数据
+ * 使用 socket 上报数据
  */
-public class HttpMonitorReporter implements MonitorReporter {
-    private static final Logger LOGGER = MonitorLogFactory.getLogger(HttpMonitorReporter.class);
+public class MonitorSocketReporter implements MonitorReporter {
+    private static final Logger LOGGER = MonitorLogFactory.getLogger(MonitorSocketReporter.class);
 
     /**
      * 上报数据
