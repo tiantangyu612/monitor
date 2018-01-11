@@ -47,6 +47,10 @@ public class MonitorConfig {
      * 采集的java method 的最大限制值
      */
     private static final int MAX_COLLECT_JAVA_METHOD_COUNT_LIMIT = 5000;
+    /**
+     * 是否启用 tomcat 数据采集
+     */
+    private static boolean enableTomcatCollect = true;
 
     /**
      * 初始化监控配置
@@ -93,6 +97,7 @@ public class MonitorConfig {
         setMonitorBasicConfig(monitorConfig);
         setJVMInfoCollectConfig(monitorConfig);
         setJavaMethodCollectConfig(monitorConfig);
+        setTomcatCollectConfig(monitorConfig);
     }
 
     /**
@@ -141,6 +146,20 @@ public class MonitorConfig {
             } catch (Exception e) {
                 // NOP
             }
+        }
+    }
+
+
+    /**
+     * 设置 tomcat collect 配置
+     *
+     * @param monitorConfig
+     */
+    private static void setTomcatCollectConfig(Properties monitorConfig) {
+        // 是否启用 tomcat 信息采集
+        String enableTomcatCollectValue = monitorConfig.getProperty("enableTomcatCollect");
+        if ("false".equals(enableTomcatCollectValue)) {
+            MonitorConfig.enableTomcatCollect = false;
         }
     }
 
@@ -196,5 +215,23 @@ public class MonitorConfig {
      */
     public static int getMaxCollectJavaMethodCount() {
         return MonitorConfig.maxCollectJavaMethodCount;
+    }
+
+    /**
+     * 获取是否启用 tomcat 数据采集
+     *
+     * @return
+     */
+    public static boolean isEnableTomcatCollect() {
+        return enableTomcatCollect;
+    }
+
+    /**
+     * 设置是否启用 tomcat 数据采集
+     *
+     * @param enableTomcatCollect
+     */
+    public static void setEnableTomcatCollect(boolean enableTomcatCollect) {
+        MonitorConfig.enableTomcatCollect = enableTomcatCollect;
     }
 }

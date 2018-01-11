@@ -1,12 +1,13 @@
 package monitor.core.collector;
 
-import monitor.core.collector.items.method.JavaMethodCollector;
-import monitor.core.collector.items.tomcat.TomcatCollector;
-import monitor.core.config.MonitorConfig;
 import monitor.core.collector.base.Collector;
+import monitor.core.collector.base.transformer.MonitorTransformer;
 import monitor.core.collector.items.jvm.JVMCollector;
 import monitor.core.collector.items.jvm.JVMInfoCollector;
+import monitor.core.collector.items.method.JavaMethodCollector;
 import monitor.core.collector.items.method.JavaMethodTransformer;
+import monitor.core.collector.items.tomcat.TomcatCollector;
+import monitor.core.config.MonitorConfig;
 import monitor.core.util.StringUtils;
 
 import java.lang.instrument.Instrumentation;
@@ -26,6 +27,8 @@ public class Collectors {
      * @param instrumentation
      */
     public static void initCollectors(Instrumentation instrumentation) {
+        MonitorTransformer monitorTransformer = new MonitorTransformer();
+
         if (MonitorConfig.isEnableJVMInfoCollect()) {
             // 添加 JVM 采集器
             addCollector(JVMCollector.getInstance());
@@ -34,11 +37,16 @@ public class Collectors {
 
         if (MonitorConfig.isEnableJavaMethodCollect()) {
             // 添加 java method 采集器
-            instrumentation.addTransformer(new JavaMethodTransformer());
+            monitorTransformer.addTransformer(new JavaMethodTransformer());
             addCollector(JavaMethodCollector.getInstance());
         }
 
-        addCollector(TomcatCollector.getInstance());
+        if (MonitorConfig.isEnableTomcatCollect()) {
+            // 添加 tomcat 采集器
+            addCollector(TomcatCollector.getInstance());
+        }
+
+        instrumentation.addTransformer(monitorTransformer);
     }
 
     /**

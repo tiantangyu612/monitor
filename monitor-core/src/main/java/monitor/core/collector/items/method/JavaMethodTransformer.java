@@ -2,14 +2,14 @@ package monitor.core.collector.items.method;
 
 import javassist.*;
 import monitor.core.annotation.Monitor;
+import monitor.core.collector.base.transformer.MatchedClass;
+import monitor.core.collector.base.transformer.MatchedClassTransformer;
 import monitor.core.log.MonitorLogFactory;
 import monitor.core.util.JavassistUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
-import java.security.ProtectionDomain;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,54 +18,64 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/5.
  * JavaMethodTransformer，使用 Javassist 增加被监控的方法，记录方法的执行 rt、错误数、最大并发、异常等信息
  */
-public class JavaMethodTransformer implements ClassFileTransformer {
+public class JavaMethodTransformer implements MatchedClassTransformer {
     private static final Logger LOGGER = MonitorLogFactory.getLogger(JavaMethodTransformer.class);
 
     /**
-     * 转换类字节码，增强方法
+     * 获取匹配的类信息
      *
-     * @param loader
      * @param className
-     * @param classBeingRedefined
-     * @param protectionDomain
      * @param classfileBuffer
      * @return
-     * @throws IllegalClassFormatException
      */
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-                            byte[] classfileBuffer) throws IllegalClassFormatException {
-        if (!JavassistUtil.isIgnoredClass(className)) {
-            ByteArrayInputStream classFileByteArrayInputStream = null;
-            try {
-                classFileByteArrayInputStream = new ByteArrayInputStream(classfileBuffer);
-                ClassPool classPool = ClassPool.getDefault();
-                CtClass ctClass = classPool.makeClass(classFileByteArrayInputStream);
+    public MatchedClass getMatchedClass(ClassLoader loader, String className, byte[] classfileBuffer, Class<?> classBeingRedefined) {
+        if (JavassistUtil.isIgnoredClass(className)) {
+            return null;
+        }
 
-                if (!ctClass.isInterface() && !ctClass.isAnnotation() && !ctClass.isEnum() && !ctClass.isArray()) {
-                    addParentClassToClassPathIfNotExists(className, classBeingRedefined, loader);
-                    // 字节码增强监控方法
-                    byte[] enhancedClassBytes = enhanceJavaMethod(ctClass, loader);
-                    if (null != enhancedClassBytes) {
-                        return enhancedClassBytes;
+        ByteArrayInputStream classFileByteArrayInputStream = null;
+        try {
+            classFileByteArrayInputStream = new ByteArrayInputStream(classfileBuffer);
+            ClassPool classPool = ClassPool.getDefault();
+            CtClass ctClass = classPool.makeClass(classFileByteArrayInputStream);
+
+            if (!ctClass.isInterface() && !ctClass.isAnnotation() && !ctClass.isEnum() && !ctClass.isArray()) {
+                addParentClassToClassPathIfNotExists(className, classBeingRedefined, loader);
+
+                MatchedClass matchedClass = new MatchedClass(loader, ctClass);
+                CtMethod[] methods = ctClass.getDeclaredMethods();
+                if (methods != null && methods.length != 0) {
+                    for (CtMethod method : methods) {
+                        if (!JavassistUtil.isIgnoredMethod(method.getName())) {
+                            // 只有标注了 @Monitor 注解的方法才能被监控
+                            if (method.hasAnnotation(Monitor.class)) {
+                                matchedClass.addCtMethods(method);
+                            }
+                        }
                     }
                 }
-            } catch (Exception e) {
-                String errorMsg = "enhanceJavaMethod error, className is: " + className;
-                LOGGER.log(Level.SEVERE, errorMsg, e);
-            } finally {
-                if (null != classFileByteArrayInputStream) {
-                    try {
-                        classFileByteArrayInputStream.close();
-                    } catch (IOException e) {
-                        String errorMsg = "close classFileByteArrayInputStream error";
-                        LOGGER.log(Level.SEVERE, errorMsg, e);
-                    }
+
+                if (null == matchedClass.getCtMethods()) {
+                    return null;
+                }
+
+                return matchedClass;
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            return null;
+        } finally {
+            if (null != classFileByteArrayInputStream) {
+                try {
+                    classFileByteArrayInputStream.close();
+                } catch (IOException e) {
+                    String errorMsg = "close classFileByteArrayInputStream error";
+                    LOGGER.log(Level.SEVERE, errorMsg, e);
                 }
             }
         }
-
-        return classfileBuffer;
     }
 
     /**
@@ -93,33 +103,19 @@ public class JavaMethodTransformer implements ClassFileTransformer {
     /**
      * 为需要监控的方法进行 Javassist 字节码增强
      *
-     * @param ctClass
-     * @param loader
+     * @param matchedClass
      * @return
-     * @throws IOException
-     * @throws CannotCompileException
+     * @throws IllegalClassFormatException
      */
-    private byte[] enhanceJavaMethod(CtClass ctClass, ClassLoader loader) throws IOException, CannotCompileException {
-        CtMethod[] methods = ctClass.getDeclaredMethods();
-        if (methods != null && methods.length != 0) {
-            int methodIndex = 0;
-            for (CtMethod method : methods) {
-                if (!JavassistUtil.isIgnoredMethod(method.getName())) {
-                    // 只有标注了 @Monitor 注解的方法才能被监控
-                    if (method.hasAnnotation(Monitor.class)) {
-                        try {
-                            doEnhanceJavaMethod(method, ctClass, loader, methodIndex);
-                            methodIndex++;
-                        } catch (Exception e) {
-                            LOGGER.log(Level.SEVERE, "javassist enhance error, cause: ", e);
-                        }
-                    }
-                }
-            }
-            return ctClass.toBytecode();
+    @Override
+    public byte[] transform(MatchedClass matchedClass) throws Exception {
+        CtClass ctClass = matchedClass.getCtClass();
+        int methodIndex = 0;
+        for (CtMethod method : matchedClass.getCtMethods()) {
+            doEnhanceJavaMethod(method, ctClass, matchedClass.getClassLoader(), methodIndex);
+            methodIndex++;
         }
-
-        return null;
+        return ctClass.toBytecode();
     }
 
     /**
