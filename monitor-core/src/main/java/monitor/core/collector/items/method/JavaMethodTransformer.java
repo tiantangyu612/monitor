@@ -79,6 +79,24 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
     }
 
     /**
+     * 转换类字节码，增强方法
+     *
+     * @param matchedClass
+     * @return
+     * @throws IllegalClassFormatException
+     */
+    @Override
+    public byte[] transform(MatchedClass matchedClass) throws Exception {
+        CtClass ctClass = matchedClass.getCtClass();
+        int methodIndex = 0;
+        for (CtMethod ctMethod : matchedClass.getCtMethods()) {
+            doEnhanceJavaMethod(ctMethod, ctClass, matchedClass.getClassLoader(), methodIndex++);
+        }
+
+        return ctClass.toBytecode();
+    }
+
+    /**
      * 将父类添加到 classPath
      *
      * @param className
@@ -98,24 +116,6 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
             String addedSuperClass = superClass == null ? "null" : superClass.getName();
             LOGGER.log(Level.SEVERE, "addParentClassToClasspath error, super class is: " + addedSuperClass + ", origin class:" + className, e);
         }
-    }
-
-    /**
-     * 为需要监控的方法进行 Javassist 字节码增强
-     *
-     * @param matchedClass
-     * @return
-     * @throws IllegalClassFormatException
-     */
-    @Override
-    public byte[] transform(MatchedClass matchedClass) throws Exception {
-        CtClass ctClass = matchedClass.getCtClass();
-        int methodIndex = 0;
-        for (CtMethod method : matchedClass.getCtMethods()) {
-            doEnhanceJavaMethod(method, ctClass, matchedClass.getClassLoader(), methodIndex);
-            methodIndex++;
-        }
-        return ctClass.toBytecode();
     }
 
     /**
@@ -181,6 +181,7 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
 
         String javaMethodCollectorName = JavaMethodCollector.class.getName();
         String collectInfoClassName = JavaMethodCollectInfo.class.getName();
+
         StringBuilder body = new StringBuilder();
         body.append("{");
         body.append("long startTime=0;");

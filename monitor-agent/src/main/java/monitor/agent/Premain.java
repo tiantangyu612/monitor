@@ -82,12 +82,13 @@ public class Premain {
         LOG.addHandler(logFileHandler);
 
         // 获取最高版的监控 core jar，并添加到 BootstrapClassLoaderSearch
-        if (!addMonitorCoreJarToBootstrapClassLoaderSearch(instrumentation)) {
+        String monitorCoreJar = addMonitorCoreJarToBootstrapClassLoaderSearch(instrumentation);
+        if (null == monitorCoreJar) {
             return;
         }
 
         // 初始化 monitor 采集器
-        initMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler);
+        initMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, monitorCoreJar);
     }
 
     /**
@@ -230,23 +231,23 @@ public class Premain {
      * @return
      * @throws IOException
      */
-    private static boolean addMonitorCoreJarToBootstrapClassLoaderSearch(Instrumentation instrumentation) throws IOException {
+    private static String addMonitorCoreJarToBootstrapClassLoaderSearch(Instrumentation instrumentation) throws IOException {
         Object monitorCoreJarPath = System.getProperties().get("monitor_core_lib_path");
         if (monitorCoreJarPath == null) {
             LOG.log(Level.SEVERE, "monitor core lib path property not found in system property");
-            return false;
+            return null;
         }
 
         String monitorCoreJar = getMonitorCoreJar(monitorCoreJarPath.toString());
         if (monitorCoreJar == null) {
             LOG.log(Level.SEVERE, "monitor core jar can not be found");
-            return false;
+            return null;
         }
 
         JarFile monitorCollectorJarFile = new JarFile(monitorCoreJar);
         instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
 
-        return true;
+        return monitorCoreJar;
     }
 
     /**
@@ -257,10 +258,11 @@ public class Premain {
      * @param instrumentation
      * @param agentJarPath
      * @param logFileHandler
+     * @param monitorCoreJar
      * @throws Exception
      */
     private static void initMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
-                                    FileHandler logFileHandler) throws Exception {
+                                    FileHandler logFileHandler, String monitorCoreJar) throws Exception {
         Class<?> monitorInitializerClass = null;
         try {
             monitorInitializerClass = Class.forName("monitor.core.MonitorInitializer");
@@ -278,12 +280,15 @@ public class Premain {
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
         Method monitorInitMethod = monitorInitializer.getClass().getMethod("initMonitor", monitorInitArgs);
+        String monitorCoreJarPath = System.getProperties().getProperty("monitor_core_lib_path");
 
         Map<String, Object> environment = new HashMap<String, Object>();
         environment.put("monitorFolder", monitorFolder.getPath());
         environment.put("agentArgs", agentArgs);
         environment.put("agentJarPath", agentJarPath);
         environment.put("logFileHandler", logFileHandler);
+        environment.put("monitorCoreJarPath", monitorCoreJarPath);
+        environment.put("monitorCoreJarVersion", monitorCoreJar);
 
         // 反射执行 collector 初始化方法
         monitorInitMethod.invoke(monitorInitializer, environment, monitorConfigProperties, instrumentation);

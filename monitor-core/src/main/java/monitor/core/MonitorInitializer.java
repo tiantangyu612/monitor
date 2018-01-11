@@ -1,21 +1,15 @@
 package monitor.core;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import javassist.ClassPool;
+import javassist.NotFoundException;
 import monitor.core.collector.Collectors;
-import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
 import monitor.core.report.task.MonitorReportTask;
-import monitor.core.util.concurrent.NamedThreadFactory;
 
 import java.lang.instrument.Instrumentation;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
@@ -48,6 +42,11 @@ public class MonitorInitializer {
         Collectors.initCollectors(instrumentation);
         LOG.info("init collectors success!");
 
+        // 将类添加到 classpath
+        if (!addThisToClasspath(monitorEnv)) {
+            return;
+        }
+
         // 启动采集器
         startCollector();
     }
@@ -60,6 +59,30 @@ public class MonitorInitializer {
     private void initLog(MonitorEnv monitorEnv) {
         FileHandler logFileHandler = monitorEnv.getLogFileHandler();
         MonitorLogFactory.initLog(logFileHandler);
+    }
+
+    /**
+     * 添加到 classpath
+     *
+     * @param monitorEnv
+     * @return
+     */
+    private boolean addThisToClasspath(MonitorEnv monitorEnv) {
+        String monitorCoreJarPath = monitorEnv.getMonitorCoreJarPath();
+        ClassPool classPool = ClassPool.getDefault();
+
+        try {
+            classPool.get(this.getClass().getName());
+        } catch (NotFoundException e) {
+            try {
+                classPool.insertClassPath(monitorCoreJarPath);
+            } catch (NotFoundException e1) {
+                LOG.severe("failed to insert javassist class path:" + monitorCoreJarPath);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

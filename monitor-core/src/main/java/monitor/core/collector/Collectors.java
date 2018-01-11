@@ -37,8 +37,8 @@ public class Collectors {
 
         if (MonitorConfig.isEnableJavaMethodCollect()) {
             // 添加 java method 采集器
-            monitorTransformer.addTransformer(new JavaMethodTransformer());
             addCollector(JavaMethodCollector.getInstance());
+            monitorTransformer.addTransformer(new JavaMethodTransformer());
         }
 
         if (MonitorConfig.isEnableTomcatCollect()) {

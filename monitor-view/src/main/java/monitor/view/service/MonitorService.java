@@ -5,5 +5,5 @@ package monitor.view.service;
  * MonitorService
  */
 public interface MonitorService {
-
+    void test();
 }
