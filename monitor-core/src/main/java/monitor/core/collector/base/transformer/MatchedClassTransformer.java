@@ -23,6 +23,5 @@ public interface MatchedClassTransformer extends BytecodeTransformer {
      * @return
      * @throws Exception
      */
-    byte[] transform(MatchedClass matchedClass)
-            throws Exception;
+    byte[] transform(MatchedClass matchedClass) throws Exception;
 }
