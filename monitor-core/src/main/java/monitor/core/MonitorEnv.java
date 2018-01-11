@@ -28,10 +28,6 @@ public class MonitorEnv {
      * monitor core jar 路径
      */
     private String monitorCoreJarPath;
-    /**
-     * monitor core jar 版本号
-     */
-    private String monitorCoreJarVersion;
 
     public MonitorEnv(Map<String, Object> environment) {
         this.monitorFolder = (String) environment.get("monitorFolder");
@@ -39,7 +35,6 @@ public class MonitorEnv {
         this.agentJarPath = (String) environment.get("agentJarPath");
         this.logFileHandler = (FileHandler) environment.get("logFileHandler");
         this.monitorCoreJarPath = (String) environment.get("monitorCoreJarPath");
-        this.monitorCoreJarVersion = (String) environment.get("monitorCoreJarVersion");
     }
 
     public String getMonitorFolder() {
@@ -82,14 +77,6 @@ public class MonitorEnv {
         this.monitorCoreJarPath = monitorCoreJarPath;
     }
 
-    public String getMonitorCoreJarVersion() {
-        return monitorCoreJarVersion;
-    }
-
-    public void setMonitorCoreJarVersion(String monitorCoreJarVersion) {
-        this.monitorCoreJarVersion = monitorCoreJarVersion;
-    }
-
     @Override
     public String toString() {
         return "MonitorEnv{" +
@@ -98,7 +85,6 @@ public class MonitorEnv {
                 ", agentJarPath='" + agentJarPath + '\'' +
                 ", logFileHandler=" + logFileHandler +
                 ", monitorCoreJarPath='" + monitorCoreJarPath + '\'' +
-                ", monitorCoreJarVersion='" + monitorCoreJarVersion + '\'' +
                 '}';
     }
 }

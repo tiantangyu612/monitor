@@ -34,6 +34,11 @@ public class MonitorInitializer {
         initLog(monitorEnv);
         LOG.info("int collector log success!");
 
+        // 将 monitor-core jar 添加到 classpath，防止 javassist 字节码增强时出现 ClassNotFoundException
+        if (!addMonitorCoreJarToClasspath(monitorEnv)) {
+            return;
+        }
+
         // 初始化监控配置
         MonitorConfig.initConfig(monitorEnv, monitorConfigProperties);
         LOG.info("init monitor config success!");
@@ -41,11 +46,6 @@ public class MonitorInitializer {
         // 初始化监控采集器配置信息
         Collectors.initCollectors(instrumentation);
         LOG.info("init collectors success!");
-
-        // 将类添加到 classpath
-        if (!addThisToClasspath(monitorEnv)) {
-            return;
-        }
 
         // 启动采集器
         startCollector();
@@ -62,12 +62,12 @@ public class MonitorInitializer {
     }
 
     /**
-     * 添加到 classpath
+     * 将 monitor-core jar 添加到 classpath
      *
      * @param monitorEnv
      * @return
      */
-    private boolean addThisToClasspath(MonitorEnv monitorEnv) {
+    private boolean addMonitorCoreJarToClasspath(MonitorEnv monitorEnv) {
         String monitorCoreJarPath = monitorEnv.getMonitorCoreJarPath();
         ClassPool classPool = ClassPool.getDefault();
 
