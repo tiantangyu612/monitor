@@ -93,7 +93,10 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
             doEnhanceJavaMethod(ctMethod, ctClass, matchedClass.getClassLoader(), methodIndex++);
         }
 
-        return ctClass.toBytecode();
+        byte[] classBytecode = ctClass.toBytecode();
+        ctClass.defrost();
+
+        return classBytecode;
     }
 
     /**
