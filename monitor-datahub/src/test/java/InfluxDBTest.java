@@ -3,7 +3,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.datahub.storage.influxdb.InfluxDBBuilder;
 import monitor.datahub.storage.influxdb.InfluxDBService;
 import org.influxdb.InfluxDB;
-import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 import org.junit.Before;
 import org.junit.Test;

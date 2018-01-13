@@ -12,7 +12,17 @@
     <context:component-scan base-package="monitor.view.web"/>
     <context:annotation-config/>
 
-    <context:property-placeholder location="classpath:config.properties"/>
+    <mvc:default-servlet-handler/>
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>
+                <value>classpath:velocity.properties</value>
+            </list>
+        </property>
+    </bean>
 
     <mvc:annotation-driven>
         <mvc:message-converters>
@@ -32,6 +42,23 @@
                 <bean class="com.alibaba.fastjson.support.spring.FastJsonJsonView"/>
             </list>
         </property>
+    </bean>
+
+    <bean id="velocityConfig" class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+        <property name="configLocation">
+            <value>classpath:velocity.properties</value>
+        </property>
+    </bean>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
+        <property name="cache" value="false"/>
+        <property name="layoutUrl" value="/layout/defaultLayout.vm"/>
+        <property name="prefix" value="/templates/"/>
+        <property name="suffix" value=".vm"/>
+        <property name="exposeSpringMacroHelpers" value="true"/>
+        <property name="contentType" value="text/html;charset=UTF-8"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView"/>
+        <property name="toolboxConfigLocation" value="/WEB-INF/toolbox.xml"/>
     </bean>
 
     <!-- FastJsonHttpMessageConverter -->

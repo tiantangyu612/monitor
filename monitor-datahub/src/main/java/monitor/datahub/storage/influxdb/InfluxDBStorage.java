@@ -59,7 +59,7 @@ public class InfluxDBStorage implements MonitorStorage {
                 String collectorItemName = collectDataItemsEntry.getKey();
                 List<Map<String, Object>> collectorItemsData = collectDataItemsEntry.getValue();
 
-                tagsToAdd.put(collectorName, collectorItemName);
+//                tagsToAdd.put(collectorName, collectorItemName);
 
                 for (Map<String, Object> collectorItem : collectorItemsData) {
                     for (Map.Entry<String, Object> collectorItemEntry : collectorItem.entrySet()) {
@@ -70,7 +70,7 @@ public class InfluxDBStorage implements MonitorStorage {
                     }
                 }
 
-                if (!tagsToAdd.isEmpty() && !fields.isEmpty()) {
+                if (!fields.isEmpty()) {
                     influxDBService.insert(getMeasurement(application, cluster, collectorName, collectorItemName), tagsToAdd, fields);
                 }
 

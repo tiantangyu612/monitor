@@ -1,0 +1,9 @@
+<html>
+<head>
+    <title>monitor</title>
+    <script src="/static/js/echarts.min.js" type="text/javascript"></script>
+</head>
+<body>
+    $screen_content
+</body>
+</html>
