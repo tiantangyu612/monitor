@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * 监控配置信息
  */
 public class MonitorConfig {
-    private static Logger LOG = MonitorLogFactory.getLogger(MonitorConfig.class);
+    private static final Logger LOGGER = MonitorLogFactory.getLogger(MonitorConfig.class);
 
     /**
      * 监控环境信息
@@ -51,6 +51,10 @@ public class MonitorConfig {
      * 是否启用 tomcat 数据采集
      */
     private static boolean enableTomcatCollect = true;
+    /**
+     * 采集数据上报处理类工厂
+     */
+    private static String monitorReporterFactory = "monitor.core.report.MonitorSocketReporterFactory";
 
     /**
      * 初始化监控配置
@@ -108,6 +112,7 @@ public class MonitorConfig {
     private static void setMonitorBasicConfig(Properties monitorConfig) {
         MonitorConfig.application = monitorConfig.getProperty("application");
         MonitorConfig.cluster = monitorConfig.getProperty("cluster");
+        setMonitorReporterFactory(monitorConfig);
     }
 
     /**
@@ -233,5 +238,25 @@ public class MonitorConfig {
      */
     public static void setEnableTomcatCollect(boolean enableTomcatCollect) {
         MonitorConfig.enableTomcatCollect = enableTomcatCollect;
+    }
+
+    /**
+     * 获取采集数据上报处理类工厂
+     *
+     * @return
+     */
+    public static String getMonitorReporterFactory() {
+        return monitorReporterFactory;
+    }
+
+    /**
+     * 设置采集数据上报处理类工厂
+     *
+     * @param monitorConfig
+     */
+    public static void setMonitorReporterFactory(Properties monitorConfig) {
+        if (null != monitorConfig.get("monitorReporterFactory")) {
+            MonitorConfig.monitorReporterFactory = monitorReporterFactory;
+        }
     }
 }

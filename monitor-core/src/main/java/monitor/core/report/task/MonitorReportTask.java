@@ -2,7 +2,7 @@ package monitor.core.report.task;
 
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
-import monitor.core.report.MonitorReporterFactory;
+import monitor.core.report.Reporters;
 import monitor.core.util.concurrent.NamedThreadFactory;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class MonitorReportTask implements Runnable {
             Collector collector = collectorEntry.getValue();
             if (collector.isEnable()) {
                 Map<String, List<Map<String, Object>>> collectDatas = collector.collectData();
-                MonitorReporterFactory.createMonitorRepoter().reportData(collectDatas);
+                Reporters.getReporter().reportData(collectDatas);
             }
         }
 
