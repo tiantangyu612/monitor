@@ -18,6 +18,7 @@ public class Test {
             @Override
             public void run() {
                 test.say();
+                test.getName("test");
             }
         };
         ExecutorService threadPool = Executors.newFixedThreadPool(20);

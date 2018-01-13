@@ -27,54 +27,34 @@ public class MonitorEnv {
     /**
      * monitor core jar 路径
      */
-    private String monitorCoreJarPath;
+    private String coreJarPath;
 
     public MonitorEnv(Map<String, Object> environment) {
         this.monitorFolder = (String) environment.get("monitorFolder");
         this.agentArgs = (String) environment.get("agentArgs");
         this.agentJarPath = (String) environment.get("agentJarPath");
         this.logFileHandler = (FileHandler) environment.get("logFileHandler");
-        this.monitorCoreJarPath = (String) environment.get("monitorCoreJarPath");
+        this.coreJarPath = (String) environment.get("coreJarPath");
     }
 
     public String getMonitorFolder() {
         return monitorFolder;
     }
 
-    public void setMonitorFolder(String monitorFolder) {
-        this.monitorFolder = monitorFolder;
-    }
-
     public String getAgentArgs() {
         return agentArgs;
-    }
-
-    public void setAgentArgs(String agentArgs) {
-        this.agentArgs = agentArgs;
     }
 
     public String getAgentJarPath() {
         return agentJarPath;
     }
 
-    public void setAgentJarPath(String agentJarPath) {
-        this.agentJarPath = agentJarPath;
-    }
-
     public FileHandler getLogFileHandler() {
         return logFileHandler;
     }
 
-    public void setLogFileHandler(FileHandler logFileHandler) {
-        this.logFileHandler = logFileHandler;
-    }
-
-    public String getMonitorCoreJarPath() {
-        return monitorCoreJarPath;
-    }
-
-    public void setMonitorCoreJarPath(String monitorCoreJarPath) {
-        this.monitorCoreJarPath = monitorCoreJarPath;
+    public String getCoreJarPath() {
+        return coreJarPath;
     }
 
     @Override
@@ -84,7 +64,7 @@ public class MonitorEnv {
                 ", agentArgs='" + agentArgs + '\'' +
                 ", agentJarPath='" + agentJarPath + '\'' +
                 ", logFileHandler=" + logFileHandler +
-                ", monitorCoreJarPath='" + monitorCoreJarPath + '\'' +
+                ", coreJarPath='" + coreJarPath + '\'' +
                 '}';
     }
 }

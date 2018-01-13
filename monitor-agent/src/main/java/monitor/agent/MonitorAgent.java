@@ -122,7 +122,7 @@ public class MonitorAgent {
         environment.put("agentArgs", agentArgs);
         environment.put("agentJarPath", agentJarPath);
         environment.put("logFileHandler", logFileHandler);
-        environment.put("monitorCoreJarPath", monitorCoreJarPath);
+        environment.put("coreJarPath", monitorCoreJarPath);
 
         // 反射执行 collector 初始化方法
         monitorInitMethod.invoke(monitorInitializer, environment, monitorConfigProperties, instrumentation);

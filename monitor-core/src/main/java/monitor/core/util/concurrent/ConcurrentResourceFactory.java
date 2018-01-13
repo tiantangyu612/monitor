@@ -12,6 +12,11 @@ public class ConcurrentResourceFactory<T, R> {
     private AtomicReference<T>[] values;
     private LinkedBlockingQueue<Integer> linkedBlockingQueue;
 
+    /**
+     * 初始化资源池
+     *
+     * @param size 资源池大小
+     */
     @SuppressWarnings("unchecked")
     public ConcurrentResourceFactory(int size) {
         if (size > 5000) {
@@ -21,22 +26,29 @@ public class ConcurrentResourceFactory<T, R> {
         } else {
             this.values = new AtomicReference[size];
 
-            int i;
-            for (i = 0; i < size; ++i) {
-                this.values[i] = new AtomicReference();
-                this.values[i].set(null);
+            int count;
+            for (count = 0; count < size; ++count) {
+                this.values[count] = new AtomicReference();
+                this.values[count].set(null);
             }
 
             this.resources = (R[]) new Object[size];
             this.linkedBlockingQueue = new LinkedBlockingQueue<Integer>(size);
 
-            for (i = 0; i < size; ++i) {
-                this.linkedBlockingQueue.add(i);
+            for (count = 0; count < size; ++count) {
+                this.linkedBlockingQueue.add(count);
             }
 
         }
     }
 
+    /**
+     * 获取资源对象
+     *
+     * @param resourceId 资源 id
+     * @param clazz      资源类名称
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public T obtainValue(int resourceId, Class<? extends T> clazz) {
         AtomicReference atomicReference = this.values[resourceId];
@@ -58,6 +70,11 @@ public class ConcurrentResourceFactory<T, R> {
         }
     }
 
+    /**
+     * 获取所有资源对象
+     *
+     * @return
+     */
     public AtomicReference<T>[] getAllValues() {
         return this.values;
     }
@@ -67,7 +84,13 @@ public class ConcurrentResourceFactory<T, R> {
         return size == null ? this.resources.length : size;
     }
 
-    public Integer registerResource(R resource) {
+    /**
+     * 添加资源
+     *
+     * @param resource
+     * @return
+     */
+    public Integer addResource(R resource) {
         Integer index = this.linkedBlockingQueue.poll();
         if (index == null) {
             return null;
@@ -77,6 +100,12 @@ public class ConcurrentResourceFactory<T, R> {
         }
     }
 
+    /**
+     * 获取资源
+     *
+     * @param resourceId
+     * @return
+     */
     public R getResource(int resourceId) {
         return this.resources[resourceId];
     }

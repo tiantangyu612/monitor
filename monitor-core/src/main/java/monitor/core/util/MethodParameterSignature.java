@@ -83,4 +83,11 @@ public class MethodParameterSignature {
             throw new RuntimeException("wrong type:" + ch);
         }
     }
+
+    @Override
+    public String toString() {
+        return "MethodParameterSignature{" +
+                "paramSignature='" + paramSignature + '\'' +
+                '}';
+    }
 }

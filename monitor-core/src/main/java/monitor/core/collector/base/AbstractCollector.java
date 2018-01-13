@@ -66,7 +66,7 @@ public abstract class AbstractCollector implements Collector {
      * @return
      */
     public Map<String, List<Map<String, Object>>> collectData() {
-        List<CollectorItem> collectorItems = this.collectorItems;
+        List<CollectorItem> collectorItems = getCollectorItems();
 
         Map<String, List<Map<String, Object>>> collectDataMap = new HashMap<String, List<Map<String, Object>>>();
         if (CollectionUtils.isNotEmpty(collectorItems)) {
@@ -76,15 +76,5 @@ public abstract class AbstractCollector implements Collector {
         }
 
         return collectDataMap;
-    }
-
-    /**
-     * 是否项目启动时收集
-     *
-     * @return
-     */
-    @Override
-    public boolean isCollectOnStart() {
-        return false;
     }
 }

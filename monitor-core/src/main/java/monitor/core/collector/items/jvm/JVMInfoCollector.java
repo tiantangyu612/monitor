@@ -22,9 +22,4 @@ public class JVMInfoCollector extends AbstractCollector {
     public String getName() {
         return "JVMInfo";
     }
-
-    @Override
-    public boolean isCollectOnStart() {
-        return true;
-    }
 }

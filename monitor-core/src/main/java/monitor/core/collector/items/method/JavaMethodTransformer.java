@@ -5,7 +5,7 @@ import monitor.core.annotation.Monitor;
 import monitor.core.collector.base.transformer.MatchedClass;
 import monitor.core.collector.base.transformer.MatchedClassTransformer;
 import monitor.core.log.MonitorLogFactory;
-import monitor.core.util.JavassistUtil;
+import monitor.core.util.MonitorJavassistUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
      */
     @Override
     public MatchedClass getMatchedClass(ClassLoader loader, String className, byte[] classfileBuffer, Class<?> classBeingRedefined) {
-        if (JavassistUtil.isIgnoredClass(className)) {
+        if (MonitorJavassistUtil.isIgnoredClass(className)) {
             return null;
         }
 
@@ -47,7 +47,7 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
                 CtMethod[] methods = ctClass.getDeclaredMethods();
                 if (methods != null && methods.length != 0) {
                     for (CtMethod method : methods) {
-                        if (!JavassistUtil.isIgnoredMethod(method.getName())) {
+                        if (!MonitorJavassistUtil.isIgnoredMethod(method.getName())) {
                             // 只有标注了 @Monitor 注解的方法才能被监控
                             if (method.hasAnnotation(Monitor.class)) {
                                 matchedClass.addCtMethods(method);
@@ -112,7 +112,7 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
             if (classBeingRedefined != null) {
                 superClass = classBeingRedefined.getSuperclass();
                 if (superClass != null) {
-                    JavassistUtil.addToClassPathIfNotExist(superClass.getName(), loader);
+                    MonitorJavassistUtil.getClass(superClass.getName(), loader);
                 }
             }
         } catch (Exception e) {
@@ -134,21 +134,21 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
      */
     private void doEnhanceJavaMethod(CtMethod method, CtClass clazz, ClassLoader loader, int index) throws CannotCompileException, NotFoundException, ClassNotFoundException {
         String methodName = method.getName();
-        JavassistUtil.MethodInfo methodInfo = JavassistUtil.getMethodInfo(method.getSignature());
-        Iterator<String> paramClassListIterator = methodInfo.getParamClassList().iterator();
+        MonitorJavassistUtil.EnhancedMethodInfo enhancedMethodInfo = MonitorJavassistUtil.getMethodInfo(method.getSignature());
+        Iterator<String> paramClassListIterator = enhancedMethodInfo.getParamClassList().iterator();
 
         while (paramClassListIterator.hasNext()) {
             String paramClass = paramClassListIterator.next();
-            JavassistUtil.addToClassPathIfNotExist(paramClass, loader);
+            MonitorJavassistUtil.getClass(paramClass, loader);
         }
 
-        if (methodInfo.getReturnClass() != null) {
-            JavassistUtil.addToClassPathIfNotExist(methodInfo.getReturnClass(), loader);
+        if (enhancedMethodInfo.getReturnClass() != null) {
+            MonitorJavassistUtil.getClass(enhancedMethodInfo.getReturnClass(), loader);
         }
 
-        String methodFullName = methodName + methodInfo.getMethodSignature();
+        String methodFullName = methodName + enhancedMethodInfo.getMethodSignature();
         ClassAndMethod classAndMethod = new ClassAndMethod(clazz.getName(), methodFullName);
-        Integer resourceId = JavaMethodCollectorItem.RESOURCE_FACTORY.registerResource(classAndMethod);
+        Integer resourceId = JavaMethodCollectorItem.RESOURCE_FACTORY.addResource(classAndMethod);
         if (resourceId == null) {
             LOGGER.severe("not enough resource:" + classAndMethod.toString());
         } else {
@@ -158,8 +158,9 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
             }
             newMethod.setBody(buildNewMethodBody(method, index, resourceId));
 
-            JavassistUtil.copyMethodAnnotationAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
-            JavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
+            // 将
+            MonitorJavassistUtil.copyMethodAnnotationAttributes(method.getMethodInfo(), newMethod.getMethodInfo());
+            MonitorJavassistUtil.removeAnnotationAttribute(method.getMethodInfo());
             clazz.addMethod(newMethod);
             LOGGER.info(" Interceptor added for " + classAndMethod.getClassName() + "." + classAndMethod.getMethodName() + ",resourceId[[" + resourceId + "]]");
         }
@@ -175,7 +176,7 @@ public class JavaMethodTransformer implements MatchedClassTransformer {
      * @throws NotFoundException
      */
     private static String buildNewMethodBody(CtMethod method, int index, int resourceId) throws NotFoundException {
-        String oldName = method.getName() + "$monitorProxy" + index;
+        String oldName = method.getName() + MonitorJavassistUtil.MONITOR_METHOD_SUFFIX + index;
         method.setName(oldName);
         if (Modifier.isPublic(method.getModifiers())) {
             int privateModifier = method.getModifiers() + 1;

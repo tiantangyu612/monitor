@@ -67,7 +67,7 @@ public class MonitorInitializer {
      * @return
      */
     private void addMonitorCoreJarToClasspath(MonitorEnv monitorEnv) throws NotFoundException {
-        String monitorCoreJarPath = monitorEnv.getMonitorCoreJarPath();
+        String monitorCoreJarPath = monitorEnv.getCoreJarPath();
         ClassPool classPool = ClassPool.getDefault();
 
         try {

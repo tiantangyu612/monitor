@@ -6,15 +6,20 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.AttributeInfo;
+import javassist.bytecode.MethodInfo;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 
 import java.util.*;
 
 /**
  * Created by lizhitao on 2018/1/9.
- * javassist 工具类
+ * monitor javassist 工具类
  */
-public class JavassistUtil {
+public class MonitorJavassistUtil {
+    /**
+     * 被增强的 monitor 方法后缀
+     */
+    public static final String MONITOR_METHOD_SUFFIX = "$monitorProxy";
     /**
      * 不需要增强的方法名称
      */
@@ -33,17 +38,7 @@ public class JavassistUtil {
         IGNORED_METHOD.add("main");
     }
 
-    private JavassistUtil() {
-    }
-
-    /**
-     * 是否为不需要增强的 java method
-     *
-     * @param methodName
-     * @return
-     */
-    public static boolean isIgnoredMethod(String methodName) {
-        return IGNORED_METHOD.contains(methodName) || methodName.contains("$monitorProxy");
+    private MonitorJavassistUtil() {
     }
 
     /**
@@ -58,7 +53,17 @@ public class JavassistUtil {
     }
 
     /**
-     * 将类添加到 classpath
+     * 是否为不需要增强的 java method，已经被增强的 monitor 方法也不会被再次增强
+     *
+     * @param methodName
+     * @return
+     */
+    public static boolean isIgnoredMethod(String methodName) {
+        return IGNORED_METHOD.contains(methodName) || methodName.contains(MonitorJavassistUtil.MONITOR_METHOD_SUFFIX);
+    }
+
+    /**
+     * 获取 CtClass，若获取不到则将类添加到 classpath
      *
      * @param className
      * @param loader
@@ -66,7 +71,7 @@ public class JavassistUtil {
      * @throws ClassNotFoundException
      * @throws NotFoundException
      */
-    public static CtClass addToClassPathIfNotExist(String className, ClassLoader loader) throws ClassNotFoundException, NotFoundException {
+    public static CtClass getClass(String className, ClassLoader loader) throws ClassNotFoundException, NotFoundException {
         ClassPool pool = ClassPool.getDefault();
 
         try {
@@ -81,14 +86,14 @@ public class JavassistUtil {
     /**
      * 获取方法信息
      *
-     * @param signature
+     * @param methodSignature 方法签名
      * @return
      */
-    public static MethodInfo getMethodInfo(String signature) {
-        int idx1 = signature.indexOf("(");
-        int idx2 = signature.indexOf(")");
-        String source = signature.substring(idx1 + 1, idx2);
-        String returnTypeString = signature.substring(idx2 + 1);
+    public static EnhancedMethodInfo getMethodInfo(String methodSignature) {
+        int idx1 = methodSignature.indexOf("(");
+        int idx2 = methodSignature.indexOf(")");
+        String source = methodSignature.substring(idx1 + 1, idx2);
+        String returnTypeString = methodSignature.substring(idx2 + 1);
         int index = 0;
         List<MethodParameterSignature> methodParameterSignatures = new ArrayList<MethodParameterSignature>();
         StringBuilder sb = new StringBuilder();
@@ -121,16 +126,16 @@ public class JavassistUtil {
 
                 methodName.append(")");
                 MethodParameterSignature methodParameterSignature = new MethodParameterSignature(returnTypeString);
-                MethodInfo methodInfo = new MethodInfo(classTypeStrings, methodName.toString(), methodParameterSignature.getClassTypeString());
-                return methodInfo;
+                EnhancedMethodInfo enhancedMethodInfo = new EnhancedMethodInfo(classTypeStrings, methodName.toString(), methodParameterSignature.getClassTypeString());
+                return enhancedMethodInfo;
             }
 
             char paramClassList = source.charAt(index);
-            if (paramClassList == 91) {
+            if (paramClassList == CharUtils.LEFT_SQUARE_BRACKET) {
                 sb.append(paramClassList);
                 ++index;
                 paramClassList = source.charAt(index);
-                if (paramClassList == 91) {
+                if (paramClassList == CharUtils.LEFT_SQUARE_BRACKET) {
                     sb.append(paramClassList);
                     ++index;
                     index = getTypeString(sb, source, index);
@@ -146,47 +151,47 @@ public class JavassistUtil {
     private static int getTypeString(StringBuilder sb, String source, int index) {
         char ch = source.charAt(index++);
         sb.append(ch);
-        if (ch == 76) {
+        if (ch == 'L') {
             do {
                 ch = source.charAt(index++);
                 sb.append(ch);
-            } while (ch != 59);
+            } while (ch != CharUtils.SEMICOLON);
         }
 
         return index;
     }
 
     /**
-     * 拷贝 Annotation 注解到新方法上
+     * 拷贝方法 Annotation 以及方法参数 Annotation 注解到另一个方法上
      *
-     * @param oldMethod
-     * @param newMethod
+     * @param oneMethod
+     * @param anotherMethod
      */
-    public static void copyMethodAnnotationAttributes(javassist.bytecode.MethodInfo oldMethod, javassist.bytecode.MethodInfo newMethod) {
-        if (oldMethod != null && newMethod != null) {
-            AnnotationsAttribute oldAnnotations = (AnnotationsAttribute) oldMethod.getAttribute("RuntimeVisibleAnnotations");
-            ParameterAnnotationsAttribute oldParamAnnotations = (ParameterAnnotationsAttribute) oldMethod.getAttribute("RuntimeVisibleParameterAnnotations");
-            AnnotationsAttribute newAnnotations = (AnnotationsAttribute) newMethod.getAttribute("RuntimeVisibleAnnotations");
-            ParameterAnnotationsAttribute newParamAnnotations = (ParameterAnnotationsAttribute) newMethod.getAttribute("RuntimeVisibleParameterAnnotations");
+    public static void copyMethodAnnotationAttributes(MethodInfo oneMethod, MethodInfo anotherMethod) {
+        if (oneMethod != null && anotherMethod != null) {
+            AnnotationsAttribute oneMethodAnnotations = (AnnotationsAttribute) oneMethod.getAttribute("RuntimeVisibleAnnotations");
+            ParameterAnnotationsAttribute oneMethodParamAnnotations = (ParameterAnnotationsAttribute) oneMethod.getAttribute("RuntimeVisibleParameterAnnotations");
+            AnnotationsAttribute anotherMethodAnnotations = (AnnotationsAttribute) anotherMethod.getAttribute("RuntimeVisibleAnnotations");
+            ParameterAnnotationsAttribute anotherMethodParamAnnotations = (ParameterAnnotationsAttribute) anotherMethod.getAttribute("RuntimeVisibleParameterAnnotations");
             AttributeInfo attributeInfo;
-            if (oldAnnotations != null && newAnnotations == null) {
-                attributeInfo = oldAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
-                newMethod.addAttribute(attributeInfo);
+            if (oneMethodAnnotations != null && anotherMethodAnnotations == null) {
+                attributeInfo = oneMethodAnnotations.copy(anotherMethod.getConstPool(), Collections.EMPTY_MAP);
+                anotherMethod.addAttribute(attributeInfo);
             }
 
-            if (oldParamAnnotations != null && newParamAnnotations == null) {
-                attributeInfo = oldParamAnnotations.copy(newMethod.getConstPool(), Collections.EMPTY_MAP);
-                newMethod.addAttribute(attributeInfo);
+            if (oneMethodParamAnnotations != null && anotherMethodParamAnnotations == null) {
+                attributeInfo = oneMethodParamAnnotations.copy(anotherMethod.getConstPool(), Collections.EMPTY_MAP);
+                anotherMethod.addAttribute(attributeInfo);
             }
         }
     }
 
     /**
-     * 移除方法 Annotation 注解
+     * 移除方法 Annotation 以及方法参数 Annotation 注解
      *
      * @param methodInfo
      */
-    public static void removeAnnotationAttribute(javassist.bytecode.MethodInfo methodInfo) {
+    public static void removeAnnotationAttribute(MethodInfo methodInfo) {
         if (methodInfo != null) {
             List allAttributes = methodInfo.getAttributes();
             if (allAttributes != null) {
@@ -212,12 +217,21 @@ public class JavassistUtil {
     /**
      * 方法信息
      */
-    public static class MethodInfo {
+    public static class EnhancedMethodInfo {
+        /**
+         * 方法参数列表
+         */
         private List<String> paramClassList;
+        /**
+         * 方法签名
+         */
         private String methodSignature;
+        /**
+         * 方法返回类型
+         */
         private String returnClass;
 
-        public MethodInfo(List<String> paramClassList, String methodSignature, String returnClass) {
+        public EnhancedMethodInfo(List<String> paramClassList, String methodSignature, String returnClass) {
             this.paramClassList = paramClassList;
             this.methodSignature = methodSignature;
             this.returnClass = returnClass;
@@ -241,7 +255,7 @@ public class JavassistUtil {
 
         @Override
         public String toString() {
-            return "MethodInfo{" +
+            return "EnhancedMethodInfo{" +
                     "paramClassList=" + paramClassList +
                     ", methodSignature='" + methodSignature + '\'' +
                     ", returnClass='" + returnClass + '\'' +

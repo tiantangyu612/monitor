@@ -17,20 +17,6 @@ public interface CollectorItem {
     String getName();
 
     /**
-     * 是否启用该采集项
-     *
-     * @param enable
-     */
-    void setEnable(boolean enable);
-
-    /**
-     * 获取采集项是否启用
-     *
-     * @return
-     */
-    boolean isEnable();
-
-    /**
      * 设置一个采集周期内的最大采集数据条数
      *
      * @param maxCollectCount
@@ -51,18 +37,4 @@ public interface CollectorItem {
      * @return
      */
     List<Map<String, Object>> collectData();
-
-    /**
-     * 设置是否需要上报监控数据到监控数据中心
-     *
-     * @param needReport
-     */
-    void setNeedReport(boolean needReport);
-
-    /**
-     * 获取是否需要上报监控数据到监控数据中心状态
-     *
-     * @return
-     */
-    boolean isNeedReport();
 }

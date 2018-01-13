@@ -11,8 +11,17 @@ import java.util.List;
  * 匹配到的需要增加方法监控字节码的类信息
  */
 public class MatchedClass {
+    /**
+     * 加载该类的 ClassLoader
+     */
     private ClassLoader classLoader;
+    /**
+     * 该类的 CtClass
+     */
     private CtClass ctClass;
+    /**
+     * 需要监控的 CtMethod 列表，标注了 @Monitor 的方法会被监控
+     */
     private List<CtMethod> ctMethods;
 
     public MatchedClass() {
@@ -54,7 +63,8 @@ public class MatchedClass {
     @Override
     public String toString() {
         return "MatchedClass{" +
-                "ctClass=" + ctClass +
+                "classLoader=" + classLoader +
+                ", ctClass=" + ctClass +
                 ", ctMethods=" + ctMethods +
                 '}';
     }

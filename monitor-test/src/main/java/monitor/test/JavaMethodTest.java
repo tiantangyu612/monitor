@@ -18,4 +18,16 @@ public class JavaMethodTest {
             e.printStackTrace();
         }
     }
+
+    @Monitor
+    public String getName(String name) {
+        try {
+            Thread.sleep(Math.abs(new Random().nextInt(19)) + 1);
+            return "name is: " + name;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return Thread.currentThread().getName();
+    }
 }
