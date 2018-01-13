@@ -34,5 +34,24 @@
             <artifactId>log4j</artifactId>
         </dependency>
         <!-- end log -->
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+        <!-- start guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <!-- end guava -->
+
+        <!-- start junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <!-- end junit -->
     </dependencies>
 </project>

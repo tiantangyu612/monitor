@@ -5,7 +5,7 @@ import org.influxdb.InfluxDBFactory;
 
 /**
  * Created by lizhitao on 2018/1/13.
- * InfluxDB  操作类
+ * InfluxDB  Builder
  */
 public class InfluxDBBuilder {
     private String username;

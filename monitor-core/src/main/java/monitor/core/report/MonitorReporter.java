@@ -1,5 +1,7 @@
 package monitor.core.report;
 
+import monitor.core.report.vo.ReportData;
+
 import java.util.List;
 import java.util.Map;
 
@@ -11,8 +13,8 @@ public interface MonitorReporter {
     /**
      * 上报监控数据
      *
-     * @param monitorData
+     * @param reportData
      * @return
      */
-    boolean reportData(Map<String, List<Map<String, Object>>> monitorData);
+    boolean reportData(ReportData reportData);
 }

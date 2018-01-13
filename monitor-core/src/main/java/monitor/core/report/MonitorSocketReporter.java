@@ -1,16 +1,14 @@
 package monitor.core.report;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.report.vo.ReportData;
 import monitor.core.util.IOUtils;
 
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,15 +31,15 @@ public class MonitorSocketReporter implements MonitorReporter {
     /**
      * 上报数据
      *
-     * @param monitorData
+     * @param reportData
      * @return
      */
     @Override
-    public boolean reportData(Map<String, List<Map<String, Object>>> monitorData) {
+    public boolean reportData(ReportData reportData) {
         try {
-            String monitorJsonData = JSON.toJSONString(monitorData, SerializerFeature.PrettyFormat);
+            String reportJsonData = JSON.toJSONString(reportData);
 
-            return sendDataToDataHub(monitorJsonData);
+            return sendDataToDataHub(reportJsonData);
         } catch (Throwable e) {
             String errorMsg = "reportData failure!!!!";
             LOGGER.log(Level.SEVERE, errorMsg, e);
@@ -52,10 +50,10 @@ public class MonitorSocketReporter implements MonitorReporter {
     /**
      * 将数据上报到数据中心
      *
-     * @param monitorJsonData
+     * @param reportJsonData
      * @return
      */
-    private boolean sendDataToDataHub(String monitorJsonData) {
+    private boolean sendDataToDataHub(String reportJsonData) {
         Socket socket = createSendDataSocket();
         if (null != socket) {
             OutputStream outputStream = null;
@@ -64,7 +62,7 @@ public class MonitorSocketReporter implements MonitorReporter {
             try {
                 outputStream = socket.getOutputStream();
                 dataOutputStream = new DataOutputStream(outputStream);
-                dataOutputStream.writeUTF(monitorJsonData);
+                dataOutputStream.writeUTF(reportJsonData);
 
                 return true;
             } catch (Exception e) {

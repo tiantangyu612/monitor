@@ -7,14 +7,17 @@ import org.influxdb.dto.QueryResult;
 
 import java.util.Map;
 
-public class InfluxdbService {
+/**
+ * Created by lizhitao on 2018/1/13.
+ * InfluxDB 操作类
+ */
+public class InfluxDBService {
     private String database;
     private String policyName;
     private InfluxDB influxDB;
 
-    public InfluxdbService(String database, String policyName, InfluxDB influxDB) {
+    public InfluxDBService(String database, InfluxDB influxDB) {
         this.database = database;
-        this.policyName = policyName;
         this.influxDB = influxDB;
     }
 
@@ -33,7 +36,6 @@ public class InfluxdbService {
      * @param replicationNum 备份数量
      */
     public void createRetentionPolicy(String duration, Integer replicationNum) {
-
         String command = String.format("CREATE RETENTION POLICY \"%s\" ON \"%s\" DURATION %s REPLICATION %s DEFAULT",
                 policyName, database, duration, replicationNum);
 
@@ -43,9 +45,9 @@ public class InfluxdbService {
     /**
      * 插入数据
      *
-     * @param measurement a Point in a fluent manner
-     * @param tagsToAdd   the Map of tags to add
-     * @param fields      the fields to add
+     * @param measurement a Point in a fluent manner，传统数据库的表的概念
+     * @param tagsToAdd   the Map of tags to add，各种记录值（没有索引的属性）也就是记录的值
+     * @param fields      the fields to add，各种有索引的属性
      */
     public void insert(String measurement, Map<String, String> tagsToAdd, Map<String, Object> fields) {
 

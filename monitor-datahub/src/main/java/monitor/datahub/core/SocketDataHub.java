@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class SocketDataHub extends AbstractMonitorDataHub {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 200, 30, TimeUnit.SECONDS,
+    private final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 1, 30, TimeUnit.SECONDS,
             new ArrayBlockingQueue<Runnable>(2000), new ThreadPoolExecutor.DiscardPolicy());
 
     private static final int PORT = 16666;
@@ -73,10 +73,10 @@ public class SocketDataHub extends AbstractMonitorDataHub {
                 inputStream = socket.getInputStream();
 
                 dataInputStream = new DataInputStream(inputStream);
-                String collectData = dataInputStream.readUTF();
+                String reportData = dataInputStream.readUTF();
 
                 // 存储监控数据
-                getMonitorStorageFactory().crateMonitorStorage().storageData(collectData);
+                getMonitorStorage().storageData(reportData);
             } catch (IOException e) {
                 logger.error("socket get input stream error, cause: ", e);
             } finally {

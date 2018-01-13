@@ -1,6 +1,5 @@
 package monitor.datahub.storage.influxdb;
 
-import monitor.datahub.storage.InfluxDBStorage;
 import monitor.datahub.storage.MonitorStorage;
 import monitor.datahub.storage.MonitorStorageFactory;
 
