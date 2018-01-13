@@ -23,8 +23,8 @@ public class MonitorConfigProperties {
     /**
      * 加载监控配置
      *
-     * @param agentArgs
-     * @param monitorFolder
+     * @param agentArgs     传入的 agent 参数
+     * @param monitorFolder monitor-agent-{version}.jar 所在文件夹路径
      * @return
      * @throws Exception
      */

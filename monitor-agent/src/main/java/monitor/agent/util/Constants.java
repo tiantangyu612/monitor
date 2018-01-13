@@ -18,6 +18,10 @@ public class Constants {
      */
     public static final String MONITOR_INITIALIZER_CLASS = "monitor.core.MonitorInitializer";
     /**
+     * 监控初始化方法名
+     */
+    public static final String MONITOR_INITIALIZER_METHOD = "initMonitor";
+    /**
      * 监控 agent jar 所在文件夹名称常量，文件夹名称必须为该名称
      */
     public static final String MONITOR_FOLDER_NAME = "monitor";

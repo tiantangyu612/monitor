@@ -1,5 +1,7 @@
 package monitor.agent.log;
 
+import monitor.agent.util.StandardSystemProperty;
+
 import java.io.File;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -17,11 +19,11 @@ public class AgentLoggerFactory {
     /**
      * 日志文件个数
      */
-    public static int LOG_FILE_COUNT = 3;
+    private static int LOG_FILE_COUNT = 3;
     /**
      * 日志文件大小，100 MB
      */
-    public static int LOG_FILE_SIZE = 100 * ONE_MB_BYTES;
+    private static int LOG_FILE_SIZE = 100 * ONE_MB_BYTES;
 
     /**
      * 获取 Logger
@@ -79,7 +81,7 @@ public class AgentLoggerFactory {
         }
 
         if (logFilePath == null) {
-            logFilePath = (String) System.getProperties().get("user.home");
+            logFilePath = StandardSystemProperty.USER_HOME.value();
             if (logFilePath == null) {
                 logFilePath = "/tmp";
             }

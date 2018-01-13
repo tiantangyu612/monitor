@@ -24,15 +24,15 @@ public class MonitorAgent {
     private static Logger LOG = AgentLoggerFactory.getLogger(MonitorAgent.class);
 
     /**
-     * 监控 agent jar 所在文件夹名称
+     * 监控 agent jar 所在文件夹名称，该文件夹名称必须为 monitor
      */
     private static File monitorFolder = null;
 
     /**
      * 初始化 agent
      *
-     * @param agentArgs
-     * @param instrumentation
+     * @param agentArgs       传入的 agent 参数
+     * @param instrumentation Instrumentation 对象
      * @throws Exception
      */
     public static void init(String agentArgs, Instrumentation instrumentation) throws Exception {
@@ -46,9 +46,10 @@ public class MonitorAgent {
         FileHandler logFileHandler = initAndGetLogFileHandler(agentArgs, monitorConfigProperties);
 
         // 获取最高版的监控 core jar，并添加到 BootstrapClassLoaderSearch
+        // 将该 jar 包添加到 Bootstrap Classloader Search 用于解决 tomcat 特殊的类加载机制加载不到该 jar 包中的类
         String monitorCoreJarPath = MonitorCoreJarUtil.getMonitorCoreJarPath();
-        JarFile monitorCollectorJarFile = new JarFile(monitorCoreJarPath);
-        instrumentation.appendToBootstrapClassLoaderSearch(monitorCollectorJarFile);
+        JarFile monitorCoreJarFile = new JarFile(monitorCoreJarPath);
+        instrumentation.appendToBootstrapClassLoaderSearch(monitorCoreJarFile);
 
         // 执行初始化 monitor 操作
         doInitMonitor(monitorConfigProperties, agentArgs, instrumentation, agentJarPath, logFileHandler, monitorCoreJarPath);
@@ -57,9 +58,9 @@ public class MonitorAgent {
     /**
      * 初始化 FileHandler 并返回
      *
-     * @param agentArgs
-     * @param monitorConfigProperties
-     * @return
+     * @param agentArgs               传入的 agent 参数
+     * @param monitorConfigProperties 监控配置属性
+     * @return FileHandler
      */
     private static FileHandler initAndGetLogFileHandler(String agentArgs, Properties monitorConfigProperties) {
         // 初始化日志配置
@@ -74,8 +75,8 @@ public class MonitorAgent {
     /**
      * 验证 agent jar path 是否符合规则，若合法返回 agent jar path
      *
-     * @param agentArgs
-     * @return
+     * @param agentArgs 传入的 agent 参数
+     * @return String，agent jar 路径
      */
     private static String validateAndGetAgentJarPath(String agentArgs) throws MonitorJarNotFoundException {
         String agentJarPath = Premain.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -100,12 +101,12 @@ public class MonitorAgent {
     /**
      * 执行初始化 monitor 采集器
      *
-     * @param monitorConfigProperties
-     * @param agentArgs
-     * @param instrumentation
-     * @param agentJarPath
-     * @param logFileHandler
-     * @param monitorCoreJarPath
+     * @param monitorConfigProperties 监控配置属性
+     * @param agentArgs               传入的 agent 参数
+     * @param instrumentation         Instrumentation 对象
+     * @param agentJarPath            agent jar 文件路径
+     * @param logFileHandler          commons logging FileHandler
+     * @param monitorCoreJarPath      monitor-core-{version}.jar 文件路径
      * @throws Exception
      */
     private static void doInitMonitor(Properties monitorConfigProperties, String agentArgs, Instrumentation instrumentation, String agentJarPath,
@@ -114,7 +115,7 @@ public class MonitorAgent {
         Object monitorInitializer = monitorInitializerClass.newInstance();
 
         Class<?>[] monitorInitArgs = {Map.class, Properties.class, Instrumentation.class};
-        Method monitorInitMethod = monitorInitializer.getClass().getMethod("initMonitor", monitorInitArgs);
+        Method monitorInitMethod = monitorInitializer.getClass().getMethod(Constants.MONITOR_INITIALIZER_METHOD, monitorInitArgs);
 
         Map<String, Object> environment = new HashMap<String, Object>();
         environment.put("monitorFolder", monitorFolder.getPath());

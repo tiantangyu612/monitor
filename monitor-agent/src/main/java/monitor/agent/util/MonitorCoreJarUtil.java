@@ -23,7 +23,7 @@ public class MonitorCoreJarUtil {
     /**
      * 获取最高版的监控 core jar
      *
-     * @return
+     * @return String
      * @throws IOException
      */
     public static String getMonitorCoreJarPath() throws Exception {
@@ -47,7 +47,7 @@ public class MonitorCoreJarUtil {
     /**
      * 获取监控 core jar file
      *
-     * @param monitorCoreJarPath
+     * @param monitorCoreJarPath monitor-core-{version}.jar 文件路径
      * @return
      * @throws IOException
      */
@@ -78,7 +78,7 @@ public class MonitorCoreJarUtil {
     /**
      * 查找 monitor core jar
      *
-     * @param monitorCoreJarPath
+     * @param monitorCoreJarPath monitor-core-{version}.jar 文件路径
      * @return
      */
     private static List<String> searchMonitorCoreJars(File monitorCoreJarPath) {
@@ -112,12 +112,12 @@ public class MonitorCoreJarUtil {
     /**
      * 获取最高版本的 monitor-core jar 版本号
      *
-     * @param collectorJars
+     * @param monitorCoreJars 监控 core jar 列表
      * @return
      */
-    private static String getHighestMonitorCoreJar(List<String> collectorJars) {
+    private static String getHighestMonitorCoreJar(List<String> monitorCoreJars) {
         String highestCollectorJar = null;
-        for (String collectorJar : collectorJars) {
+        for (String collectorJar : monitorCoreJars) {
             if (highestCollectorJar == null) {
                 highestCollectorJar = collectorJar;
             } else if (isHigherVersionJar(collectorJar, highestCollectorJar)) {
@@ -130,8 +130,8 @@ public class MonitorCoreJarUtil {
     /**
      * 是否是更高版本的 jar 版本号
      *
-     * @param jar
-     * @param anotherJar
+     * @param jar        jar 名称
+     * @param anotherJar 另一个 jar 名称
      * @return
      */
     private static boolean isHigherVersionJar(String jar, String anotherJar) {
@@ -155,7 +155,7 @@ public class MonitorCoreJarUtil {
     /**
      * 分割 jar 版本号
      *
-     * @param jarVersion
+     * @param jarVersion jar 版本
      * @return
      */
     private static int[] splitVersion(String jarVersion) {
