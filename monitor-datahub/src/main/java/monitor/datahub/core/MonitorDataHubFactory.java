@@ -1,4 +1,4 @@
-package monitor.datahub;
+package monitor.datahub.core;
 
 /**
  * Created by lizhitao on 2018/1/11.
