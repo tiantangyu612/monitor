@@ -3,9 +3,9 @@ package monitor.core.report;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.util.IOUtils;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -70,27 +70,9 @@ public class MonitorSocketReporter implements MonitorReporter {
             } catch (Exception e) {
                 LOGGER.log(Level.SEVERE, "sendDataToDataHub error, cause: ", e);
             } finally {
-                if (null != dataOutputStream) {
-                    try {
-                        dataOutputStream.close();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "close dataOutputStream error, cause: ", e);
-                    }
-                }
-
-                if (null != outputStream) {
-                    try {
-                        outputStream.close();
-                    } catch (IOException e) {
-                        LOGGER.log(Level.SEVERE, "close socket outputStream error, cause: ", e);
-                    }
-                }
-
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "close socket error, cause: ", e);
-                }
+                IOUtils.closeQuiet(dataOutputStream);
+                IOUtils.closeQuiet(outputStream);
+                IOUtils.closeQuiet(socket);
             }
         }
 

@@ -1,5 +1,9 @@
 package monitor.datahub.core;
 
+import monitor.datahub.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +17,9 @@ import java.util.concurrent.TimeUnit;
  * Created by lizhitao on 2018/1/11.
  * 使用 Socket 收集采集器采集的数据
  */
-public class SocketDataHub implements MonitorDataHub {
+public class SocketDataHub extends AbstractMonitorDataHub {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private final ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 200, 30, TimeUnit.SECONDS,
             new ArrayBlockingQueue<Runnable>(2000), new ThreadPoolExecutor.DiscardPolicy());
 
@@ -21,9 +27,11 @@ public class SocketDataHub implements MonitorDataHub {
 
     private ServerSocket serverSocket;
 
+    /**
+     * 启动 Socket 数据收集器收集数据
+     */
     @Override
     public void start() {
-        System.out.println("---------------- SocketDataHub is startup, port is: " + PORT);
         try {
             serverSocket = new ServerSocket(PORT);
 
@@ -32,20 +40,19 @@ public class SocketDataHub implements MonitorDataHub {
                 threadPool.execute(new SocketHandler(socket));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info("new ServerSocket error, cause: ", e);
         }
+
+        logger.info("---------------- SocketDataHub is startup, port is: " + PORT);
     }
 
+    /**
+     * 关闭 Socket 数据收集器
+     */
     @Override
     public void stop() {
-        if (null != serverSocket) {
-            try {
-                serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("---------------- SocketDataHub is stop, bye bye !!!");
+        IOUtils.closeQuiet(serverSocket);
+        logger.info("---------------- SocketDataHub is stop, bye bye !!!");
     }
 
     /**
@@ -68,36 +75,14 @@ public class SocketDataHub implements MonitorDataHub {
                 dataInputStream = new DataInputStream(inputStream);
                 String collectData = dataInputStream.readUTF();
 
-                System.out.println("---------------------------------------------------------------");
-                System.out.println(collectData);
-                System.out.println("---------------------------------------------------------------");
+                // 存储监控数据
+                getMonitorStorageFactory().crateMonitorStorage().storageData(collectData);
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error("socket get input stream error, cause: ", e);
             } finally {
-                if (null != dataInputStream) {
-                    try {
-                        dataInputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (null != inputStream) {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (null != socket) {
-                    try {
-                        socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+                IOUtils.closeQuiet(dataInputStream);
+                IOUtils.closeQuiet(inputStream);
+                IOUtils.closeQuiet(socket);
             }
         }
     }
