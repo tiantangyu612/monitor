@@ -32,9 +32,9 @@ public class JVMThreadCollectorItem extends AbstractCollectorItem {
         jvmThreadInfo.put("daemonThreadCount", Integer.valueOf(this.threadMXBean.getDaemonThreadCount()));
         jvmThreadInfo.put("deadlockedThreadsCount", Integer.valueOf(this.threadMXBean.findDeadlockedThreads() == null ? 0 : this.threadMXBean.findDeadlockedThreads().length));
         jvmThreadInfo.put("totalStartedThreadCount", Long.valueOf(this.threadMXBean.getTotalStartedThreadCount()));
-        jvmThreadInfo.put("currentThreadCpuTime", Long.valueOf(this.threadMXBean.getCurrentThreadCpuTime()));
-        jvmThreadInfo.put("currentThreadUserTime", Long.valueOf(this.threadMXBean.getCurrentThreadUserTime()));
-        jvmThreadInfo.put("monitorDeadlockedThreads", Integer.valueOf(this.threadMXBean.findMonitorDeadlockedThreads() == null ? 0 : this.threadMXBean.findMonitorDeadlockedThreads().length));
+//        jvmThreadInfo.put("currentThreadCpuTime", Long.valueOf(this.threadMXBean.getCurrentThreadCpuTime()));
+//        jvmThreadInfo.put("currentThreadUserTime", Long.valueOf(this.threadMXBean.getCurrentThreadUserTime()));
+//        jvmThreadInfo.put("monitorDeadlockedThreads", Integer.valueOf(this.threadMXBean.findMonitorDeadlockedThreads() == null ? 0 : this.threadMXBean.findMonitorDeadlockedThreads().length));
 
         collectData.add(jvmThreadInfo);
         return collectData;

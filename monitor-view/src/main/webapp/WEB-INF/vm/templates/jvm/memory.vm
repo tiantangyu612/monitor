@@ -27,10 +27,27 @@
             data: ${xAxisData}
         },
         yAxis: {
-            type: 'value'
+            type: 'value',
+            axisLabel: {
+                formatter: function (value) {
+                    return getFormater(value);
+                }
+            }
         },
         series: ${series}
     };
+
+    function getFormater(value) {
+        if (value >= 1073741824) {
+            return parseInt(value / 1073741824) + " GB";
+        } else if (value >= 1048576) {
+            return parseInt(value / 1048576) + " MB";
+        } else if (value >= 1024) {
+            return parseInt(value / 1024) + " KB";
+        } else {
+            return value + " Byte"
+        }
+    }
 
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);

@@ -84,10 +84,10 @@ public class JVMGCCollectorItem extends AbstractCollectorItem {
         jvmGCInfo.put("youngGCCollectionTime", this.getYoungGCCollectionTime());
         jvmGCInfo.put("fullGCCollectionCount", this.getFullGCCollectionCount());
         jvmGCInfo.put("fullGCCollectionTime", this.getFullGCCollectionTime());
-        jvmGCInfo.put("youngGCCollectionTotalCount", this.getYoungGCCollectionTotalCount());
-        jvmGCInfo.put("youngGCCollectionTotalTime", this.getYoungGCCollectionTotalTime());
-        jvmGCInfo.put("fullGCCollectionTotalCount", this.getFullGCCollectionTotalCount());
-        jvmGCInfo.put("fullGCCollectionTotalTime", this.getFullGCCollectionTotalTime());
+//        jvmGCInfo.put("youngGCCollectionTotalCount", this.getYoungGCCollectionTotalCount());
+//        jvmGCInfo.put("youngGCCollectionTotalTime", this.getYoungGCCollectionTotalTime());
+//        jvmGCInfo.put("fullGCCollectionTotalCount", this.getFullGCCollectionTotalCount());
+//        jvmGCInfo.put("fullGCCollectionTotalTime", this.getFullGCCollectionTotalTime());
 
         if (this.fullGC != null) {
             jvmGCInfo.put("fullGCMBeanName", this.fullGC.getName());

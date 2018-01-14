@@ -95,10 +95,10 @@ public class JVMCpuCollectorItem extends AbstractCollectorItem {
             double ratio = (double) cpuTimeInterval / (double) sysTimeInterval * 100.0D / (double) this.processorCount;
 
             Map<String, Object> cpuInfo = new HashMap<String, Object>(5);
-            cpuInfo.put("cpuTimeInterval", cpuTimeInterval);
-            cpuInfo.put("totalCpuTime", currentProcessTime);
-            cpuInfo.put("processorCount", this.processorCount);
-            cpuInfo.put("systemTimeInterval", sysTimeInterval);
+//            cpuInfo.put("cpuTimeInterval", cpuTimeInterval);
+//            cpuInfo.put("totalCpuTime", currentProcessTime);
+//            cpuInfo.put("processorCount", this.processorCount);
+//            cpuInfo.put("systemTimeInterval", sysTimeInterval);
             cpuInfo.put("cpuRatio", ratio);
             this.lastProcessCpuTime = currentProcessTime;
             this.lastSystemTime = currentSystemTime;

@@ -28,7 +28,7 @@ public class JVMMemoryCollectorItem extends AbstractCollectorItem {
         Map<String, Object> jvmMemoryInfo = new HashMap<String, Object>(3);
         jvmMemoryInfo.put("heapMemoryUsage", this.memoryMXBean.getHeapMemoryUsage().getUsed());
         jvmMemoryInfo.put("nonHeapMemoryUsage", this.memoryMXBean.getNonHeapMemoryUsage().getUsed());
-        jvmMemoryInfo.put("objectPendingFinalizationCount", this.memoryMXBean.getObjectPendingFinalizationCount());
+//        jvmMemoryInfo.put("objectPendingFinalizationCount", this.memoryMXBean.getObjectPendingFinalizationCount());
         collectData.add(jvmMemoryInfo);
 
         return collectData;
