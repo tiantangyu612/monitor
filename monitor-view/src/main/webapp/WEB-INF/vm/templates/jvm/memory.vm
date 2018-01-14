@@ -1,5 +1,5 @@
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: 980px;height:400px;"></div>
+<div id="main" style="width: 100%;height:400px;"></div>
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));
@@ -7,7 +7,7 @@
     // 指定图表的配置项和数据
     var option = {
         title: {
-            text: '${title}'
+            text: ''
         },
         tooltip: {
             trigger: 'axis'
@@ -39,7 +39,7 @@
 
     function getFormater(value) {
         if (value >= 1073741824) {
-            return parseInt(value / 1073741824) + " GB";
+            return (value / 1073741824).toFixed(2) + " GB";
         } else if (value >= 1048576) {
             return parseInt(value / 1048576) + " MB";
         } else if (value >= 1024) {

@@ -7,10 +7,7 @@ import monitor.core.util.CollectionUtils;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,6 +17,16 @@ import java.util.logging.Logger;
  */
 public class JVMMemoryPoolCollectItem extends AbstractCollectorItem {
     private static Logger LOGGER = MonitorLogFactory.getLogger(JVMMemoryPoolCollectItem.class);
+
+    private static final Set<String> collectPoolNames = new HashSet<String>();
+
+    static {
+        collectPoolNames.add("Code Cache");
+        collectPoolNames.add("PS Eden Space");
+        collectPoolNames.add("PS Old Gen");
+        collectPoolNames.add("PS Survivor Space");
+        collectPoolNames.add("PS Perm Gen");
+    }
 
     @Override
     public String getName() {
@@ -37,12 +44,14 @@ public class JVMMemoryPoolCollectItem extends AbstractCollectorItem {
                     MemoryUsage memoryUsage = memoryPoolMXBean.getUsage();
                     Map<String, Object> memoryInfo = new HashMap<String, Object>();
                     memoryInfo.put("name", memoryPoolMXBean.getName());
-                    memoryInfo.put("committed", memoryUsage.getCommitted());
-                    memoryInfo.put("init", memoryUsage.getInit());
+//                    memoryInfo.put("committed", memoryUsage.getCommitted());
+//                    memoryInfo.put("init", memoryUsage.getInit());
                     memoryInfo.put("max", memoryUsage.getMax());
                     memoryInfo.put("used", memoryUsage.getUsed());
 
-                    collectDatas.add(memoryInfo);
+                    if (collectPoolNames.contains(memoryPoolMXBean.getName())) {
+                        collectDatas.add(memoryInfo);
+                    }
                 }
 
             }

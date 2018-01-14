@@ -4,7 +4,9 @@
     <script src="/static/js/echarts.min.js" type="text/javascript"></script>
 </head>
 <body>
-<div>
+<div style="height: 10%;background-color: aliceblue;">
+</div>
+<div style="float: left; width: 15%;background-color: aqua;height: 90%;">
     <ul>
         <li><a href="/monitor/jvm/memory">内存</a></li>
         <li><a href="/monitor/jvm/classLoading">类加载</a></li>
@@ -13,9 +15,11 @@
         <li><a href="/monitor/jvm/thread">thread</a></li>
         <li><a href="/monitor/jvm/gc">gc</a></li>
         <li><a href="/monitor/jvm/memoryPool">memoryPool</a></li>
-        <li><a href="/monitor/jvm/tomcat">tomcat</a></li>
+        <li><a href="/monitor/tomcat/tomcatThread">tomcat</a></li>
     </ul>
 </div>
+<div style="float: left; width: 85%;height: 90%;">
     $screen_content
+</div>
 </body>
 </html>
