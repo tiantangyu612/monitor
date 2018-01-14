@@ -80,4 +80,8 @@
         <servlet-name>default</servlet-name>
         <url-pattern>*.ico</url-pattern>
     </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>/</welcome-file>
+    </welcome-file-list>
 </web-app>

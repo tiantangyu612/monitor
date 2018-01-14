@@ -1,5 +1,11 @@
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: 100%;height:400px;"></div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">${title}</h3>
+    </div>
+    <div id="main" style="height: 500px;" class="panel-body"></div>
+</div>
+
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var myChart = echarts.init(document.getElementById('main'));

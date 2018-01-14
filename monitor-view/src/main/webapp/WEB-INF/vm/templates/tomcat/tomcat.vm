@@ -1,9 +1,18 @@
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h3 class="panel-title">${title}</h3>
+        <h3 class="panel-title">tomcat threads</h3>
     </div>
-    <div id="main" style="height: 500px;" class="panel-body"></div>
+    <div id="main" style="height: 400px;" class="panel-body"></div>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">tomcat version</h3>
+    </div>
+    <div class="panel-body">
+        $!{tomcatVersion}
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -33,27 +42,10 @@
             data: ${xAxisData}
         },
         yAxis: {
-            type: 'value',
-            axisLabel: {
-                formatter: function (value) {
-                    return getFormater(value);
-                }
-            }
+            type: 'value'
         },
         series: ${series}
     };
-
-    function getFormater(value) {
-        if (value >= 1073741824) {
-            return (value / 1073741824).toFixed(2) + " GB";
-        } else if (value >= 1048576) {
-            return parseInt(value / 1048576) + " MB";
-        } else if (value >= 1024) {
-            return parseInt(value / 1024) + " KB";
-        } else {
-            return value + " Byte"
-        }
-    }
 
     // 使用刚指定的配置项和数据显示图表。
     myChart.setOption(option);

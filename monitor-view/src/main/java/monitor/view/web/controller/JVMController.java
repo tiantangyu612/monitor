@@ -1,8 +1,10 @@
 package monitor.view.web.controller;
 
+import monitor.core.annotation.Monitor;
 import monitor.view.web.controller.base.BaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 @RequestMapping(value = "/monitor/jvm")
-public class JVMController extends BaseController{
+public class JVMController extends BaseController {
 
     /**
      * 内存信息
@@ -19,9 +21,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/memory")
-    public String memory(Model model) {
-        buildLineChartData("memory", "monitor-view_online_JVM_memory", model);
+    @RequestMapping(value = "/memory/{application}/{cluster}")
+    @Monitor
+    public String memory(@PathVariable("application") String application,
+                         @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_memory";
+        String sql = "select heapMemoryUsage,nonHeapMemoryUsage from \"" + measurement + "\"";
+        buildLineChartData("memory", sql, model);
         return "jvm/memory";
 
     }
@@ -32,9 +38,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/classLoading")
-    public String classLoading(Model model) {
-        buildLineChartData("classLoading", "monitor-view_online_JVM_classLoading", model);
+    @RequestMapping(value = "/classLoading/{application}/{cluster}")
+    @Monitor
+    public String classLoading(@PathVariable("application") String application,
+                               @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_classLoading";
+        String sql = "select loadedClassCount,totalLoadedClassCount,unloadedClassCount from \"" + measurement + "\"";
+        buildLineChartData("classLoading", sql, model);
         return "jvm/classLoading";
     }
 
@@ -44,9 +54,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/compile")
-    public String compile(Model model) {
-        buildLineChartData("compile", "monitor-view_online_JVM_compile", model);
+    @RequestMapping(value = "/compile/{application}/{cluster}")
+    @Monitor
+    public String compile(@PathVariable("application") String application,
+                          @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_compile";
+        String sql = "select compilationTime,totalCompilationTime from \"" + measurement + "\"";
+        buildLineChartData("compile", sql, model);
         return "jvm/classLoading";
     }
 
@@ -56,9 +70,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/cpu")
-    public String cpu(Model model) {
-        buildLineChartData("cpu", "monitor-view_online_JVM_cpu", model);
+    @RequestMapping(value = "/cpu/{application}/{cluster}")
+    @Monitor
+    public String cpu(@PathVariable("application") String application,
+                      @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_cpu";
+        String sql = "select cpuRatio from \"" + measurement + "\"";
+        buildLineChartData("cpu", sql, model);
         return "jvm/classLoading";
     }
 
@@ -68,9 +86,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/thread")
-    public String thread(Model model) {
-        buildLineChartData("thread", "monitor-view_online_JVM_thread", model);
+    @RequestMapping(value = "/thread/{application}/{cluster}")
+    @Monitor
+    public String thread(@PathVariable("application") String application,
+                         @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_thread";
+        String sql = "select daemonThreadCount,deadlockedThreadsCount,peakThreadCount,threadCount,totalStartedThreadCount from \"" + measurement + "\"";
+        buildLineChartData("thread", sql, model);
         return "jvm/classLoading";
     }
 
@@ -80,9 +102,13 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/gc")
-    public String gc(Model model) {
-        buildLineChartData("gc", "monitor-view_online_JVM_GC", model);
+    @RequestMapping(value = "/gc/{application}/{cluster}")
+    @Monitor
+    public String gc(@PathVariable("application") String application,
+                     @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_GC";
+        String sql = "select fullGCCollectionCount,fullGCCollectionTime,youngGCCollectionCount,youngGCCollectionTime from \"" + measurement + "\"";
+        buildLineChartData("gc", sql, model);
         return "jvm/classLoading";
     }
 
@@ -92,9 +118,18 @@ public class JVMController extends BaseController{
      * @param model
      * @return
      */
-    @RequestMapping(value = "/memoryPool")
-    public String memoryPool(Model model) {
-        buildLineChartData("memoryPool", "monitor-view_online_JVM_memoryPool", model);
+    @RequestMapping(value = "/memoryPool/{application}/{cluster}")
+    @Monitor
+    public String memoryPool(@PathVariable("application") String application,
+                             @PathVariable("cluster") String cluster, Model model) {
+        String measurement = application + "_" + cluster + "_JVM_memoryPool";
+        String sql = "select \"Code Cache max\",\"Code Cache used\"," +
+                "\"PS Eden Space max\",\"PS Eden Space used\"," +
+                "\"PS Survivor Space max\",\"PS Survivor Space used\"," +
+                "\"PS Old Gen max\",\"PS Old Gen used\"" +
+//                "\"PS Perm Gen max\",\"PS Perm Gen used\"" +
+                " from \"" + measurement + "\"";
+        buildLineChartData("memoryPool", sql, model);
         return "jvm/memory";
     }
 }

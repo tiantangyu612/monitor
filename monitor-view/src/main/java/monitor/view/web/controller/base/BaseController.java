@@ -1,7 +1,6 @@
 package monitor.view.web.controller.base;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import monitor.core.util.CollectionUtils;
@@ -20,8 +19,8 @@ import java.util.Map;
  * BaseController
  */
 public class BaseController {
-    private InfluxDB influxDB = null;
-    private InfluxDBService influxDBService = null;
+    protected InfluxDB influxDB = null;
+    protected InfluxDBService influxDBService = null;
 
     @PostConstruct
     public void init() {
@@ -37,13 +36,12 @@ public class BaseController {
      * 构建折线图数据
      *
      * @param collectorItemName 采集项名称
-     * @param measurement       表名
+     * @param sql               sql
      * @param model
      */
-    protected void buildLineChartData(String collectorItemName, String measurement, Model model) {
+    protected void buildLineChartData(String collectorItemName, String sql, Model model) {
         // 查询数据
-        QueryResult queryResult = influxDBService.query("select * from \"" + measurement + "\"");
-        System.out.println(JSON.toJSONString(queryResult.getResults(), SerializerFeature.PrettyFormat));
+        QueryResult queryResult = influxDBService.query(sql);
         if (!queryResult.hasError()) {
             // 数据分类
             List<String> categories = Lists.newArrayList();

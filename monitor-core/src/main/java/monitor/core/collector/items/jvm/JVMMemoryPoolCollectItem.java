@@ -44,8 +44,8 @@ public class JVMMemoryPoolCollectItem extends AbstractCollectorItem {
                     MemoryUsage memoryUsage = memoryPoolMXBean.getUsage();
                     Map<String, Object> memoryInfo = new HashMap<String, Object>();
                     memoryInfo.put("name", memoryPoolMXBean.getName());
-//                    memoryInfo.put("committed", memoryUsage.getCommitted());
-//                    memoryInfo.put("init", memoryUsage.getInit());
+                    memoryInfo.put("committed", memoryUsage.getCommitted());
+                    memoryInfo.put("init", memoryUsage.getInit());
                     memoryInfo.put("max", memoryUsage.getMax());
                     memoryInfo.put("used", memoryUsage.getUsed());
 
