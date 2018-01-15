@@ -9,8 +9,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 public class IndexController {
+    /**
+     * 首页
+     *
+     * @return
+     */
     @RequestMapping(value = "/")
     public String index() {
         return "index";
+    }
+
+    /**
+     * 主页面
+     *
+     * @return
+     */
+    @RequestMapping(value = "/main")
+    public String main() {
+        return "main";
     }
 }

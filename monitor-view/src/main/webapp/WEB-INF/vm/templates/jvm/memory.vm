@@ -1,9 +1,11 @@
+#include("/templates/main.vm")
+
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div class="panel panel-default">
     <div class="panel-heading">
         <h3 class="panel-title">${title}</h3>
     </div>
-    <div id="main" style="height: 500px;" class="panel-body"></div>
+    <div id="main" style="height: 400px;" class="panel-body"></div>
 </div>
 
 <script type="text/javascript">

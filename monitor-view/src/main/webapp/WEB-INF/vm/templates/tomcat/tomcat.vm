@@ -1,3 +1,5 @@
+#include("/templates/main.vm")
+
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div class="panel panel-default">
     <div class="panel-heading">

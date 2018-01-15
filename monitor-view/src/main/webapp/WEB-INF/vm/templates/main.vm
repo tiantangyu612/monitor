@@ -1,0 +1,23 @@
+<div class="row" style="padding-bottom: 10px;">
+    <div class="col-md-11">
+        <ul class="nav nav-pills">
+            <li style="line-height: 40px;height: 40px;">监控项：</li>
+            <li role="presentation"><a href="/monitor/method/invoke/monitor-view/online">JavaMethod</a></li>
+            <li role="presentation"><a href="/monitor/tomcat/tomcatThread/monitor-view/online">Tomcat</a></li>
+            <li role="presentation" class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">JVM <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/monitor/jvm/thread/monitor-view/online">Thread</a></li>
+                    <li><a href="/monitor/jvm/gc/monitor-view/online">GC</a></li>
+                    <li><a href="/monitor/jvm/cpu/monitor-view/online">CPU</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/monitor/jvm/memoryPool/monitor-view/online">MemoryPool</a></li>
+                    <li><a href="/monitor/jvm/memory/monitor-view/online">Memory</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/monitor/jvm/classLoading/monitor-view/online">ClassLoading</a></li>
+                    <li><a href="/monitor/jvm/compile/monitor-view/online">Compile</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
