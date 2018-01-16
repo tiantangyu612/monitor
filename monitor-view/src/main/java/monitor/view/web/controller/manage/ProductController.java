@@ -10,8 +10,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/monitor/product")
 public class ProductController {
+    /**
+     * 产品管理
+     *
+     * @return
+     */
     @RequestMapping("/manage")
     public String manage() {
         return "manage/product";
+    }
+
+    /**
+     * 应用管理
+     *
+     * @return
+     */
+    @RequestMapping("/application/manage")
+    public String applicationManage() {
+        return "manage/application";
     }
 }

@@ -1,4 +1,4 @@
-#set($layout = "/layout/emptyLayout.vm")
+#set($layout = "/layout/loginLayout.vm")
 
 <div class="container">
     <form class="form-signin" action="/login" method="post">
