@@ -1,4 +1,4 @@
-package monitor.view.web.controller;
+package monitor.view.web.controller.monitor;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;

@@ -1,4 +1,4 @@
-package monitor.view.web.controller;
+package monitor.view.web.controller.monitor;
 
 import monitor.core.annotation.Monitor;
 import monitor.view.web.controller.base.BaseController;

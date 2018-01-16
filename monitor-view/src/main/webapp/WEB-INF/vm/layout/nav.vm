@@ -1,25 +1,48 @@
-
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                 <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar">add</span>
-                <span class="icon-bar">update</span>
-                <span class="icon-bar">delete</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" href="/">Monitor</a>
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">应用监控 <span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li class="dropdown-submenu">
+                            <a href="#">监控系统</a>
+                            <ul class="dropdown-menu no-bottom-space">
+                                <li class="dropdown-submenu">
+                                    <a href="#">Monitor-View</a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="/main">online</a></li>
+                                        <li><a href="#">test</a></li>
+                                        <li><a href="#">pre</a></li>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#">Monitor-Datahub</a>
+                                    <ul class="dropdown-menu no-bottom-space">
+                                        <li><a href="#">online</a></li>
+                                        <li><a href="#">test</a></li>
+                                        <li><a href="#">pre</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href="#">青龙系统</a></li>
+                        <li><a href="#">天网系统</a></li>
+                    </ul>
+                </li>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">产品管理 <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#">我的产品</a></li>
+                        <li><a href="/monitor/product/manage">我的产品</a></li>
                         <li><a href="#">我的监控</a></li>
                         <li><a href="#">我的报警</a></li>
                     </ul>
@@ -53,8 +76,8 @@
                         <li><a href="#">Separated link</a></li>
                     </ul>
                 </li>
-                <li><a href="#">安全退出</a></li>
+                <li><a href="/loginOut">安全退出</a></li>
             </ul>
-        </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
+        </div>
+    </div>
 </nav>

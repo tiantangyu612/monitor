@@ -1,0 +1,58 @@
+/*monitor css*/
+body {
+    padding-top: 70px;
+}
+
+.navbar .container {
+    position: relative;
+}
+
+.navbar .dropdown-menu {
+    left: auto;
+}
+
+.navbar .dropdown-menu > li {
+    display: block;
+}
+
+.navbar .dropdown {
+    position: static;
+}
+
+/*----------------下来菜单-----------------------*/
+
+.navbar .dropdown-submenu {
+    position: relative;
+}
+
+.navbar .dropdown-submenu > a:after {
+    top: 8px;
+    right: 9px;
+    font-size: 11px;
+    position: absolute;
+    font-weight: normal;
+    display: inline-block;
+}
+
+.navbar .dropdown-submenu > .dropdown-menu {
+    top: 3px;
+    left: 100%;
+    margin-top: -5px;
+    margin-left: 0px;
+}
+
+/*Submenu comes from LEFT side*/
+.navbar .dropdown-submenu > .dropdown-menu.submenu-left {
+    left: -100%;
+}
+
+.navbar .dropdown-submenu:hover > .dropdown-menu {
+    display: block;
+}
+
+/*----------------全屏菜单-----------------------*/
+.navbar .dropdown.mega-menu-fullwidth .dropdown-menu {
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
