@@ -38,8 +38,6 @@ public class JavaMethodController extends BaseController {
                 "max(maxTime) as maxTime,sum(ms0_10) as ms0_10,sum(ms10_100) as ms10_100,sum(ms100_1000) as ms100_1000," +
                 "sum(s1_10) as s1_10,sum(s10_n) as s10_n,sum(totalTime) as totalTime from \"" + measurement + "\" group by class,method";
 
-        String sql2 = "select class,errorCount,invokedCount,maxConcurrency,maxTime,method,ms0_10,ms10_100,ms100_1000,s1_10,s10_n,totalTime from \"" + measurement + "\" order by time desc";
-
         // 查询数据
         QueryResult queryResult = influxDBService.query(sql);
 
