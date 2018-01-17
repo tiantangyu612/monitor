@@ -16,11 +16,11 @@ public class Constants {
     /**
      * 监控初始化类
      */
-    public static final String MONITOR_INITIALIZER_CLASS = "monitor.core.MonitorInitializer";
+    public static final String MONITOR_INITIALIZER_CLASS = "monitor.core.MonitorBootstrap";
     /**
      * 监控初始化方法名
      */
-    public static final String MONITOR_INITIALIZER_METHOD = "initMonitor";
+    public static final String MONITOR_INITIALIZER_METHOD = "init";
     /**
      * 监控 agent jar 所在文件夹名称常量，文件夹名称必须为该名称
      */
