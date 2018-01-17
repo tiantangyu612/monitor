@@ -12,8 +12,10 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">应用监控 <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">我的产品 <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">我的监控</a></li>
+                        <li><a href="#">我的报警</a></li>
                         <li class="dropdown-submenu">
                             <a href="#">监控系统</a>
                             <ul class="dropdown-menu no-bottom-space">
@@ -35,8 +37,6 @@
                                 </li>
                             </ul>
                         </li>
-                        <li><a href="#">青龙系统</a></li>
-                        <li><a href="#">天网系统</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
@@ -47,7 +47,6 @@
                         <li><a href="/monitor/config/basic">基础监控管理</a></li>
                         <li><a href="#">报警发送模板</a></li>
                         <li><a href="#">报警联系人组</a></li>
-                        <li><a href="#">我的报警</a></li>
                     </ul>
                 </li>
                 <li class="dropdown">
