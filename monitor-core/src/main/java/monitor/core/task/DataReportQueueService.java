@@ -52,6 +52,11 @@ public class DataReportQueueService implements MonitorLifecycle {
         }
     }
 
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
     /**
      * 将需要上报的监控数据添加到上报数据队列
      *

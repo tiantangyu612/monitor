@@ -81,4 +81,9 @@ public class DataCollectTask implements Runnable, MonitorLifecycle {
             LOGGER.log(Level.SEVERE, "failed to stop DataCollectTask", e);
         }
     }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
 }
