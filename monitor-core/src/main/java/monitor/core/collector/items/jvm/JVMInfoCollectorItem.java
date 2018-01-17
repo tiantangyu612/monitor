@@ -1,20 +1,18 @@
 package monitor.core.collector.items.jvm;
 
-import monitor.core.collector.base.AbstractCollectorItem;
+import monitor.core.collector.base.OneRowCollectorItem;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by lizhitao on 2018/1/9.
  * jvm info 采集项
  */
-public class JVMInfoCollectorItem extends AbstractCollectorItem {
+public class JVMInfoCollectorItem extends OneRowCollectorItem {
     private OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
     private RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
 
@@ -24,9 +22,7 @@ public class JVMInfoCollectorItem extends AbstractCollectorItem {
     }
 
     @Override
-    public List<Map<String, Object>> collectData() {
-        List<Map<String, Object>> collectData = new ArrayList<Map<String, Object>>(1);
-
+    protected Map<String, Object> collectItemData() {
         Map<String, Object> jvmInfo = new HashMap<String, Object>();
         jvmInfo.put("arch", this.operatingSystemMXBean.getArch());
         jvmInfo.put("osName", this.operatingSystemMXBean.getName());
@@ -71,8 +67,6 @@ public class JVMInfoCollectorItem extends AbstractCollectorItem {
             jvmInfo.put("fileEncode", encodeing);
         }
 
-        collectData.add(jvmInfo);
-
-        return collectData;
+        return jvmInfo;
     }
 }

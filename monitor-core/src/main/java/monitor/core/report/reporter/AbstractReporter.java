@@ -1,7 +1,8 @@
-package monitor.core.report;
+package monitor.core.report.reporter;
 
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.report.Reporter;
 import monitor.core.report.vo.DataHubUrl;
 import monitor.core.util.StringUtils;
 
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  * Created by bjlizhitao on 2018/1/17.
  * 基础监控数据上报器
  */
-public abstract class AbstractMonitorReporter implements MonitorReporter {
+public abstract class AbstractReporter implements Reporter {
     private final Logger logger = MonitorLogFactory.getLogger(getClass());
     /**
      * dataHub url 分隔符

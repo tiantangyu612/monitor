@@ -1,7 +1,7 @@
 package monitor.core.collector.items.jvm;
 
+import monitor.core.collector.base.OneRowCollectorItem;
 import monitor.core.log.MonitorLogFactory;
-import monitor.core.collector.base.AbstractCollectorItem;
 
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/8.
  * jvm GC 信息收集
  */
-public class JVMGCCollectorItem extends AbstractCollectorItem {
+public class JVMGCCollectorItem extends OneRowCollectorItem {
     private static final Logger LOGGER = MonitorLogFactory.getLogger(JVMGCCollectorItem.class);
     private GarbageCollectorMXBean youngGC;
     private GarbageCollectorMXBean fullGC;
@@ -76,9 +76,7 @@ public class JVMGCCollectorItem extends AbstractCollectorItem {
      * @return
      */
     @Override
-    public List<Map<String, Object>> collectData() {
-        List<Map<String, Object>> collectData = new ArrayList<Map<String, Object>>(1);
-
+    protected Map<String, Object> collectItemData() {
         Map<String, Object> jvmGCInfo = new HashMap<String, Object>(10);
         jvmGCInfo.put("youngGCCollectionCount", this.getYoungGCCollectionCount());
         jvmGCInfo.put("youngGCCollectionTime", this.getYoungGCCollectionTime());
@@ -97,8 +95,7 @@ public class JVMGCCollectorItem extends AbstractCollectorItem {
             jvmGCInfo.put("youngGCMBeanName", this.youngGC.getName());
         }
 
-        collectData.add(jvmGCInfo);
-        return collectData;
+        return jvmGCInfo;
     }
 
     /**

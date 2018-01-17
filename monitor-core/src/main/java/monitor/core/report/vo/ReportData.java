@@ -5,11 +5,24 @@ import java.util.Map;
 
 /**
  * Created by lizhitao on 2018/1/13.
- * 上报的数据
+ * 监控采集器上报的数据
  */
 public class ReportData {
+    /**
+     * 应用名
+     */
     private String application;
+    /**
+     * 集群名
+     */
     private String cluster;
+    /**
+     * 实例 ip
+     */
+    private String instanceIP;
+    /**
+     * 上报数据的时间
+     */
     private long timestamp;
     private Map<String, Map<String, List<Map<String, Object>>>> reportData;
 
@@ -27,6 +40,14 @@ public class ReportData {
 
     public void setCluster(String cluster) {
         this.cluster = cluster;
+    }
+
+    public String getInstanceIP() {
+        return instanceIP;
+    }
+
+    public void setInstanceIP(String instanceIP) {
+        this.instanceIP = instanceIP;
     }
 
     public long getTimestamp() {
@@ -50,6 +71,7 @@ public class ReportData {
         return "ReportData{" +
                 "application='" + application + '\'' +
                 ", cluster='" + cluster + '\'' +
+                ", instanceIP='" + instanceIP + '\'' +
                 ", timestamp=" + timestamp +
                 ", reportData=" + reportData +
                 '}';

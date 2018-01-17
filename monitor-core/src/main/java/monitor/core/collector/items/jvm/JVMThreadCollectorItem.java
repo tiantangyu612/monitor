@@ -1,19 +1,17 @@
 package monitor.core.collector.items.jvm;
 
-import monitor.core.collector.base.AbstractCollectorItem;
+import monitor.core.collector.base.OneRowCollectorItem;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
  * Created by lizhitao on 2018/1/8.
  * jvm 线程信息采集
  */
-public class JVMThreadCollectorItem extends AbstractCollectorItem {
+public class JVMThreadCollectorItem extends OneRowCollectorItem {
     private ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
 
     @Override
@@ -22,9 +20,7 @@ public class JVMThreadCollectorItem extends AbstractCollectorItem {
     }
 
     @Override
-    public List<Map<String, Object>> collectData() {
-        List<Map<String, Object>> collectData = new ArrayList<Map<String, Object>>(1);
-
+    protected Map<String, Object> collectItemData() {
         Map<String, Object> jvmThreadInfo = new HashMap<String, Object>(8);
         jvmThreadInfo.put("threadCount", Integer.valueOf(this.threadMXBean.getThreadCount()));
         jvmThreadInfo.put("peakThreadCount", Integer.valueOf(this.threadMXBean.getPeakThreadCount()));
@@ -36,7 +32,6 @@ public class JVMThreadCollectorItem extends AbstractCollectorItem {
         jvmThreadInfo.put("currentThreadUserTime", Long.valueOf(this.threadMXBean.getCurrentThreadUserTime()));
         jvmThreadInfo.put("monitorDeadlockedThreads", Integer.valueOf(this.threadMXBean.findMonitorDeadlockedThreads() == null ? 0 : this.threadMXBean.findMonitorDeadlockedThreads().length));
 
-        collectData.add(jvmThreadInfo);
-        return collectData;
+        return jvmThreadInfo;
     }
 }

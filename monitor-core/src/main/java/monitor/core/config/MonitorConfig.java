@@ -54,7 +54,7 @@ public class MonitorConfig {
     /**
      * 采集数据上报处理类工厂
      */
-    private static String monitorReporterFactory = "monitor.core.report.MonitorSocketReporterFactory";
+    private static String monitorReporterFactory = "monitor.core.report.reporter.SocketReporterFactory";
     /**
      * 数据上报中心 url，用于采集数据上报
      */

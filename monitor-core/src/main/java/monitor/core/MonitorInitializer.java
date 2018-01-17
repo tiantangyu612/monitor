@@ -5,7 +5,8 @@ import javassist.NotFoundException;
 import monitor.core.collector.Collectors;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
-import monitor.core.report.task.MonitorReportTask;
+import monitor.core.task.DataReportQueueService;
+import monitor.core.task.DataReportTask;
 
 import java.lang.instrument.Instrumentation;
 import java.util.Map;
@@ -86,7 +87,7 @@ public class MonitorInitializer {
      * 启动采集器
      */
     private static void startCollector() {
-        MonitorReportTask.getInstance().start();
+        DataReportQueueService.getInstance().start();
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
@@ -100,6 +101,6 @@ public class MonitorInitializer {
      * 停止采集器
      */
     private static void stopCollector() {
-        MonitorReportTask.getInstance().stop();
+        DataReportTask.getInstance().stop();
     }
 }

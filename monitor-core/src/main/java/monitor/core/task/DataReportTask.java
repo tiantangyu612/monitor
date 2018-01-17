@@ -1,10 +1,10 @@
-package monitor.core.report.task;
+package monitor.core.task;
 
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
-import monitor.core.report.Reporters;
 import monitor.core.report.vo.ReportData;
+import monitor.core.util.NetUtil;
 import monitor.core.util.concurrent.NamedThreadFactory;
 
 import java.util.HashMap;
@@ -19,14 +19,14 @@ import java.util.concurrent.TimeUnit;
  * Created by lizhitao on 2018/1/10.
  * 监控数据上报任务
  */
-public class MonitorReportTask implements Runnable {
-    private static MonitorReportTask instance = new MonitorReportTask();
+public class DataReportTask implements Runnable {
+    private static DataReportTask instance = new DataReportTask();
 
-    private MonitorReportTask() {
+    private DataReportTask() {
     }
 
-    public static MonitorReportTask getInstance() {
-        return MonitorReportTask.instance;
+    public static DataReportTask getInstance() {
+        return DataReportTask.instance;
     }
 
     private ScheduledExecutorService monitorReportSchedule = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
@@ -41,6 +41,7 @@ public class MonitorReportTask implements Runnable {
                 ReportData reportData = new ReportData();
                 reportData.setApplication(MonitorConfig.getApplication());
                 reportData.setCluster(MonitorConfig.getCluster());
+                reportData.setInstanceIP(NetUtil.getIp());
                 reportData.setTimestamp(System.currentTimeMillis());
 
                 Map<String, Map<String, List<Map<String, Object>>>> reportDataMap = new HashMap<String, Map<String, List<Map<String, Object>>>>();
@@ -49,7 +50,7 @@ public class MonitorReportTask implements Runnable {
 
                 reportData.setReportData(reportDataMap);
 
-                Reporters.getReporter().reportData(reportData);
+                DataReportQueueService.getInstance().addToReportDataQueue(reportData);
             }
         }
 
@@ -59,7 +60,7 @@ public class MonitorReportTask implements Runnable {
      * 启动数据上报
      */
     public void start() {
-        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(MonitorReportTask.instance, 30, 30, TimeUnit.SECONDS);
+        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(DataReportTask.instance, 30, 30, TimeUnit.SECONDS);
     }
 
     /**

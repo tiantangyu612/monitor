@@ -1,14 +1,17 @@
 package monitor.core.collector.items.jvm;
 
+import monitor.core.collector.base.OneRowCollectorItem;
 import monitor.core.log.MonitorLogFactory;
-import monitor.core.collector.base.AbstractCollectorItem;
 import monitor.core.util.CollectionUtils;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +19,7 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/8.
  * JVM cpu 信息采集
  */
-public class JVMCpuCollectorItem extends AbstractCollectorItem {
+public class JVMCpuCollectorItem extends OneRowCollectorItem {
     private static Logger LOGGER = MonitorLogFactory.getLogger(JVMCpuCollectorItem.class);
     private OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
     private MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
@@ -84,8 +87,7 @@ public class JVMCpuCollectorItem extends AbstractCollectorItem {
     }
 
     @Override
-    public List<Map<String, Object>> collectData() {
-        List<Map<String, Object>> collectData = new ArrayList<Map<String, Object>>(1);
+    protected Map<String, Object> collectItemData() {
 
         Long currentProcessTime = this.getProcessCpuTime();
         if (currentProcessTime != null && this.lastProcessCpuTime != null) {
@@ -95,17 +97,17 @@ public class JVMCpuCollectorItem extends AbstractCollectorItem {
             double ratio = (double) cpuTimeInterval / (double) sysTimeInterval * 100.0D / (double) this.processorCount;
 
             Map<String, Object> cpuInfo = new HashMap<String, Object>(5);
-//            cpuInfo.put("cpuTimeInterval", cpuTimeInterval);
-//            cpuInfo.put("totalCpuTime", currentProcessTime);
-//            cpuInfo.put("processorCount", this.processorCount);
-//            cpuInfo.put("systemTimeInterval", sysTimeInterval);
+            cpuInfo.put("cpuTimeInterval", cpuTimeInterval);
+            cpuInfo.put("totalCpuTime", currentProcessTime);
+            cpuInfo.put("processorCount", this.processorCount);
+            cpuInfo.put("systemTimeInterval", sysTimeInterval);
             cpuInfo.put("cpuRatio", ratio);
             this.lastProcessCpuTime = currentProcessTime;
             this.lastSystemTime = currentSystemTime;
 
-            collectData.add(cpuInfo);
+            return cpuInfo;
         }
 
-        return collectData;
+        return null;
     }
 }

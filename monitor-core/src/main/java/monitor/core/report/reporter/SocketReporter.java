@@ -1,8 +1,9 @@
-package monitor.core.report;
+package monitor.core.report.reporter;
 
 import com.alibaba.fastjson.JSON;
 import monitor.core.log.MonitorLogFactory;
 import monitor.core.report.vo.ReportData;
+import monitor.core.report.vo.DataHubUrl;
 import monitor.core.util.IOUtils;
 
 import java.io.DataOutputStream;
@@ -16,17 +17,8 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/10.
  * 使用 socket 上报数据
  */
-public class MonitorSocketReporter extends AbstractMonitorReporter {
-    private static final Logger LOGGER = MonitorLogFactory.getLogger(MonitorSocketReporter.class);
-
-    /**
-     * 数据上报服务器 host
-     */
-    private static final String dataHubHost = "localhost";
-    /**
-     * 数据上报端口号
-     */
-    private static final int PORT = 16666;
+public class SocketReporter extends RoundRobinReporter {
+    private static final Logger LOGGER = MonitorLogFactory.getLogger(SocketReporter.class);
 
     /**
      * 上报数据
@@ -84,9 +76,11 @@ public class MonitorSocketReporter extends AbstractMonitorReporter {
      */
     private Socket createSendDataSocket() {
         try {
+            DataHubUrl dataHubHost = getDataHubUrl();
+
             Socket sendDataSocket = new Socket();
             sendDataSocket.setSoTimeout(5000);
-            sendDataSocket.connect(new InetSocketAddress(dataHubHost, PORT));
+            sendDataSocket.connect(new InetSocketAddress(dataHubHost.getHost(), dataHubHost.getPort()));
 
             return sendDataSocket;
         } catch (Exception e) {
