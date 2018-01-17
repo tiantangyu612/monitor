@@ -2,13 +2,13 @@
 
 <ol class="breadcrumb">
     <li>监控管理</li>
-    <li><a href="/monitor/product/manage">产品管理</a></li>
+    <li><a href="/monitor/manage/products">产品管理</a></li>
     <li>应用管理</li>
 </ol>
 <form class="form-inline" style="margin-bottom: 20px;">
     <div class="form-group">
         <div class="input-group">
-            <input type="text" class="form-control" id="exampleInputAmount" placeholder="请输入产品名称查询">
+            <input type="text" class="form-control" id="exampleInputAmount" placeholder="请输入应用名称查询">
             <div class="btn input-group-addon glyphicon glyphicon-search"></div>
         </div>
     </div>
@@ -31,37 +31,25 @@
         </thead>
         <tbody>
         <tr>
+            <td>monitor-view</td>
             <td>监控系统</td>
-            <td>（李智涛）lizhitao</td>
-            <td>监控 java 应用，以及监控系统负载、IO 等等</td>
+            <td>监控数据展示 web</td>
             <td>2018-01-16 17:52:33</td>
             <td>2018-01-16 17:52:33</td>
             <td style="text-align:center">
-                <a class="btn btn-primary btn-xs" href="/monitor/product/application/manage">应用管理</a>
+                <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1/application/1">集群管理</a>
                 <button class="btn btn-default btn-xs">修改</button>
                 <button class="btn btn-danger btn-xs">删除</button>
             </td>
         </tr>
         <tr>
-            <td>青龙系统</td>
-            <td>（李智涛）lizhitao</td>
-            <td>最牛叉的系统</td>
+            <td>monitor-datahub</td>
+            <td>监控系统</td>
+            <td>监控系统数据中心</td>
             <td>2018-01-15 13:12:33</td>
             <td>2018-01-15 17:12:33</td>
             <td style="text-align:center">
-                <a class="btn btn-primary btn-xs" href="/monitor/product/application/manage">应用管理</a>
-                <button class="btn btn-default btn-xs">修改</button>
-                <button class="btn btn-danger btn-xs">删除</button>
-            </td>
-        </tr>
-        <tr>
-            <td>天网系统</td>
-            <td>（李智涛）lizhitao</td>
-            <td>信用黑名单</td>
-            <td>2018-01-13 17:52:33</td>
-            <td>2018-01-13 17:52:33</td>
-            <td style="text-align:center">
-                <a class="btn btn-primary btn-xs" href="/monitor/product/application/manage">应用管理</a>
+                <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1/application/2">集群管理</a>
                 <button class="btn btn-default btn-xs">修改</button>
                 <button class="btn btn-danger btn-xs">删除</button>
             </td>
@@ -96,27 +84,26 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">添加产品</h4>
+                <h4 class="modal-title" id="myModalLabel">添加应用</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">产品名称：</label>
+                        <label for="productName" class="col-sm-3 control-label">应用名称：</label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="productName" name="productName"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">负责人：</label>
+                        <label for="productName" class="col-sm-3 control-label">所属产品：</label>
                         <div class="col-sm-8">
                             <select class="form-control">
-                                <option>（李智涛）lizhitao</option>
-                                <option>（张三）zhangsan</option>
+                                <option>监控系统</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productDesc" class="col-sm-3 control-label">产品说明：</label>
+                        <label for="productDesc" class="col-sm-3 control-label">应用说明：</label>
                         <div class="col-sm-8">
                             <textarea rows="5" maxlength="150" class="form-control" id="productDesc"
                                       name="productDesc"></textarea>

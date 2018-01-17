@@ -1,4 +1,4 @@
-package monitor.view.vo;
+package monitor.view.domain.vo;
 
 /**
  * Created by lizhitao on 2018/1/14.
