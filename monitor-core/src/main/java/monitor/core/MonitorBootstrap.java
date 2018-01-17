@@ -131,9 +131,4 @@ public class MonitorBootstrap implements MonitorLifecycle {
             }
         }
     }
-
-    @Override
-    public boolean isRunning() {
-        return false;
-    }
 }
