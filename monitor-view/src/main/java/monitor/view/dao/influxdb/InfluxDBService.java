@@ -4,8 +4,10 @@ import org.influxdb.InfluxDB;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
+import org.influxdb.impl.TimeUtil;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by lizhitao on 2018/1/13.
@@ -66,6 +68,17 @@ public class InfluxDBService {
      */
     public QueryResult query(String command) {
         return influxDB.query(new Query(command, database));
+    }
+
+    /**
+     * 查询数据
+     *
+     * @param command
+     * @param timeUnit
+     * @return
+     */
+    public QueryResult query(String command, TimeUnit timeUnit) {
+        return influxDB.query(new Query(command, database), timeUnit);
     }
 
     public InfluxDB getInfluxDB() {

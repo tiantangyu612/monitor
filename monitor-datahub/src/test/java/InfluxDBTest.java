@@ -1,4 +1,3 @@
-/*
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import monitor.datahub.storage.influxdb.InfluxDBBuilder;
@@ -10,12 +9,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
-
-*/
-/**
- * Created by lizhitao on 2018/1/13.
- * InfluxDBTest
- *//*
 
 public class InfluxDBTest {
     private InfluxDB influxDB = null;
@@ -51,9 +44,7 @@ public class InfluxDBTest {
     }
 
     @Test
-    @Ignore
     public void testDeleteDB() {
         influxDB.deleteDatabase("monitor");
     }
 }
-*/

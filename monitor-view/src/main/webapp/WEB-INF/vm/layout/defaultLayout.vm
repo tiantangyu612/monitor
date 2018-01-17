@@ -15,20 +15,11 @@
 <div class="container-fluid">
     #parse("/layout/nav.vm")
     <div class="row">
-        <div class="col-md-2">
-            <ul class="nav nav-tabs" style="margin-bottom: 10px;">
-                <li role="presentation" class="active"><a href="#">我的产品</a></li>
-            </ul>
-            <div class="list-group">
-                <a href="#" class="list-group-item">监控系统</a>
-                <a href="#" class="list-group-item">青龙系统</a>
-                <a href="#" class="list-group-item">天网系统</a>
-            </div>
-        </div>
-        <div class="col-md-10 table-responsive">
+        <div class="col-md-12">
             $screen_content
         </div>
     </div>
+</div>
 </div>
 </div>
 </body>
