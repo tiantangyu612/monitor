@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/10.
  * 使用 socket 上报数据
  */
-public class MonitorSocketReporter implements MonitorReporter {
+public class MonitorSocketReporter extends AbstractMonitorReporter {
     private static final Logger LOGGER = MonitorLogFactory.getLogger(MonitorSocketReporter.class);
 
     /**

@@ -55,6 +55,10 @@ public class MonitorConfig {
      * 采集数据上报处理类工厂
      */
     private static String monitorReporterFactory = "monitor.core.report.MonitorSocketReporterFactory";
+    /**
+     * 数据上报中心 url，用于采集数据上报
+     */
+    private static String dataHubUrl = "127.0.0.1:16666";
 
     /**
      * 初始化监控配置
@@ -113,6 +117,7 @@ public class MonitorConfig {
         MonitorConfig.application = monitorConfig.getProperty("application");
         MonitorConfig.cluster = monitorConfig.getProperty("cluster");
         setMonitorReporterFactory(monitorConfig);
+        setDataHubUrl(monitorConfig);
     }
 
     /**
@@ -232,15 +237,6 @@ public class MonitorConfig {
     }
 
     /**
-     * 设置是否启用 tomcat 数据采集
-     *
-     * @param enableTomcatCollect
-     */
-    public static void setEnableTomcatCollect(boolean enableTomcatCollect) {
-        MonitorConfig.enableTomcatCollect = enableTomcatCollect;
-    }
-
-    /**
      * 获取采集数据上报处理类工厂
      *
      * @return
@@ -256,7 +252,27 @@ public class MonitorConfig {
      */
     public static void setMonitorReporterFactory(Properties monitorConfig) {
         if (null != monitorConfig.get("monitorReporterFactory")) {
-            MonitorConfig.monitorReporterFactory = monitorReporterFactory;
+            MonitorConfig.monitorReporterFactory = monitorConfig.getProperty("monitorReporterFactory");
+        }
+    }
+
+    /**
+     * 获取数据上报中心 url，用于采集数据上报
+     *
+     * @return
+     */
+    public static String getDataHubUrl() {
+        return dataHubUrl;
+    }
+
+    /**
+     * 设置数据上报中心 url，用于采集数据上报
+     *
+     * @param monitorConfig
+     */
+    public static void setDataHubUrl(Properties monitorConfig) {
+        if (null != monitorConfig.get("dataHubUrl")) {
+            MonitorConfig.dataHubUrl = monitorConfig.getProperty("dataHubUrl");
         }
     }
 }
