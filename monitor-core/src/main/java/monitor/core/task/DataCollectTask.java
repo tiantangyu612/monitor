@@ -1,8 +1,10 @@
 package monitor.core.task;
 
+import monitor.core.MonitorLifecycle;
 import monitor.core.collector.Collectors;
 import monitor.core.collector.base.Collector;
 import monitor.core.config.MonitorConfig;
+import monitor.core.log.MonitorLogFactory;
 import monitor.core.report.vo.ReportData;
 import monitor.core.util.NetUtil;
 import monitor.core.util.concurrent.NamedThreadFactory;
@@ -14,19 +16,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Created by lizhitao on 2018/1/10.
- * 监控数据上报任务
+ * 监控数据采集定时上报任务
  */
-public class DataReportTask implements Runnable {
-    private static DataReportTask instance = new DataReportTask();
+public class DataCollectTask implements Runnable, MonitorLifecycle {
+    private static final Logger LOGGER = MonitorLogFactory.getLogger(DataCollectTask.class);
+    private static DataCollectTask instance = new DataCollectTask();
 
-    private DataReportTask() {
+    private DataCollectTask() {
     }
 
-    public static DataReportTask getInstance() {
-        return DataReportTask.instance;
+    public static DataCollectTask getInstance() {
+        return DataCollectTask.instance;
     }
 
     private ScheduledExecutorService monitorReportSchedule = Executors.newScheduledThreadPool(1, new NamedThreadFactory("monitor-collector", true));
@@ -59,15 +64,21 @@ public class DataReportTask implements Runnable {
     /**
      * 启动数据上报
      */
+    @Override
     public void start() {
-        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(DataReportTask.instance, 30, 30, TimeUnit.SECONDS);
+        scheduledFuture = monitorReportSchedule.scheduleWithFixedDelay(DataCollectTask.instance, 30, 30, TimeUnit.SECONDS);
     }
 
     /**
      * 停止数据上报
      */
+    @Override
     public void stop() {
-        scheduledFuture.cancel(true);
-        monitorReportSchedule.shutdown();
+        try {
+            scheduledFuture.cancel(false);
+            monitorReportSchedule.shutdown();
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "failed to stop DataCollectTask", e);
+        }
     }
 }

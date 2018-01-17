@@ -5,10 +5,12 @@ import javassist.NotFoundException;
 import monitor.core.collector.Collectors;
 import monitor.core.config.MonitorConfig;
 import monitor.core.log.MonitorLogFactory;
+import monitor.core.task.DataCollectTask;
 import monitor.core.task.DataReportQueueService;
-import monitor.core.task.DataReportTask;
 
 import java.lang.instrument.Instrumentation;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.FileHandler;
@@ -18,8 +20,9 @@ import java.util.logging.Logger;
  * Created by lizhitao on 2018/1/5.
  * 监控初始化类，初始化监控环境、监控配置、Transformer、采集器配置并启动监控采集器
  */
-public class MonitorInitializer {
-    private static Logger LOG = MonitorLogFactory.getLogger(MonitorInitializer.class);
+public class MonitorBootstrap implements MonitorLifecycle {
+    private static Logger LOG = MonitorLogFactory.getLogger(MonitorBootstrap.class);
+    private List<MonitorLifecycle> monitorComponents = new ArrayList<MonitorLifecycle>();
 
     /**
      * 初始化监控系统，该方法由 Agent premain 反射调用
@@ -29,7 +32,7 @@ public class MonitorInitializer {
      * @param instrumentation
      * @throws Exception
      */
-    public void initMonitor(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) throws Exception {
+    public void init(Map<String, Object> environment, Properties monitorConfigProperties, Instrumentation instrumentation) throws Exception {
         MonitorEnv monitorEnv = new MonitorEnv(environment);
 
         // 初始化日志配置
@@ -47,8 +50,11 @@ public class MonitorInitializer {
         Collectors.initCollectors(instrumentation);
         LOG.info("init collectors success!");
 
+        // 初始化监控组件
+        initMonitorComponent();
+
         // 启动采集器
-        startCollector();
+        start();
     }
 
     /**
@@ -59,6 +65,14 @@ public class MonitorInitializer {
     private void initLog(MonitorEnv monitorEnv) {
         FileHandler logFileHandler = monitorEnv.getLogFileHandler();
         MonitorLogFactory.initLog(logFileHandler);
+    }
+
+    /**
+     * 初始化监控组件
+     */
+    private void initMonitorComponent() {
+        monitorComponents.add(DataCollectTask.getInstance());
+        monitorComponents.add(DataReportQueueService.getInstance());
     }
 
     /**
@@ -86,13 +100,20 @@ public class MonitorInitializer {
     /**
      * 启动采集器
      */
-    private static void startCollector() {
-        DataReportQueueService.getInstance().start();
+    @Override
+    public void start() {
+        for (MonitorLifecycle monitorComponent : monitorComponents) {
+            try {
+                monitorComponent.start();
+            } catch (Exception e) {
+                // NOP
+            }
+        }
 
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
-                stopCollector();
+                MonitorBootstrap.this.stop();
             }
         });
     }
@@ -100,7 +121,14 @@ public class MonitorInitializer {
     /**
      * 停止采集器
      */
-    private static void stopCollector() {
-        DataReportTask.getInstance().stop();
+    @Override
+    public void stop() {
+        for (MonitorLifecycle monitorComponent : monitorComponents) {
+            try {
+                monitorComponent.stop();
+            } catch (Exception e) {
+                // NOP
+            }
+        }
     }
 }
