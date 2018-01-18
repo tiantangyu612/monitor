@@ -18,6 +18,16 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     /**
+     * 修改产品信息
+     *
+     * @param product
+     */
+    @Override
+    public int update(Product product) {
+        return productDao.updateByProductId(product);
+    }
+
+    /**
      * 删除产品
      *
      * @param id

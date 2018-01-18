@@ -29,6 +29,8 @@ public class Pager<T> {
      */
     private int pageCount = 1;
 
+    private int offset = 0;
+
     /* 初始化分页组件 */
     public Pager(Integer pageSize, Integer totalCount, Integer currentPage) {
         if (null == pageSize) {
@@ -54,6 +56,7 @@ public class Pager<T> {
 
         setPageCount(pageNum.intValue());
 
+        setOffset((currentPage - 1) * pageSize);
     }
 
     public Pager(int totalCount, int pageSize, int currentPage, List<T> dataList) {
@@ -114,4 +117,23 @@ public class Pager<T> {
         this.pageCount = pageCount;
     }
 
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    @Override
+    public String toString() {
+        return "Pager{" +
+                "dataList=" + dataList +
+                ", totalCount=" + totalCount +
+                ", pageSize=" + pageSize +
+                ", currentPage=" + currentPage +
+                ", pageCount=" + pageCount +
+                ", offset=" + offset +
+                '}';
+    }
 }

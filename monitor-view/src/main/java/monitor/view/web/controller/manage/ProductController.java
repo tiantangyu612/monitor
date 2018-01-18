@@ -28,12 +28,12 @@ public class ProductController {
      */
     @RequestMapping("/products")
     @Monitor
-    public String manage(Model model, @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                         @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
-        List<Product> products = productService.getProductList(offset, 10);
+    public String manage(Model model, @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
         int count = productService.count();
 
         Pager<Product> pager = new Pager<Product>(10, count, currentPage);
+        List<Product> products = productService.getProductList(pager.getOffset(), 10);
+
         pager.setDataList(products);
 
         model.addAttribute("pager", pager);
@@ -71,10 +71,22 @@ public class ProductController {
      * @param id
      * @return
      */
-    @RequestMapping(value = "/products/update/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/products/update/{id}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public Product updateProduct(@PathVariable(value = "id") Integer id) {
         return productService.getProductById(id);
+    }
+
+    /**
+     * 修改产品前查询产品信息
+     *
+     * @param product
+     * @return
+     */
+    @RequestMapping(value = "/products/update", method = RequestMethod.POST)
+    public String updateProduct(Product product) {
+        productService.update(product);
+        return "redirect:/monitor/manage/products";
     }
 
     /**

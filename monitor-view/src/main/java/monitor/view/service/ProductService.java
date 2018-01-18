@@ -10,6 +10,13 @@ import java.util.List;
  */
 public interface ProductService {
     /**
+     * 修改产品信息
+     *
+     * @param product
+     */
+    int update(Product product);
+
+    /**
      * 删除产品
      *
      * @param id

@@ -30,12 +30,13 @@
             #foreach($product in $!{pager.dataList})
             <tr>
                 <td>$!{product.name}</td>
-                <td>（李智涛）lizhitao</td>
+                <td>$!{product.owner}</td>
                 <td>$!{product.description}</td>
                 <td style="text-align:center">
                     <a class="btn btn-primary btn-xs" href="/monitor/manage/products/${product.id}">应用管理</a>
-                    <button class="btn btn-default btn-xs">修改</button>
-                    <a class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteProductConfirm" onclick="deleteProduct(${product.id})">删除</a>
+                    <button class="btn btn-default btn-xs" onclick="updateProduct(${product.id})">修改</button>
+                    <a class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteProductConfirm"
+                       onclick="deleteProduct(${product.id})">删除</a>
                 </td>
             </tr>
             #end
@@ -43,18 +44,20 @@
     </table>
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li>
-                <a href="#" aria-label="Previous">
+            <li #if($pager.currentPage == 1) class="disabled" #end>
+                <a #if($pager.currentPage == 1)href="javascript:void(0);"#else
+                   href="/monitor/manage/products?currentPage=$math.sub(${pager.currentPage}, 1)" #end
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li>
-                <a href="#" aria-label="Next">
+            #foreach($count in [1..${pager.pageCount}])
+                <li><a href="/monitor/manage/products?currentPage=${count}">$count</a></li>
+            #end
+            <li #if($pager.currentPage == $pager.pageCount) class="disabled" #end>
+                <a #if($pager.currentPage == $pager.pageCount)href="javascript:void(0);"#else
+                   href="/monitor/manage/products?currentPage=$math.add(${pager.currentPage}, 1)" #end
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -74,7 +77,7 @@
             <div class="modal-body">您确定要删除该产品吗？</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">关闭</button>
-                <a id="deleteProductHref" href="#"  class="btn btn-danger btn-xs">确定</a>
+                <a id="deleteProductHref" href="#" class="btn btn-danger btn-xs">确定</a>
             </div>
         </div>
     </div>
@@ -85,7 +88,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">添加产品</h4>
             </div>
             <div class="modal-body">
@@ -100,15 +104,16 @@
                         <label for="productOwner" class="col-sm-3 control-label">负责人：</label>
                         <div class="col-sm-8">
                             <select id="productOwner" class="form-control" name="owner">
-                                <option>（李智涛）lizhitao</option>
-                                <option>（张三）zhangsan</option>
+                                <option value="（李智涛）lizhitao">（李智涛）lizhitao</option>
+                                <option value="（张三）zhangsan">（张三）zhangsan</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="productDesc" class="col-sm-3 control-label">产品说明：</label>
                         <div class="col-sm-8">
-                            <textarea rows="5" maxlength="150" class="form-control" id="productDesc" name="description"></textarea>
+                            <textarea rows="5" maxlength="150" class="form-control" id="productDesc"
+                                      name="description"></textarea>
                         </div>
                     </div>
                 </form>
@@ -121,6 +126,51 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="updateProductModal" tabindex="-1" role="dialog" aria-labelledby="updateProductModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="updateProductModalLabel">修改产品</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="updateProductForm" method="post"
+                      action="/monitor/manage/products/update">
+                    <input type="hidden" name="id" value="" id="updateProductId"/>
+                    <div class="form-group">
+                        <label for="updateProductName" class="col-sm-3 control-label">产品名称：</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="updateProductName" name="name"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProductOwner" class="col-sm-3 control-label">负责人：</label>
+                        <div class="col-sm-8">
+                            <select id="updateProductOwner" class="form-control" name="owner">
+                                <option value="（李智涛）lizhitao">（李智涛）lizhitao</option>
+                                <option value="（张三）zhangsan">（张三）zhangsan</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateProductDesc" class="col-sm-3 control-label">产品说明：</label>
+                        <div class="col-sm-8">
+                            <textarea rows="5" maxlength="150" class="form-control" id="updateProductDesc"
+                                      name="description"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" id="updateProductSubmit" class="btn btn-primary">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(function () {
         $("#addProductSubmit").click(function () {
@@ -128,8 +178,25 @@
         });
     });
 
-    function deleteProduct(id){
+    $(function () {
+        $("#updateProductSubmit").click(function () {
+            $("#updateProductForm").submit();
+        });
+    });
+
+    function deleteProduct(id) {
         var href = "/monitor/manage/products/delete/" + id;
         $("#deleteProductHref").prop("href", href);
+    }
+
+    function updateProduct(id) {
+        $.get("/monitor/manage/products/update/" + id, function (product) {
+            $("#updateProductId").val(product.id)
+            $("#updateProductName").val(product.name)
+            $("#updateProductOwner").val(product.owner)
+            $("#updateProductDesc").val(product.description)
+
+            $("#updateProductModal").modal();
+        })
     }
 </script>
