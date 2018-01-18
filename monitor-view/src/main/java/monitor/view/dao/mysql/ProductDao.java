@@ -20,6 +20,14 @@ public interface ProductDao {
     Product getProductById(Integer id);
 
     /**
+     * 查询产品总数
+     *
+     * @return
+     */
+    @Select("SELECT COUNT(*) FROM Product")
+    int count();
+
+    /**
      * 插入产品信息
      *
      * @param product

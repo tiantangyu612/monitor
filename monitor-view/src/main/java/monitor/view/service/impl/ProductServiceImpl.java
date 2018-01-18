@@ -29,6 +29,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /**
+     * 查询产品总数
+     *
+     * @return
+     */
+    @Override
+    public int count() {
+        return productDao.count();
+    }
+
+    /**
      * 插入产品信息
      *
      * @param product

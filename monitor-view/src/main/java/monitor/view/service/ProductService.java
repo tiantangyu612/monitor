@@ -18,6 +18,13 @@ public interface ProductService {
     int deleteById(Integer id);
 
     /**
+     * 查询产品总数
+     *
+     * @return
+     */
+    int count();
+
+    /**
      * 插入产品信息
      *
      * @param product

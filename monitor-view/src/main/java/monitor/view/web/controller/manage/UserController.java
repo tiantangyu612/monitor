@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * 用户管理
  */
 @Controller
-@RequestMapping("/monitor/user")
+@RequestMapping("/monitor/manage")
 public class UserController {
-    @RequestMapping("/manage")
+    @RequestMapping("/users")
     public String manage() {
         return "manage/user";
     }

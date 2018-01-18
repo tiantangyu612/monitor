@@ -25,6 +25,10 @@ public class User {
      */
     private String phone;
     /**
+     * 密码
+     */
+    private String password;
+    /**
      * 创建时间
      */
     private Date createTime = new Date(System.currentTimeMillis());
@@ -69,6 +73,14 @@ public class User {
         this.phone = phone;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public Date getCreateTime() {
         return createTime;
     }
@@ -85,6 +97,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", password='" + password + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }

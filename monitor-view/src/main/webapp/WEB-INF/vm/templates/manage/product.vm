@@ -27,13 +27,13 @@
         </tr>
         </thead>
         <tbody>
-            #foreach($product in $!{products})
+            #foreach($product in $!{pager.dataList})
             <tr>
                 <td>$!{product.name}</td>
                 <td>（李智涛）lizhitao</td>
                 <td>$!{product.description}</td>
                 <td style="text-align:center">
-                    <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1">应用管理</a>
+                    <a class="btn btn-primary btn-xs" href="/monitor/manage/products/${product.id}">应用管理</a>
                     <button class="btn btn-default btn-xs">修改</button>
                     <a class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteProductConfirm" onclick="deleteProduct(${product.id})">删除</a>
                 </td>

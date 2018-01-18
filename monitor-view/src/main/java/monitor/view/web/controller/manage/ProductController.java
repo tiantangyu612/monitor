@@ -2,13 +2,11 @@ package monitor.view.web.controller.manage;
 
 import monitor.core.annotation.Monitor;
 import monitor.view.domain.entity.Product;
+import monitor.view.domain.vo.Pager;
 import monitor.view.service.ProductService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,9 +29,14 @@ public class ProductController {
     @RequestMapping("/products")
     @Monitor
     public String manage(Model model, @RequestParam(value = "offset", defaultValue = "0") Integer offset,
-                         @RequestParam(value = "limit", defaultValue = "10") Integer limit) {
-        List<Product> products = productService.getProductList(offset, limit);
-        model.addAttribute("products", products);
+                         @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage) {
+        List<Product> products = productService.getProductList(offset, 10);
+        int count = productService.count();
+
+        Pager<Product> pager = new Pager<Product>(10, count, currentPage);
+        pager.setDataList(products);
+
+        model.addAttribute("pager", pager);
         return "manage/product";
     }
 
@@ -60,6 +63,18 @@ public class ProductController {
     public String deleteProduct(@PathVariable(value = "id") Integer id) {
         productService.deleteById(id);
         return "redirect:/monitor/manage/products";
+    }
+
+    /**
+     * 修改产品前查询产品信息
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(value = "/products/update/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Product updateProduct(@PathVariable(value = "id") Integer id) {
+        return productService.getProductById(id);
     }
 
     /**
