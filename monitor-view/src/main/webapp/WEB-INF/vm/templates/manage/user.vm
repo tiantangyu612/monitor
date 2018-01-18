@@ -11,7 +11,8 @@
             <div class="btn input-group-addon glyphicon glyphicon-search"></div>
         </div>
     </div>
-    <button data-toggle="modal" data-target="#myModal" type="button" class="btn btn-primary" style="margin-left: 20px;">
+    <button data-toggle="modal" data-target="#addUserModal" type="button" class="btn btn-primary"
+            style="margin-left: 20px;">
         添加用户
     </button>
 </form>
@@ -24,40 +25,42 @@
             <th>姓名</th>
             <th>邮箱</th>
             <th>手机号</th>
-            <th>创建时间</th>
-            <th>修改时间</th>
             <th style="text-align:center">操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>lizhitao</td>
-            <td>李智涛</td>
-            <td>lizhitao123@126.com</td>
-            <td>18501187960</td>
-            <td>2018-01-16 17:52:33</td>
-            <td>2018-01-16 17:52:33</td>
-            <td style="text-align:center">
-                <button class="btn btn-primary btn-xs">修改</button>
-                <button class="btn btn-danger btn-xs">删除</button>
-            </td>
-        </tr>
+            #foreach($user in $!{pager.dataList})
+            <tr>
+                <td>$!{user.username}</td>
+                <td>$!{user.name}</td>
+                <td>$!{user.email}</td>
+                <td>$!{user.phone}</td>
+                <td style="text-align:center">
+                    <button class="btn btn-warning btn-xs">重置密码</button>
+                    <button class="btn btn-primary btn-xs">修改</button>
+                    <button class="btn btn-danger btn-xs">删除</button>
+                </td>
+            </tr>
+            #end
         </tbody>
     </table>
+
     <nav aria-label="Page navigation">
         <ul class="pagination">
-            <li>
-                <a href="#" aria-label="Previous">
+            <li #if($pager.currentPage == 1) class="disabled" #end>
+                <a #if($pager.currentPage == 1)href="javascript:void(0);"#else
+                   href="/monitor/manage/users?currentPage=$math.sub(${pager.currentPage}, 1)" #end
+                   aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            <li><a href="#">1</a></li>
-            <li><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-            <li><a href="#">4</a></li>
-            <li><a href="#">5</a></li>
-            <li>
-                <a href="#" aria-label="Next">
+            #foreach($count in [1..${pager.pageCount}])
+                <li><a href="/monitor/manage/users?currentPage=${count}">$count</a></li>
+            #end
+            <li #if($pager.currentPage == $pager.pageCount) class="disabled" #end>
+                <a #if($pager.currentPage == $pager.pageCount)href="javascript:void(0);"#else
+                   href="/monitor/manage/users?currentPage=$math.add(${pager.currentPage}, 1)" #end
+                   aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
@@ -65,47 +68,55 @@
     </nav>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<!-- 添加用户弹窗 -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+                <h4 class="modal-title" id="addUserModalLabel">添加用户</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal">
+                <form class="form-horizontal" id="addUserForm" method="post" action="/monitor/manage/users/add">
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">用户名：</label>
+                        <label for="addUsername" class="col-sm-3 control-label">用户名：</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="productName" name="productName"/>
+                            <input type="text" class="form-control" id="addUsername" name="username" required/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">姓名：</label>
+                        <label for="addName" class="col-sm-3 control-label">姓名：</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="productName" name="productName"/>
+                            <input type="text" class="form-control" id="addName" name="name" required/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">邮箱：</label>
+                        <label for="addEmail" class="col-sm-3 control-label">邮箱：</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="productName" name="productName"/>
+                            <input type="text" class="form-control" id="addEmail" name="email" required/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">手机号：</label>
+                        <label for="addPhone" class="col-sm-3 control-label">手机号：</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="productName" name="productName"/>
+                            <input type="text" class="form-control" id="addPhone" name="phone"/>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button type="button" class="btn btn-primary" id="addUserSubmit">保存</button>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#addUserSubmit").click(function () {
+            $("#addUserForm").submit();
+        });
+    });
+</script>

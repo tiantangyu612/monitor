@@ -1,9 +1,14 @@
 package monitor.view.web.controller;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import monitor.view.domain.entity.User;
+import monitor.view.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -13,6 +18,9 @@ import javax.servlet.http.HttpSession;
  */
 @Controller
 public class LoginController {
+    @Resource
+    private UserService userService;
+
     /**
      * 登录页
      *
@@ -30,12 +38,19 @@ public class LoginController {
      */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(HttpServletRequest request, String username, String password) {
+        HttpSession session = request.getSession();
+
         if ("root".equals(username) && "root".equals(password)) {
-            HttpSession session = request.getSession();
             session.setAttribute("username", "root");
             return "redirect:/";
         } else {
-            return "redirect:/login";
+            User user = userService.selectLogingUser(username, Hashing.md5().hashString(password, Charsets.UTF_8).toString());
+            if (null != user) {
+                session.setAttribute("username", user.getUsername());
+                return "redirect:/";
+            } else {
+                return "redirect:/login";
+            }
         }
     }
 

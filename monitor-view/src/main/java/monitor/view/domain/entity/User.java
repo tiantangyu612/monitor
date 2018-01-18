@@ -1,5 +1,8 @@
 package monitor.view.domain.entity;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+
 import java.util.Date;
 
 /**
@@ -27,7 +30,7 @@ public class User {
     /**
      * 密码
      */
-    private String password;
+    private String password = Hashing.md5().hashString("111111", Charsets.UTF_8).toString();
     /**
      * 创建时间
      */

@@ -43,15 +43,16 @@ public class BaseController {
         // 查询数据
         QueryResult queryResult = influxDBService.query(sql);
         if (!queryResult.hasError()) {
-            // 数据分类
-            List<String> categories = Lists.newArrayList();
-            // x 轴分类
-            List<String> xAxisData = Lists.newArrayList();
-            // 分类的数据
-            List<Map<String, Object>> finalData = Lists.newArrayList();
-
             List<QueryResult.Result> queryResults = queryResult.getResults();
             if (CollectionUtils.isNotEmpty(queryResults)) {
+                // 数据分类
+                List<String> categories = Lists.newArrayList();
+                // x 轴分类
+                List<String> xAxisData = Lists.newArrayList();
+                // 分类的数据
+                List<Map<String, Object>> finalData = Lists.newArrayList();
+
+
                 QueryResult.Result result = queryResults.get(0);
                 List<QueryResult.Series> seriesList = result.getSeries();
                 if (CollectionUtils.isNotEmpty(seriesList)) {
@@ -94,15 +95,21 @@ public class BaseController {
 
                         finalData.add(finalDataItem);
                     }
-                }
-            }
 
-            model.addAttribute("hasData", true);
-            model.addAttribute("title", collectorItemName);
-            model.addAttribute("categories", JSON.toJSONString(categories));
-            model.addAttribute("xAxisData", JSON.toJSONString(xAxisData));
-            model.addAttribute("series", JSON.toJSONString(finalData));
+                    model.addAttribute("hasData", true);
+                    model.addAttribute("categories", JSON.toJSONString(categories));
+                    model.addAttribute("xAxisData", JSON.toJSONString(xAxisData));
+                    model.addAttribute("series", JSON.toJSONString(finalData));
+                } else {
+                    model.addAttribute("title", collectorItemName);
+                    model.addAttribute("hasData", false);
+                }
+            } else {
+                model.addAttribute("title", collectorItemName);
+                model.addAttribute("hasData", false);
+            }
         } else {
+            model.addAttribute("title", collectorItemName);
             model.addAttribute("hasData", false);
         }
     }

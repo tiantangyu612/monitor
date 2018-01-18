@@ -2,8 +2,10 @@ package monitor.view.web.controller.manage;
 
 import monitor.core.annotation.Monitor;
 import monitor.view.domain.entity.Product;
+import monitor.view.domain.entity.User;
 import monitor.view.domain.vo.Pager;
 import monitor.view.service.ProductService;
+import monitor.view.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +22,8 @@ import java.util.List;
 public class ProductController {
     @Resource
     private ProductService productService;
+    @Resource
+    private UserService userService;
 
     /**
      * 产品管理
@@ -32,11 +36,14 @@ public class ProductController {
         int count = productService.count();
 
         Pager<Product> pager = new Pager<Product>(10, count, currentPage);
-        List<Product> products = productService.getProductList(pager.getOffset(), 10);
 
+        List<Product> products = productService.getProductList(pager.getOffset(), pager.getPageSize());
         pager.setDataList(products);
-
         model.addAttribute("pager", pager);
+
+        List<User> users = userService.getUserList(0, Integer.MAX_VALUE);
+        model.addAttribute("users", users);
+
         return "manage/product";
     }
 

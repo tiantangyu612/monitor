@@ -104,8 +104,10 @@
                         <label for="productOwner" class="col-sm-3 control-label">负责人：</label>
                         <div class="col-sm-8">
                             <select id="productOwner" class="form-control" name="owner">
-                                <option value="（李智涛）lizhitao">（李智涛）lizhitao</option>
-                                <option value="（张三）zhangsan">（张三）zhangsan</option>
+                                #foreach($user in $!{users})
+                                    <option value="（$!{user.name}）$!{user.username}">
+                                        （$!{user.name}）$!{user.username}</option>
+                                #end
                             </select>
                         </div>
                     </div>
@@ -149,8 +151,10 @@
                         <label for="updateProductOwner" class="col-sm-3 control-label">负责人：</label>
                         <div class="col-sm-8">
                             <select id="updateProductOwner" class="form-control" name="owner">
-                                <option value="（李智涛）lizhitao">（李智涛）lizhitao</option>
-                                <option value="（张三）zhangsan">（张三）zhangsan</option>
+                                #foreach($user in $!{users})
+                                    <option value="（$!{user.name}）$!{user.username}">
+                                        （$!{user.name}）$!{user.username}</option>
+                                #end
                             </select>
                         </div>
                     </div>
@@ -176,9 +180,8 @@
         $("#addProductSubmit").click(function () {
             $("#addProductForm").submit();
         });
-    });
 
-    $(function () {
+
         $("#updateProductSubmit").click(function () {
             $("#updateProductForm").submit();
         });

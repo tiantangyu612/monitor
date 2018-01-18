@@ -20,6 +20,14 @@ public interface UserDao {
     User getUserById(Integer id);
 
     /**
+     * 查询用户总数
+     *
+     * @return
+     */
+    @Select("SELECT COUNT(*) FROM User")
+    int count();
+
+    /**
      * 插入用户
      *
      * @param user
@@ -66,4 +74,14 @@ public interface UserDao {
      */
     @Update("DELETE FROM User WHERE id=#{id}")
     int deleteByUserId(Integer id);
+
+    /**
+     * 查询登录用户
+     *
+     * @param username
+     * @param password
+     * @return
+     */
+    @Select("SELECT * FROM User WHERE username=#{username} AND password=#{password}")
+    User selectLoginUser(@Param("username") String username, @Param("password") String password);
 }
