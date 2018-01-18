@@ -23,24 +23,22 @@
             <th>产品名称</th>
             <th>产品负责人</th>
             <th>产品说明</th>
-            <th>创建时间</th>
-            <th>修改时间</th>
             <th style="text-align:center">操作</th>
         </tr>
         </thead>
         <tbody>
-        <tr>
-            <td>监控系统</td>
-            <td>（李智涛）lizhitao</td>
-            <td>监控 java 应用，以及监控系统负载、IO 等等</td>
-            <td>2018-01-16 17:52:33</td>
-            <td>2018-01-16 17:52:33</td>
-            <td style="text-align:center">
-                <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1">应用管理</a>
-                <button class="btn btn-default btn-xs">修改</button>
-                <button class="btn btn-danger btn-xs">删除</button>
-            </td>
-        </tr>
+            #foreach($product in $!{products})
+            <tr>
+                <td>$!{product.name}</td>
+                <td>（李智涛）lizhitao</td>
+                <td>$!{product.description}</td>
+                <td style="text-align:center">
+                    <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1">应用管理</a>
+                    <button class="btn btn-default btn-xs">修改</button>
+                    <a class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteProductConfirm" onclick="deleteProduct(${product.id})">删除</a>
+                </td>
+            </tr>
+            #end
         </tbody>
     </table>
     <nav aria-label="Page navigation">
@@ -64,27 +62,44 @@
     </nav>
 </div>
 
+<!-- 删除确认对话框 -->
+<div class="modal fade" id="deleteProductConfirm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">确认对话框</h4>
+            </div>
+            <div class="modal-body">您确定要删除该产品吗？</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">关闭</button>
+                <a id="deleteProductHref" href="#"  class="btn btn-danger btn-xs">确定</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">添加产品</h4>
             </div>
             <div class="modal-body">
-                <form class="form-horizontal">
+                <form class="form-horizontal" id="addProductForm" method="post" action="/monitor/manage/products/add">
                     <div class="form-group">
                         <label for="productName" class="col-sm-3 control-label">产品名称：</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="productName" name="productName"/>
+                            <input type="text" class="form-control" id="productName" name="name"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="productName" class="col-sm-3 control-label">负责人：</label>
+                        <label for="productOwner" class="col-sm-3 control-label">负责人：</label>
                         <div class="col-sm-8">
-                            <select class="form-control">
+                            <select id="productOwner" class="form-control" name="owner">
                                 <option>（李智涛）lizhitao</option>
                                 <option>（张三）zhangsan</option>
                             </select>
@@ -93,16 +108,28 @@
                     <div class="form-group">
                         <label for="productDesc" class="col-sm-3 control-label">产品说明：</label>
                         <div class="col-sm-8">
-                            <textarea rows="5" maxlength="150" class="form-control" id="productDesc"
-                                      name="productDesc"></textarea>
+                            <textarea rows="5" maxlength="150" class="form-control" id="productDesc" name="description"></textarea>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary">保存</button>
+                <button type="button" id="addProductSubmit" class="btn btn-primary">保存</button>
             </div>
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#addProductSubmit").click(function () {
+            $("#addProductForm").submit();
+        });
+    });
+
+    function deleteProduct(id){
+        var href = "/monitor/manage/products/delete/" + id;
+        $("#deleteProductHref").prop("href", href);
+    }
+</script>

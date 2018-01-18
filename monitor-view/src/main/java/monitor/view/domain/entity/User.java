@@ -3,23 +3,27 @@ package monitor.view.domain.entity;
 import java.util.Date;
 
 /**
- * Created by lizhitao on 2018/1/17.
- * 产品实体
+ * Created by bjlizhitao on 2018/1/18.
+ * 用户实体
  */
-public class Product {
+public class User {
     private Integer id;
     /**
-     * 产品名称
+     * 用户名
+     */
+    private String username;
+    /**
+     * 姓名
      */
     private String name;
     /**
-     * 产品负责人
+     * 邮箱
      */
-    private String owner;
+    private String email;
     /**
-     * 产品描述
+     * 手机号
      */
-    private String description;
+    private String phone;
     /**
      * 创建时间
      */
@@ -33,6 +37,14 @@ public class Product {
         this.id = id;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getName() {
         return name;
     }
@@ -41,20 +53,20 @@ public class Product {
         this.name = name;
     }
 
-    public String getOwner() {
-        return owner;
+    public String getEmail() {
+        return email;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getDescription() {
-        return description;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public Date getCreateTime() {
@@ -67,11 +79,12 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "User{" +
                 "id=" + id +
+                ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
-                ", description='" + description + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }

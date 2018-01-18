@@ -13,13 +13,16 @@
         <context:exclude-filter type="regex" expression="monitor\.view\.web\..*"/>
     </context:component-scan>
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" >
-        <property name="ignoreUnresolvablePlaceholders"  value="true" />
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
         <property name="locations">
             <list>
                 <value>classpath:config.properties</value>
                 <value>classpath:velocity.properties</value>
+                <value>classpath:db.properties</value>
             </list>
         </property>
     </bean>
+
+    <import resource="classpath:spring-mybatis.xml"/>
 </beans>

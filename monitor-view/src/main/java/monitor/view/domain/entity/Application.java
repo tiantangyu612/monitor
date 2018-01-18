@@ -3,23 +3,27 @@ package monitor.view.domain.entity;
 import java.util.Date;
 
 /**
- * Created by lizhitao on 2018/1/17.
- * 产品实体
+ * Created by bjlizhitao on 2018/1/18.
+ * 应用实体
  */
-public class Product {
+public class Application {
     private Integer id;
     /**
-     * 产品名称
+     * 应用名称
      */
     private String name;
     /**
-     * 产品负责人
+     * 所属产品
      */
-    private String owner;
+    private Integer productId;
     /**
-     * 产品描述
+     * 应用描述
      */
     private String description;
+    /**
+     * 应用负责人
+     */
+    private String owner;
     /**
      * 创建时间
      */
@@ -33,6 +37,14 @@ public class Product {
         this.id = id;
     }
 
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
     public String getName() {
         return name;
     }
@@ -41,20 +53,20 @@ public class Product {
         this.name = name;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public Date getCreateTime() {
@@ -67,11 +79,12 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "Application{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
+                ", productId=" + productId +
                 ", description='" + description + '\'' +
+                ", owner='" + owner + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }

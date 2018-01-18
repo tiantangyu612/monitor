@@ -3,23 +3,31 @@ package monitor.view.domain.entity;
 import java.util.Date;
 
 /**
- * Created by lizhitao on 2018/1/17.
- * 产品实体
+ * Created by bjlizhitao on 2018/1/18.
+ * 集群实体
  */
-public class Product {
+public class Cluster {
     private Integer id;
     /**
-     * 产品名称
+     * 集群名称
      */
     private String name;
     /**
-     * 产品负责人
+     * 所属应用
      */
-    private String owner;
+    private Integer applicationId;
     /**
-     * 产品描述
+     * 集群描述
      */
     private String description;
+    /**
+     * 报警接收人
+     */
+    private String alarmUser;
+    /**
+     * 集群报警接收组
+     */
+    private String alarmGroup;
     /**
      * 创建时间
      */
@@ -41,12 +49,12 @@ public class Product {
         this.name = name;
     }
 
-    public String getOwner() {
-        return owner;
+    public Integer getApplicationId() {
+        return applicationId;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
+    public void setApplicationId(Integer applicationId) {
+        this.applicationId = applicationId;
     }
 
     public String getDescription() {
@@ -55,6 +63,22 @@ public class Product {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getAlarmUser() {
+        return alarmUser;
+    }
+
+    public void setAlarmUser(String alarmUser) {
+        this.alarmUser = alarmUser;
+    }
+
+    public String getAlarmGroup() {
+        return alarmGroup;
+    }
+
+    public void setAlarmGroup(String alarmGroup) {
+        this.alarmGroup = alarmGroup;
     }
 
     public Date getCreateTime() {
@@ -67,11 +91,13 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "Cluster{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
+                ", applicationId=" + applicationId +
                 ", description='" + description + '\'' +
+                ", alarmUser='" + alarmUser + '\'' +
+                ", alarmGroup='" + alarmGroup + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }
