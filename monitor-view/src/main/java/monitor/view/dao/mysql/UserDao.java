@@ -64,7 +64,7 @@ public interface UserDao {
      * @return
      */
     @Update("UPDATE User SET password=#{password} WHERE id=#{id}")
-    int changePassword(Integer id, String password);
+    int changePassword(@Param("id") Integer id, @Param("password") String password);
 
     /**
      * 删除用户信息

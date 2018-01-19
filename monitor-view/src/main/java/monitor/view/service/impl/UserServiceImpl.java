@@ -1,5 +1,7 @@
 package monitor.view.service.impl;
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
 import monitor.view.dao.mysql.UserDao;
 import monitor.view.domain.entity.User;
 import monitor.view.service.UserService;
@@ -91,7 +93,18 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public User selectLogingUser(String username, String password) {
+    public User selectLoginUser(String username, String password) {
         return userDao.selectLoginUser(username, password);
+    }
+
+    /**
+     * 重置用户密码
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public int resetUserPassword(Integer id) {
+        return userDao.changePassword(id, Hashing.md5().hashString("111111", Charsets.UTF_8).toString());
     }
 }

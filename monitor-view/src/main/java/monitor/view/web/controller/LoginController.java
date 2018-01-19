@@ -44,7 +44,7 @@ public class LoginController {
             session.setAttribute("username", "root");
             return "redirect:/";
         } else {
-            User user = userService.selectLogingUser(username, Hashing.md5().hashString(password, Charsets.UTF_8).toString());
+            User user = userService.selectLoginUser(username, Hashing.md5().hashString(password, Charsets.UTF_8).toString());
             if (null != user) {
                 session.setAttribute("username", user.getUsername());
                 return "redirect:/";

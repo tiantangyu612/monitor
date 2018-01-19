@@ -128,7 +128,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- 更新产品信息 -->
 <div class="modal fade" id="updateProductModal" tabindex="-1" role="dialog" aria-labelledby="updateProductModalLabel">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

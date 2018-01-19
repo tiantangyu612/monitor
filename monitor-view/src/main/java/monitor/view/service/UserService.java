@@ -63,5 +63,13 @@ public interface UserService {
      * @param password
      * @return
      */
-    User selectLogingUser(String username, String password);
+    User selectLoginUser(String username, String password);
+
+    /**
+     * 重置用户密码
+     *
+     * @param id
+     * @return
+     */
+    int resetUserPassword(Integer id);
 }
