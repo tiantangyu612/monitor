@@ -85,6 +85,6 @@ public class JavaMethodController extends BaseController {
             }
         }
 
-        return "method/method";
+        return "monitor/method/method";
     }
 }

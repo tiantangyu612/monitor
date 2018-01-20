@@ -35,7 +35,7 @@ public class TomcatController extends BaseController {
         buildLineChartData("tomcat", sql, model);
         getTomcatInfo(model);
 
-        return "tomcat/tomcat";
+        return "monitor/tomcat/tomcat";
     }
 
     private void getTomcatInfo(Model model) {

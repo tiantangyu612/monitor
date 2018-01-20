@@ -44,7 +44,7 @@ public class ProductController {
         List<User> users = userService.getUserList(0, Integer.MAX_VALUE);
         model.addAttribute("users", users);
 
-        return "manage/product";
+        return "manage/product/product";
     }
 
     /**
@@ -104,7 +104,7 @@ public class ProductController {
     @RequestMapping("/products/{productId}")
     @Monitor
     public String applicationManage(@PathVariable(value = "productId") Integer productId) {
-        return "manage/application";
+        return "manage/product/application";
     }
 
     /**
@@ -116,6 +116,6 @@ public class ProductController {
     @Monitor
     public String clusterManage(@PathVariable(value = "productId") Integer productId,
                                 @PathVariable(value = "applicationId") Integer applicationId) {
-        return "manage/cluster";
+        return "manage/product/cluster";
     }
 }

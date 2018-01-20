@@ -28,7 +28,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_memory";
         String sql = "select heapMemoryUsage,nonHeapMemoryUsage from \"" + measurement + "\"";
         buildLineChartData("memory", sql, model);
-        return "jvm/memory";
+        return "monitor/jvm/memory";
 
     }
 
@@ -45,7 +45,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_classLoading";
         String sql = "select loadedClassCount,totalLoadedClassCount,unloadedClassCount from \"" + measurement + "\"";
         buildLineChartData("classLoading", sql, model);
-        return "jvm/jvm";
+        return "monitor/jvm/jvm";
     }
 
     /**
@@ -61,7 +61,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_compile";
         String sql = "select compilationTime,totalCompilationTime from \"" + measurement + "\"";
         buildLineChartData("compile", sql, model);
-        return "jvm/jvm";
+        return "monitor/jvm/jvm";
     }
 
     /**
@@ -77,7 +77,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_cpu";
         String sql = "select cpuRatio from \"" + measurement + "\"";
         buildLineChartData("cpu", sql, model);
-        return "jvm/jvm";
+        return "monitor/jvm/jvm";
     }
 
     /**
@@ -93,7 +93,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_thread";
         String sql = "select daemonThreadCount,deadlockedThreadsCount,peakThreadCount,threadCount,totalStartedThreadCount from \"" + measurement + "\"";
         buildLineChartData("thread", sql, model);
-        return "jvm/jvm";
+        return "monitor/jvm/jvm";
     }
 
     /**
@@ -109,7 +109,7 @@ public class JVMController extends BaseController {
         String measurement = application + "_" + cluster + "_JVM_GC";
         String sql = "select fullGCCollectionCount,fullGCCollectionTime,youngGCCollectionCount,youngGCCollectionTime from \"" + measurement + "\"";
         buildLineChartData("gc", sql, model);
-        return "jvm/jvm";
+        return "monitor/jvm/jvm";
     }
 
     /**
@@ -130,6 +130,6 @@ public class JVMController extends BaseController {
 //                "\"PS Perm Gen max\",\"PS Perm Gen used\"" +
                 " from \"" + measurement + "\"";
         buildLineChartData("memoryPool", sql, model);
-        return "jvm/memory";
+        return "monitor/jvm/memory";
     }
 }
