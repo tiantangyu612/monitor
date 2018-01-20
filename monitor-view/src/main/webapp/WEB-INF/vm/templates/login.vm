@@ -2,7 +2,7 @@
 
 <div class="container">
     <form class="form-signin" action="/login" method="post">
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 class="form-signin-heading">Monitor</h2>
         <label for="inputUsername" class="sr-only">Username</label>
         <input name="username" type="text" id="inputUsername" class="form-control" placeholder="Username" required
                autofocus>
@@ -10,9 +10,10 @@
         <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
         <div class="checkbox">
             <label>
-                <input type="checkbox" value="remember-me"> Remember me
+                <input type="checkbox" value="remember-me"/>
+                <span>记住本次登录</span>
             </label>
         </div>
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
     </form>
 </div>

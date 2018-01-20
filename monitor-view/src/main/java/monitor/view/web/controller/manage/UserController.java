@@ -36,7 +36,7 @@ public class UserController {
 
         model.addAttribute("pager", pager);
 
-        return "manage/user";
+        return "manage/user/user";
     }
 
     /**
