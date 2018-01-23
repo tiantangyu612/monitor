@@ -1,7 +1,6 @@
 package monitor.view.dao.mysql;
 
 import monitor.view.domain.entity.Application;
-import monitor.view.domain.entity.Product;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
@@ -47,7 +46,7 @@ public interface ApplicationDao {
      * @return
      */
     @Select("SELECT * FROM Application WHERE productId=? ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
-    List<Product> getProductList(@Param("productId") Integer productId, @Param("offset") Integer offset, @Param("limit") Integer limit);
+    List<Application> getProductList(@Param("productId") Integer productId, @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
      * 更新应用信息
