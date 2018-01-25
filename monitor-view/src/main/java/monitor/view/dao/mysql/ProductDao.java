@@ -33,9 +33,9 @@ public interface ProductDao {
      * @param product
      * @return
      */
-    @Insert("INSERT INTO PRODUCT (id, name, owner, description, createTime) VALUES(#{id},#{name}, #{owner}, #{description}, #{createTime})")
+    @Insert("INSERT INTO PRODUCT (id, name, owner, description, createTime) " +
+            "VALUES(#{id},#{name}, #{owner}, #{description}, #{createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-//    @SelectKey(statement = "SELECT LAST_INSERT_ID()", keyProperty = "id", before = false, resultType = int.class)
     void insert(Product product);
 
     /**
