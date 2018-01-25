@@ -46,7 +46,7 @@ public interface ApplicationDao {
      * @return
      */
     @Select("SELECT * FROM Application WHERE productId=? ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
-    List<Application> getProductList(@Param("productId") Integer productId, @Param("offset") Integer offset, @Param("limit") Integer limit);
+    List<Application> getApplicationList(@Param("productId") Integer productId, @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
      * 更新应用信息

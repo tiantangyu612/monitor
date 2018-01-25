@@ -59,7 +59,7 @@ public class ApplicationServiceImpl implements ApplicationService {
      */
     @Override
     public List<Application> queryByProductId(Integer productId, Integer offset, Integer limit) {
-        return applicationDao.getProductList(productId, offset, limit);
+        return applicationDao.getApplicationList(productId, offset, limit);
     }
 
     /**
