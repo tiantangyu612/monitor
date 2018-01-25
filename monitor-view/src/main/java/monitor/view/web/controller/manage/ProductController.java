@@ -95,27 +95,4 @@ public class ProductController {
         productService.update(product);
         return "redirect:/monitor/manage/products";
     }
-
-    /**
-     * 应用管理
-     *
-     * @return
-     */
-    @RequestMapping("/products/{productId}")
-    @Monitor
-    public String applicationManage(@PathVariable(value = "productId") Integer productId) {
-        return "manage/product/application";
-    }
-
-    /**
-     * 集群管理
-     *
-     * @return
-     */
-    @RequestMapping("/products/{productId}/application/{applicationId}")
-    @Monitor
-    public String clusterManage(@PathVariable(value = "productId") Integer productId,
-                                @PathVariable(value = "applicationId") Integer applicationId) {
-        return "manage/product/cluster";
-    }
 }

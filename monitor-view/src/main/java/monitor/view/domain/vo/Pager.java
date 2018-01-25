@@ -114,6 +114,9 @@ public class Pager<T> {
     }
 
     public void setPageCount(int pageCount) {
+        if (pageCount <= 0) {
+            pageCount = 1;
+        }
         this.pageCount = pageCount;
     }
 

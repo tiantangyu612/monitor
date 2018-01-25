@@ -13,7 +13,7 @@ public class Application {
      */
     private String name;
     /**
-     * 所属产品
+     * 所属产品id
      */
     private Integer productId;
     /**

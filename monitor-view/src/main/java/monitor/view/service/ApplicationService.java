@@ -49,4 +49,12 @@ public interface ApplicationService {
      * @return
      */
     int count(Integer productId);
+
+    /**
+     * 按 id 查询应用信息
+     *
+     * @param id
+     * @return
+     */
+    Application findById(Integer id);
 }

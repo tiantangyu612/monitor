@@ -16,7 +16,7 @@ public interface ApplicationDao {
      * @param id
      * @return
      */
-    @Select("SELECT * FROM Application where id = #{id}")
+    @Select("SELECT * FROM Application where id=#{id}")
     Application getById(Integer id);
 
     /**
@@ -24,7 +24,7 @@ public interface ApplicationDao {
      *
      * @return
      */
-    @Select("SELECT COUNT(*) FROM Application where productId=?")
+    @Select("SELECT COUNT(*) FROM Application where productId=#{productId}")
     int count(@Param("productId") Integer productId);
 
     /**
@@ -46,7 +46,7 @@ public interface ApplicationDao {
      * @param limit
      * @return
      */
-    @Select("SELECT * FROM Application WHERE productId=? ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM Application WHERE productId=#{productId} ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
     List<Application> getApplicationList(@Param("productId") Integer productId, @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**

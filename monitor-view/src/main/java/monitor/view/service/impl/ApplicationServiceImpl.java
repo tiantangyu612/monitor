@@ -3,6 +3,7 @@ package monitor.view.service.impl;
 import monitor.view.dao.mysql.ApplicationDao;
 import monitor.view.domain.entity.Application;
 import monitor.view.service.ApplicationService;
+import monitor.view.service.ProductService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +17,8 @@ import java.util.List;
 public class ApplicationServiceImpl implements ApplicationService {
     @Resource
     private ApplicationDao applicationDao;
+    @Resource
+    private ProductService productService;
 
     /**
      * 删除应用
@@ -71,5 +74,16 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public int count(Integer productId) {
         return applicationDao.count(productId);
+    }
+
+    /**
+     * 按 id 查询应用信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Application findById(Integer id) {
+        return applicationDao.getById(id);
     }
 }
