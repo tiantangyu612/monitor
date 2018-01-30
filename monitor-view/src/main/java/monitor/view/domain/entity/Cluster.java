@@ -13,6 +13,10 @@ public class Cluster {
      */
     private String name;
     /**
+     * 所属产品
+     */
+    private Integer productId;
+    /**
      * 所属应用
      */
     private Integer applicationId;
@@ -20,10 +24,6 @@ public class Cluster {
      * 集群描述
      */
     private String description;
-    /**
-     * 报警接收人
-     */
-    private String alarmUser;
     /**
      * 集群报警接收组
      */
@@ -49,6 +49,14 @@ public class Cluster {
         this.name = name;
     }
 
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
     public Integer getApplicationId() {
         return applicationId;
     }
@@ -63,14 +71,6 @@ public class Cluster {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getAlarmUser() {
-        return alarmUser;
-    }
-
-    public void setAlarmUser(String alarmUser) {
-        this.alarmUser = alarmUser;
     }
 
     public String getAlarmGroup() {
@@ -94,9 +94,9 @@ public class Cluster {
         return "Cluster{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", productId='" + productId + '\'' +
                 ", applicationId=" + applicationId +
                 ", description='" + description + '\'' +
-                ", alarmUser='" + alarmUser + '\'' +
                 ", alarmGroup='" + alarmGroup + '\'' +
                 ", createTime=" + createTime +
                 '}';

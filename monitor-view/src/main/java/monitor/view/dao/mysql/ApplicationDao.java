@@ -33,8 +33,8 @@ public interface ApplicationDao {
      * @param application
      * @return
      */
-    @Insert("INSERT INTO Application (id, name, productId, description, owner, createTime) " +
-            "VALUES(#{id},#{name}, #{productId}, #{description}, #{owner}, #{createTime})")
+    @Insert("INSERT INTO Application (id, name, productId, description, createTime) " +
+            "VALUES(#{id},#{name}, #{productId}, #{description}, #{createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Application application);
 
@@ -55,7 +55,7 @@ public interface ApplicationDao {
      * @param application
      * @return
      */
-    @Update("UPDATE Application SET name=#{name},productId=#{productId}, owner=#{owner},description=#{description} WHERE id=#{id}")
+    @Update("UPDATE Application SET name=#{name},productId=#{productId},description=#{description} WHERE id=#{id}")
     int updateById(Application application);
 
     /**

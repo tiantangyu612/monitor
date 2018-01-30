@@ -21,10 +21,6 @@ public class Application {
      */
     private String description;
     /**
-     * 应用负责人
-     */
-    private String owner;
-    /**
      * 创建时间
      */
     private Date createTime = new Date(System.currentTimeMillis());
@@ -61,14 +57,6 @@ public class Application {
         this.description = description;
     }
 
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
     public Date getCreateTime() {
         return createTime;
     }
@@ -84,7 +72,6 @@ public class Application {
                 ", name='" + name + '\'' +
                 ", productId=" + productId +
                 ", description='" + description + '\'' +
-                ", owner='" + owner + '\'' +
                 ", createTime=" + createTime +
                 '}';
     }

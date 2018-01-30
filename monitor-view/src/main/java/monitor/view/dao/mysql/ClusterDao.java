@@ -25,7 +25,7 @@ public interface ClusterDao {
      * @param applicationId
      * @return
      */
-    @Select("SELECT COUNT(*) FROM Cluster where applicationId=?")
+    @Select("SELECT COUNT(*) FROM Cluster where applicationId=#{applicationId}")
     int count(@Param("applicationId") Integer applicationId);
 
     /**
@@ -34,8 +34,8 @@ public interface ClusterDao {
      * @param cluster
      * @return
      */
-    @Insert("INSERT INTO Cluster (id, name, applicationId, description, alarmUser, alarmGroup, createTime) " +
-            "VALUES(#{id},#{name}, #{applicationId}, #{description}, #{alarmUser}, #{alarmGroup}, #{createTime})")
+    @Insert("INSERT INTO Cluster (id, name, productId, applicationId, description, alarmGroup, createTime) " +
+            "VALUES(#{id},#{name}, #{productId}, #{applicationId}, #{description}, #{alarmGroup}, #{createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(Cluster cluster);
 
@@ -47,7 +47,7 @@ public interface ClusterDao {
      * @param limit
      * @return
      */
-    @Select("SELECT * FROM Cluster WHERE applicationId=? ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
+    @Select("SELECT * FROM Cluster WHERE applicationId=#{applicationId} ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
     List<Cluster> getClusterList(@Param("applicationId") Integer applicationId, @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
@@ -56,7 +56,7 @@ public interface ClusterDao {
      * @param cluster
      * @return
      */
-    @Update("UPDATE Cluster SET name=#{name},applicationId=#{applicationId},alarmUser=#{alarmUser},alarmGroup=#{alarmGroup},description=#{description} WHERE id=#{id}")
+    @Update("UPDATE Cluster SET name=#{name},applicationId=#{applicationId},alarmGroup=#{alarmGroup},description=#{description} WHERE id=#{id}")
     int updateById(Cluster cluster);
 
     /**

@@ -1,0 +1,17 @@
+<!-- 删除确认对话框 -->
+<div class="modal fade" id="deleteClusterConfirm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">确认对话框</h4>
+            </div>
+            <div class="modal-body">您确定要删除该集群吗？</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-xs" data-dismiss="modal">关闭</button>
+                <a id="deleteClusterHref" href="#" class="btn btn-danger btn-xs">确定</a>
+            </div>
+        </div>
+    </div>
+</div>

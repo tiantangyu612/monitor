@@ -34,7 +34,7 @@
                 <td>${product.name}</td>
                 <td>${app.description}</td>
                 <td style="text-align:center">
-                    <a class="btn btn-primary btn-xs" href="/monitor/manage/products/1/application/1">集群管理</a>
+                    <a class="btn btn-primary btn-xs" href="/monitor/manage/clusters/${product.id}/${app.id}">集群管理</a>
                     <button class="btn btn-default btn-xs" onclick="updateApplication(${app.id})">修改</button>
                     <button class="btn btn-danger btn-xs" data-toggle="modal" data-target="#deleteApplicationConfirm"
                             onclick="deleteApplication(${product.id}, ${app.id})">删除
