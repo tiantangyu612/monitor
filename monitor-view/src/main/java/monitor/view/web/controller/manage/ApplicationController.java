@@ -78,18 +78,6 @@ public class ApplicationController {
     }
 
     /**
-     * 集群管理
-     *
-     * @return
-     */
-    @RequestMapping("/products/{productId}/application/{applicationId}")
-    @Monitor
-    public String clusterManage(@PathVariable(value = "productId") Integer productId,
-                                @PathVariable(value = "applicationId") Integer applicationId) {
-        return "manage/product/cluster";
-    }
-
-    /**
      * 修改应用前查询应用信息
      *
      * @param id

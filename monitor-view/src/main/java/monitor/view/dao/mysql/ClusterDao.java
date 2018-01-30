@@ -1,6 +1,5 @@
 package monitor.view.dao.mysql;
 
-import monitor.view.domain.entity.Application;
 import monitor.view.domain.entity.Cluster;
 import org.apache.ibatis.annotations.*;
 
@@ -49,7 +48,7 @@ public interface ClusterDao {
      * @return
      */
     @Select("SELECT * FROM Cluster WHERE applicationId=? ORDER BY id DESC LIMIT #{limit} OFFSET #{offset}")
-    List<Application> getClusterList(@Param("applicationId") Integer applicationId, @Param("offset") Integer offset, @Param("limit") Integer limit);
+    List<Cluster> getClusterList(@Param("applicationId") Integer applicationId, @Param("offset") Integer offset, @Param("limit") Integer limit);
 
     /**
      * 更新集群信息
