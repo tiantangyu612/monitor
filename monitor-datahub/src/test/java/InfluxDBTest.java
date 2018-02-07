@@ -44,6 +44,7 @@ public class InfluxDBTest {
     }
 
     @Test
+    @Ignore
     public void testDeleteDB() {
         influxDB.deleteDatabase("monitor");
     }
