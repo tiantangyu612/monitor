@@ -1,12 +1,13 @@
 package monitor.core.collector.items.url;
 
-import com.sun.webpane.platform.ConfigManager;
-import monitor.core.collector.base.Collector;
+import monitor.core.collector.base.AbstractCollector;
 
-import java.util.regex.MatchResult;
-
-public class UrlStatsCollector extends Collector {
-    private static Logger LOG = CollectorLogFactory.getLogger(UrlStatsCollector.class);
+public class UrlStatsCollector extends AbstractCollector {
+    @Override
+    public String getName() {
+        return null;
+    }
+   /* private static Logger LOG = CollectorLogFactory.getLogger(UrlStatsCollector.class);
     private static UrlPattern pattern = ConfigManager.getUrlPattern();
     private static UrlStatsAggregator urlStatsAggregator = new UrlStatsAggregator();
     private static UrlOverallAggregator urlOverallAggregator = new UrlOverallAggregator();
@@ -119,5 +120,5 @@ public class UrlStatsCollector extends Collector {
         instance.addModelAggregator(urlStatsAggregator);
         instance.addModelAggregator(urlOverallAggregator);
         instance.addModelAggregator(urlStatusGroupAggregator);
-    }
+    }*/
 }
