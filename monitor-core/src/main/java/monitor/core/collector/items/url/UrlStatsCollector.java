@@ -1,37 +1,29 @@
 package monitor.core.collector.items.url;
 
 import monitor.core.collector.base.AbstractCollector;
+import monitor.core.log.MonitorLogFactory;
+
+import java.util.logging.Logger;
 
 public class UrlStatsCollector extends AbstractCollector {
     @Override
     public String getName() {
-        return null;
+        return "Url";
     }
-   /* private static Logger LOG = CollectorLogFactory.getLogger(UrlStatsCollector.class);
-    private static UrlPattern pattern = ConfigManager.getUrlPattern();
+
+    private static Logger LOG = MonitorLogFactory.getLogger(UrlStatsCollector.class);
     private static UrlStatsAggregator urlStatsAggregator = new UrlStatsAggregator();
     private static UrlOverallAggregator urlOverallAggregator = new UrlOverallAggregator();
     private static UrlStatusGroupAggregator urlStatusGroupAggregator = new UrlStatusGroupAggregator();
-    private static boolean isDebugEnalble = ConfigManager.isDebugEnable();
-    private static boolean isDistinguishHttpMethod = ConfigManager.isDistinguishHttpMethod();
     public static UrlStatsCollector instance = new UrlStatsCollector();
 
     private UrlStatsCollector() {
     }
 
-    public static MatchResult onMatch(String uri) {
-        return pattern == null ? null : pattern.matchedUrl(uri);
-    }
-
     public static void onStart(String uri, String method) {
-        if (isDebugEnalble) {
-            LOG.info("into URI:" + uri + ",method:" + method);
-        }
 
         if (uri != null) {
-            if (!isDistinguishHttpMethod) {
-                method = "ALL";
-            }
+            method = "ALL";
 
             urlStatsAggregator.onStart(uri, method);
         }
@@ -42,32 +34,18 @@ public class UrlStatsCollector extends AbstractCollector {
     }
 
     public static void onStart(String uri, String method, String nativeUri) {
-        if (isDebugEnalble) {
-            LOG.info("into URI:" + uri + ",method:" + method);
-        }
-
         if (uri != null) {
-            if (!isDistinguishHttpMethod) {
-                method = "ALL";
-            }
+            method = "ALL";
 
             urlStatsAggregator.onStart(uri, method);
         }
     }
 
     public static void onThrowable(Throwable th) {
-        if (isDebugEnalble) {
-            LOG.info("onThrowable:" + th.getClass().getName());
-        }
-
         urlStatsAggregator.onThrowable(th);
     }
 
     public static void onFinally(int code) {
-        if (isDebugEnalble) {
-            LOG.info("onFinally:" + code);
-        }
-
         long t = urlStatsAggregator.onFinally(code);
         if (urlOverallAggregator.isEnable()) {
             urlOverallAggregator.onTotal(t);
@@ -105,20 +83,12 @@ public class UrlStatsCollector extends AbstractCollector {
     }
 
     public static void onFinally(Object o) {
-        if (isDebugEnalble) {
-            LOG.info("onfinallly,response class:" + o.getClass().getName());
-        }
-
         onFinally(200);
-    }
-
-    public String getCollectorName() {
-        return ColectorNames.COLLECTOR_URL;
     }
 
     static {
         instance.addModelAggregator(urlStatsAggregator);
         instance.addModelAggregator(urlOverallAggregator);
         instance.addModelAggregator(urlStatusGroupAggregator);
-    }*/
+    }
 }
